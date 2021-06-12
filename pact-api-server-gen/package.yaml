@@ -1,0 +1,65 @@
+name:                pact-api-server-gen
+version:             0.0.0.0
+github:              "NorfairKing/pact"
+license:             AllRightsReserved
+author:              "Tom Sydney Kerckhove"
+maintainer:          "syd@cs-syd.eu"
+copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  dependencies:
+  - QuickCheck
+  - bytestring
+  - cookie
+  - genvalidity-hspec
+  - hspec
+  - http-client
+  - http-types
+  - monad-logger
+  - persistent
+  - persistent-sqlite
+  - servant
+  - servant-auth-client
+  - servant-auth-server
+  - servant-client
+  - pact-api
+  - pact-api-gen
+  - pact-api-server
+  - pact-client
+  - text
+  - warp
+
+tests:
+  pact-api-server-tests:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - QuickCheck
+    - bytestring
+    - cookie
+    - genvalidity-hspec
+    - hspec
+    - http-client
+    - http-types
+    - monad-logger
+    - persistent
+    - persistent-sqlite
+    - servant
+    - servant-auth-client
+    - servant-auth-server
+    - servant-client
+    - pact-api
+    - pact-api-gen
+    - pact-api-server
+    - pact-api-server-gen
+    - pact-client
+    - text
+    - warp

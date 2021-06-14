@@ -1,0 +1,78 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 109373ccbb4ed73471daced229e2e4473c4d7c18692467bb1cfdb03a947481d1
+
+name:           pact-api-server
+version:        0.0.0.0
+homepage:       https://github.com/NorfairKing/pact#readme
+bug-reports:    https://github.com/NorfairKing/pact/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+license:        AllRightsReserved
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/pact
+
+library
+  exposed-modules:
+      Pact.API.Server
+      Pact.API.Server.DB
+      Pact.API.Server.Env
+      Pact.API.Server.Handler
+      Pact.API.Server.Handler.Auth
+      Pact.API.Server.Handler.Greet
+      Pact.API.Server.Handler.Import
+      Pact.API.Server.Handler.Number
+      Pact.API.Server.OptParse
+      Pact.API.Server.SigningKey
+  other-modules:
+      Paths_pact_api_server
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , envparse
+    , jose
+    , monad-logger
+    , mtl
+    , optparse-applicative
+    , pact-api
+    , password
+    , password-instances
+    , path
+    , path-io
+    , persistent
+    , persistent-sqlite
+    , persistent-template
+    , servant-auth-server
+    , servant-server
+    , text
+    , time
+    , validity
+    , validity-persistent
+    , wai
+    , warp
+    , yaml
+    , yamlparse-applicative
+  default-language: Haskell2010
+
+executable pact-api-server
+  main-is: Main.hs
+  other-modules:
+      Paths_pact_api_server
+  hs-source-dirs:
+      app/
+  ghc-options: -rtsopts -threaded -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , pact-api-server
+  default-language: Haskell2010

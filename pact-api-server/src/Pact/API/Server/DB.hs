@@ -35,6 +35,11 @@ User
 
   deriving Show Eq Ord Generic
 
+MyRandomInt
+  myRandomTypeInt Int
+
+  deriving Show Eq Ord Generic
+
 |]
 
 instance Validity (Salt a) where

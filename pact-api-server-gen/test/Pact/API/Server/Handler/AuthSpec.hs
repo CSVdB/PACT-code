@@ -31,9 +31,7 @@ spec =
             Left err ->
               case err of
                 FailureResponse _ resp
-                  | responseStatusCode resp
-                      == HTTP.unauthorized401 ->
-                    pure ()
+                  | responseStatusCode resp == HTTP.unauthorized401 -> pure ()
                 _ ->
                   failure $
                     "Should have errored with code 401, got this instead: "

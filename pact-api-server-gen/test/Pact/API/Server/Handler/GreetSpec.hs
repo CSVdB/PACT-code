@@ -16,5 +16,4 @@ spec =
       it "does not crash" $
         \cenv ->
           withAnyNewUser cenv $ \token -> do
-            resp <- testClientOrErr cenv $ getGreet pactClient token
-            shouldBeValid resp
+            shouldBeValid =<< testClientOrErr cenv (getGreet pactClient token)

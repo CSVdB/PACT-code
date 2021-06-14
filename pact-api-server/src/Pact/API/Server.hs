@@ -52,7 +52,8 @@ pactHandlers =
   PactRoutes
     { postRegister = handlePostRegister,
       postLogin = handlePostLogin,
-      getGreet = protected handleGetGreet
+      getGreet = protected handleGetGreet,
+      postNumber = protected handlePostNumber
     }
 
 protected :: ThrowAll m => (authCookie -> m) -> AuthResult authCookie -> m

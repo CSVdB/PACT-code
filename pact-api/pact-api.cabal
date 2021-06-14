@@ -1,0 +1,43 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 5236e5f377bf7efab4e769baa8b26aa4afccb60e45b1839143849105de72ce44
+
+name:           pact-api
+version:        0.0.0.0
+homepage:       https://github.com/NorfairKing/pact-api-cli-login#readme
+bug-reports:    https://github.com/NorfairKing/pact-api-cli-login/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+license:        AllRightsReserved
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/pact-api-cli-login
+
+library
+  exposed-modules:
+      Pact.API
+      Pact.API.Data
+  other-modules:
+      Paths_pact_api
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , jose
+    , persistent
+    , servant
+    , servant-auth
+    , servant-auth-server
+    , text
+    , validity
+    , validity-text
+    , yamlparse-applicative
+  default-language: Haskell2010

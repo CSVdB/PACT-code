@@ -6,3 +6,5 @@ result*
 *.sqlite3*
 signing-key.json
 *.dat
+.parcel-cache/
+dist/

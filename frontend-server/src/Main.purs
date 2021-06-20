@@ -1,35 +1,38 @@
 module Main where
 
 import Prelude
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Effect (Effect)
 import Effect.Console (log)
-import Effect.Aff (Aff)
+import Effect.Aff (Aff, launchAff_)
+import Router (Route(..), routeCodec)
 import Halogen as H
 import Halogen.Aff as HA
 import Halogen.HTML as HH
 import Halogen.Component (ComponentSlot)
 import Halogen.Query.HalogenQ (HalogenQ)
 import Halogen.VDom.Driver (runUI)
+import Routing.Hash (getHash, setHash, matchesWith)
+import Routing.Duplex as RD
+import Data.Either (hush)
 
 -- Global state of the app ("Env")
 data Store
   = Store
 
 type State
-  = Unit
+  = { route :: Maybe Route }
 
 data Action
   = Initialize
-  | Receive Unit
 
 -- The world talks to the component
 data Query a
-  = NoOp a
+  = Navigate Route a
 
 -- A parent talks to the component
 type Input
-  = Unit
+  = Route
 
 -- Talk to the parent component
 type Output
@@ -39,13 +42,15 @@ type Output
 type OpaqueSlot slot
   = forall query. H.Slot query Void slot
 
--- Used to distinguish between two child types that have -- the same query type
+-- Used to distinguish between two child types that have the same query type.
 type ChildSlots
   = ( home :: OpaqueSlot Unit
+    , login :: OpaqueSlot Unit
+    , register :: OpaqueSlot Unit
     )
 
 initialState :: Input -> State
-initialState = const unit
+initialState = const { route: Just Home }
 
 eval :: HalogenQ Query Action Input ~> H.HalogenM State Action ChildSlots Output Aff
 eval =
@@ -59,12 +64,24 @@ eval =
         }
   where
   handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots Void Aff (Maybe a)
-  handleQuery (NoOp a) = pure $ Just a
+  handleQuery (Navigate dest a) = do
+      { route: currRoute } <- H.get
+      -- don't re-render unless the route has changed
+      when (currRoute /= Just dest) $ do 
+         -- TODO: Same route changes aren't allowed and hence will be ignored.
+         H.modify_ $ _ { route = Just dest }
+      pure $ Just a
+  -- Syd thinks:
+  -- `Just a` means "wait until the next query"
+  -- `Nothing` means "stop listening to queries, close off the app"
+  -- TODO: He's not sure. Verify with Andrew.
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Void Aff Unit
-  handleAction Initialize = pure unit
-
-  handleAction (Receive _) = pure unit
+  handleAction Initialize = do
+     -- Get route the user landed on
+     initialRoute <- hush <<< (RD.parse routeCodec) <$> H.liftEffect getHash
+     -- Navigate to this route
+     H.liftEffect <<< setHash <<< RD.print routeCodec $ fromMaybe Home initialRoute
 
   receive :: Input -> Maybe Action
   receive = const Nothing
@@ -73,7 +90,11 @@ eval =
   initialize = Just Initialize
 
 render :: State -> HH.HTML (ComponentSlot ChildSlots Aff Action) Action
-render = const $ HH.div_ [ HH.text "Hello, world!" ]
+render {route: Nothing} = HH.div_ [ HH.text "Oh no! That page wasn't found." ]
+render {route: Just r} = case r of
+    Home -> HH.div_ [ HH.text "Hello, world!" ]
+    Login -> HH.div_ [ HH.text "Welcome to the login page!" ]
+    Register -> HH.div_ [ HH.text "Welcome to the register page!" ]
 
 rootComponent :: H.Component Query Input Output Aff
 rootComponent = H.mkComponent { initialState, render, eval }
@@ -89,11 +110,13 @@ main = do
     -- let
     --   initialStore = Store
     -- rootComponent <- runAppM initialStore Router.component
-    _ <- runUI rootComponent unit htmlBody -- Bind component to htmlBody
-    -- This result (`halogenIO`) now has two records:
+    halogenIO <- runUI rootComponent Home htmlBody -- Bind component to htmlBody
+    -- This result now has two records:
     -- * `query`: Send queries to the root component
     -- * `subscribe`: Listen and react to root component's output
-    pure unit
+    void $ H.liftEffect $ matchesWith (RD.parse routeCodec) \old new ->
+      when (old /= Just new) do
+        launchAff_ $ halogenIO.query $ H.mkTell $ Navigate new
 
 -- where
 --   baseUrl = BaseURL "localhost"

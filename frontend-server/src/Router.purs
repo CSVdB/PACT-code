@@ -6,7 +6,10 @@ import Routing.Duplex (RouteDuplex', root)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
 
-data Route = Home | Login | Register
+data Route
+  = Home
+  | Login
+  | Register
 
 derive instance Generic Route _
 derive instance Eq Route
@@ -21,8 +24,10 @@ derive instance Ord Route
 -- | Our codec will cause a compile-time error if we fail to handle any of our
 -- | route cases.
 routeCodec :: RouteDuplex' Route
-routeCodec = root $ sum
-  { "Home": noArgs
-  , "Login": "login" / noArgs
-  , "Register": "register" / noArgs
-  }
+routeCodec =
+  root
+    $ sum
+        { "Home": noArgs
+        , "Login": "login" / noArgs
+        , "Register": "register" / noArgs
+        }

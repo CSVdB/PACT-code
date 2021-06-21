@@ -17,11 +17,13 @@ to generate this file without the comments in this block.
   , "effect"
   , "either"
   , "halogen"
+  , "halogen-store"
   , "maybe"
   , "prelude"
   , "psci-support"
   , "routing"
   , "routing-duplex"
+  , "safe-coerce"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

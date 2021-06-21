@@ -27,17 +27,12 @@ derive instance Eq LogLevel
 derive instance Ord LogLevel
 
 -- An environment to the app, available to all components who wish it so.
--- 
--- TODO: Add the currently logged in user here once authentication is
--- implemented.
 type Store =
   { logLevel :: LogLevel
   , currentUser :: Maybe Profile
   }
 
 -- An action that can update the store.
--- 
--- TODO: Implement once "logged in user" is part of the Store.
 data StoreAction
   = LoginUser Profile
   | LogoutUser

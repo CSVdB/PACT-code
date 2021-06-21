@@ -1,13 +1,8 @@
--- TODO: Separate the data types from the (monad) functionality?
 module PACT.Capability.Log
-  ( LogType(..)
-  , logType
-  , logContents
+  ( module PACT.Data.Log
   , class Log
   , logMessage
   , log
-  , LogEntry
-  , mkLogEntry
   , logDebug
   , logInfo
   , logWarn
@@ -17,62 +12,12 @@ module PACT.Capability.Log
   ) where
 
 import Prelude
+import PACT.Capability.Now (class Now)
+import PACT.Data.Log
 import Halogen (HalogenM)
-import Data.DateTime (DateTime)
-import Data.Formatter.DateTime (formatDateTime)
-import PACT.Capability.Now (class Now, nowDateTime)
 import Data.Maybe (Maybe(..))
-import Data.Either (either, Either(..))
-import Data.Foldable (fold)
+import Data.Either (Either(..))
 import Control.Monad.Trans.Class (lift)
-
-data LogType
-  = Debug
-  | Info
-  | Warn
-  | Error
-
-derive instance Eq LogType
-derive instance Ord LogType
-
-newtype LogEntry
-  = LogEntry
-  { logType :: LogType
-  , logTimestamp :: DateTime
-  , logContents :: String
-  }
-
-logType :: LogEntry -> LogType
-logType (LogEntry { logType: e }) = e
-
-logContents :: LogEntry -> String
-logContents (LogEntry { logContents: c }) = c
-
-formatLog :: LogType -> String
-formatLog = case _ of
-  Debug -> "DEBUG"
-  Info -> "INFO"
-  Warn -> "WARN"
-  Error -> "ERROR"
-
-mkLogEntry :: forall m. Now m => LogType -> String -> m LogEntry
-mkLogEntry logType inputMessage = do
-  now <- nowDateTime
-  pure $ LogEntry { logType: logType, logTimestamp: now, logContents: headerWith now }
-  where
-  formatTimestamp =
-    either (const "(Failed to assign time)") identity
-      <<< formatDateTime "DD-MM-YYYY hh:mm:ss a"
-
-  headerWith time =
-    fold
-      [ "["
-      , formatLog logType
-      , ": "
-      , formatTimestamp time
-      , "]\n"
-      , inputMessage
-      ]
 
 class
   (Monad m, Now m) <= Log m where

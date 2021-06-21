@@ -64,16 +64,13 @@ eval =
         , initialize = initialize
         }
   where
-  -- TODO: Figure out what happens to the `a` in `Maybe a`.
-  -- If it's `Nothing`, the component doesn't re-render.
+  -- If the `a` in `Maybe a` is `Nothing`, the component doesn't re-render.
   handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots Void AppM (Maybe a)
   handleQuery (Navigate dest a) = do
     { route: currRoute } <- H.get
-    -- don't re-render unless the route has changed
+    -- Don't re-render unless the route has changed
     when (currRoute /= Just dest)
-      $ do
-          -- TODO: Same route changes aren't allowed and hence will be ignored.
-          H.modify_ $ _ { route = Just dest }
+      $ do H.modify_ $ _ { route = Just dest }
     pure $ Just a
 
   handleAction :: Action -> H.HalogenM State Action ChildSlots Void AppM Unit
@@ -119,6 +116,6 @@ main = do
           when (old /= Just new) do
             launchAff_ $ halogenIO.query $ H.mkTell $ Navigate new
   where
-    initialStore = { logLevel: Dev, currentUser: Nothing }
-    -- TODO: Once authentication is implemented, check if there's a token from
-    -- which to derive the current user instead.
+  -- TODO: Once authentication is implemented, check if there's a token from
+  -- which to derive the current user instead.
+  initialStore = { logLevel: Dev, currentUser: Nothing }

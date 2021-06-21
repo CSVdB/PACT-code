@@ -1,12 +1,12 @@
 module Main where
 
 import Prelude
-import AppM (runAppM, LogLevel(..), AppM)
+import PACT.AppM (runAppM, LogLevel(..), AppM)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Effect (Effect)
 import Effect.Console (log)
 import Effect.Aff (launchAff_)
-import Router (Route(..), routeCodec)
+import PACT.Router (Route(..), routeCodec)
 import Halogen as H
 import Halogen.Aff as HA
 import Halogen.HTML as HH
@@ -119,4 +119,6 @@ main = do
           when (old /= Just new) do
             launchAff_ $ halogenIO.query $ H.mkTell $ Navigate new
   where
-    initialStore = { logLevel: Dev }
+    initialStore = { logLevel: Dev, currentUser: Nothing }
+    -- TODO: Once authentication is implemented, check if there's a token from
+    -- which to derive the current user instead.

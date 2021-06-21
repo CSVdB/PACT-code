@@ -1,4 +1,4 @@
-module Router where
+module PACT.Router where
 
 import Prelude hiding ((/))
 import Data.Generic.Rep (class Generic)

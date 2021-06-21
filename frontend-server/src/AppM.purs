@@ -1,17 +1,23 @@
-module AppM where
+module PACT.AppM where
 
 import Prelude
+import PACT.Router as Route
+import PACT.Data.User (Profile)
 import PACT.Capability.Now (class Now)
 import PACT.Capability.Log (class Log)
 import PACT.Capability.Log as Log
+import PACT.Capability.Navigate (class Navigate, navigate)
+import Data.Maybe (Maybe(..))
 import Halogen as H
-import Halogen.Store.Monad (class MonadStore, StoreT, runStoreT, getStore)
+import Halogen.Store.Monad (class MonadStore, StoreT, runStoreT, getStore, updateStore)
 import Effect.Aff (Aff)
 import Effect.Console as Console
 import Safe.Coerce (coerce)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Now as Now
+import Routing.Duplex (print)
+import Routing.Hash (setHash)
 
 data LogLevel
   = Dev
@@ -24,17 +30,22 @@ derive instance Ord LogLevel
 -- 
 -- TODO: Add the currently logged in user here once authentication is
 -- implemented.
-type Store
-  = { logLevel :: LogLevel }
+type Store =
+  { logLevel :: LogLevel
+  , currentUser :: Maybe Profile
+  }
 
 -- An action that can update the store.
 -- 
 -- TODO: Implement once "logged in user" is part of the Store.
 data StoreAction
-  = StoreAction
+  = LoginUser Profile
+  | LogoutUser
 
 reduce :: Store -> StoreAction -> Store
-reduce store StoreAction = store
+reduce store = case _ of
+  LoginUser profile -> store { currentUser = Just profile }
+  LogoutUser -> store { currentUser = Nothing }
 
 -- Our app's core monad, in which the production app will run.
 newtype AppM a
@@ -62,3 +73,10 @@ instance Log AppM where
     liftEffect $ case logLevel, Log.logType entry of
       Prod, Log.Debug -> pure unit
       _, _ -> Console.log $ Log.logContents entry
+
+instance Navigate AppM where
+  navigate route = liftEffect $ setHash $ print Route.routeCodec route
+  logoutUser = do
+      -- TODO: Once authentication is implemented, remove the token here !!!
+      updateStore LogoutUser
+      navigate Route.Home

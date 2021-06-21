@@ -13,6 +13,7 @@ to generate this file without the comments in this block.
 { name = "my-project"
 , dependencies =
   [ "aff"
+  , "codec-argonaut"
   , "console"
   , "datetime"
   , "effect"
@@ -22,11 +23,15 @@ to generate this file without the comments in this block.
   , "halogen"
   , "halogen-store"
   , "maybe"
+  , "newtype"
+  , "now"
   , "prelude"
+  , "profunctor"
   , "psci-support"
   , "routing"
   , "routing-duplex"
   , "safe-coerce"
+  , "transformers"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

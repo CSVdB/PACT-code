@@ -1,12 +1,17 @@
 module AppM where
 
 import Prelude
+import PACT.Capability.Now (class Now)
+import PACT.Capability.Log (class Log)
+import PACT.Capability.Log as Log
 import Halogen as H
-import Halogen.Store.Monad (class MonadStore, StoreT, runStoreT)
+import Halogen.Store.Monad (class MonadStore, StoreT, runStoreT, getStore)
 import Effect.Aff (Aff)
+import Effect.Console as Console
 import Safe.Coerce (coerce)
 import Effect.Aff.Class (class MonadAff)
-import Effect.Class (class MonadEffect)
+import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Now as Now
 
 data LogLevel
   = Dev
@@ -47,3 +52,13 @@ derive newtype instance MonadStore StoreAction Store AppM
 -- Note: `coerce` here turns `AppM` into `StoreT Store Aff`.
 runAppM :: forall q i o. Store -> H.Component q i o AppM -> Aff (H.Component q i o Aff)
 runAppM initStore = runStoreT initStore reduce <<< coerce
+
+instance Now AppM where
+  nowDateTime = liftEffect Now.nowDateTime
+
+instance Log AppM where
+  logMessage entry = do
+    { logLevel } <- getStore
+    liftEffect $ case logLevel, Log.logType entry of
+      Prod, Log.Debug -> pure unit
+      _, _ -> Console.log $ Log.logContents entry

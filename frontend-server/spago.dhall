@@ -14,8 +14,11 @@ to generate this file without the comments in this block.
 , dependencies =
   [ "aff"
   , "console"
+  , "datetime"
   , "effect"
   , "either"
+  , "foldable-traversable"
+  , "formatters"
   , "halogen"
   , "halogen-store"
   , "maybe"

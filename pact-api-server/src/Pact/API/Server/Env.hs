@@ -21,9 +21,15 @@ runDB func = do
   pool <- asks envConnectionPool
   liftIO $ runSqlPool func pool
 
-withUser :: Username -> (Entity User -> H a) -> H a
-withUser un func = do
-  mu <- runDB $ getBy $ UniqueUsername un
+getUser :: Username -> H (Maybe (Entity User))
+getUser name = runDB . getBy $ UniqueUsername name
+
+getProfile :: Username -> H Profile
+getProfile name = do
+  mu <- getUser name
   case mu of
     Nothing -> throwError err404
-    Just ue -> func ue
+    Just user -> pure . toProfile $ entityVal user
+
+withUser :: Username -> (Profile -> H a) -> H a
+withUser un func = func =<< getProfile un

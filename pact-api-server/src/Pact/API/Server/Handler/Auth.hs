@@ -6,30 +6,29 @@ module Pact.API.Server.Handler.Auth where
 import Control.Monad.IO.Class
 import Data.Password.Bcrypt
 import qualified Data.Text.Encoding as TE
+import Debug.Trace (trace)
 import Pact.API.Server.Handler.Import
 import Servant.Auth.Server (makeSessionCookieBS)
 
-handlePostRegister :: RegistrationForm -> H NoContent
-handlePostRegister RegistrationForm {..} = do
-  mUser <- runDB $ getBy (UniqueUsername registrationFormUsername)
+handlePostRegister :: RegistrationForm -> H Profile
+handlePostRegister reg@RegistrationForm {..} = do
+  mUser <- getUser registrationFormUsername
   case mUser of
     Just _ -> throwError err409
     Nothing -> do
-      pass <- hashPassword $ mkPassword registrationFormPassword
-      runDB $
-        insert_ $
-          User {userName = registrationFormUsername, userPassword = pass}
-      pure NoContent
+      user <- registrationToUser reg
+      runDB $ insert_ user
+      pure $ toProfile user
 
 handlePostLogin ::
-  LoginForm -> H (Headers '[Header "Set-Cookie" Text] NoContent)
+  LoginForm -> H (Headers '[Header "Set-Cookie" Text] Profile)
 handlePostLogin LoginForm {..} = do
-  mUser <- runDB $ getBy (UniqueUsername loginFormUsername)
+  mUser <- getUser loginFormUsername
   case mUser of
-    Nothing -> throwError err401 -- Not 404, because then we leak data about users.
-    Just (Entity _ User {..}) ->
+    Nothing -> trace "Non-existent" $ throwError err401 -- Not 404, because then we leak data about users.
+    Just (Entity _ user@User {..}) ->
       case checkPassword (mkPassword loginFormPassword) userPassword of
-        PasswordCheckFail -> throwError err401
+        PasswordCheckFail -> trace "Wrong password" $ throwError err401
         PasswordCheckSuccess -> do
           let authCookie =
                 AuthCookie {authCookieUsername = loginFormUsername}
@@ -45,4 +44,4 @@ handlePostLogin LoginForm {..} = do
             Nothing -> throwError err401
             Just setCookie ->
               return $
-                addHeader (TE.decodeUtf8 setCookie) NoContent
+                addHeader (TE.decodeUtf8 setCookie) $ toProfile user

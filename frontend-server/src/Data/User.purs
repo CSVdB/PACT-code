@@ -7,7 +7,7 @@ module PACT.Data.User
   , profileCodec
   , InitialForm
   , LoginForm
-  , loginFormsCodec
+  , loginFormCodec
   , RegistrationForm
   , registrationFormCodec
   ) where
@@ -55,8 +55,8 @@ type InitialForm row =
 
 type LoginForm = { | InitialForm () }
 
-loginFormsCodec :: JsonCodec LoginForm
-loginFormsCodec = CAR.object "LoginForm"
+loginFormCodec :: JsonCodec LoginForm
+loginFormCodec = CAR.object "LoginForm"
   { email: emailAddressCodec
   , password: CA.string
   }

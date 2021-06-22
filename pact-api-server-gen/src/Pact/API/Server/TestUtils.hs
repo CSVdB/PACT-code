@@ -75,15 +75,13 @@ withAnyNewUser cenv func =
 
 withNewUser :: ClientEnv -> RegistrationForm -> (Token -> IO a) -> IO a
 withNewUser cenv rf func = do
-  testClientOrErr cenv $ do
-    NoContent <- postRegister pactClient rf
-    pure ()
+  testClientOrErr cenv . void $ postRegister pactClient rf
   token <- testLogin cenv $ registrationFormToLoginForm rf
   func token
 
 testLogin :: ClientEnv -> LoginForm -> IO Token
 testLogin cenv lf = do
-  Headers NoContent (HCons sessionHeader HNil) <-
+  Headers _ (HCons sessionHeader HNil) <-
     testClientOrErr cenv $ postLogin pactClient lf
   case sessionHeader of
     MissingHeader ->

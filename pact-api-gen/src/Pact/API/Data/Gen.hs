@@ -6,6 +6,10 @@ import Data.GenValidity
 import Data.GenValidity.Text ()
 import Pact.API.Data
 
+instance GenValid EmailAddress where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
+
 instance GenValid RegistrationForm where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
@@ -15,5 +19,9 @@ instance GenValid LoginForm where
   shrinkValid = shrinkValidStructurally
 
 instance GenValid Username where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
+
+instance GenValid Profile where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally

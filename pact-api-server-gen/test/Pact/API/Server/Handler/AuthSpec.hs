@@ -3,6 +3,7 @@ module Pact.API.Server.Handler.AuthSpec
   )
 where
 
+import Data.Functor (void)
 import Network.HTTP.Types as HTTP
 import Pact.API
 import Pact.API.Data
@@ -19,10 +20,8 @@ spec =
     describe "PostRegister" $
       it "does not crash" $
         \cenv ->
-          forAllValid $ \rf -> do
-            NoContent <-
-              testClientOrErr cenv $ postRegister pactClient rf
-            pure ()
+          forAllValid $ \rf ->
+            void . testClientOrErr cenv $ postRegister pactClient rf
     describe "PostRegister" $ do
       it "fails before registration" $ \cenv ->
         forAllValid $ \lf -> do
@@ -43,16 +42,15 @@ spec =
           forAllValid $ \un1 ->
             forAll (genValid `suchThat` (/= un1)) $ \un2 ->
               forAllValid $ \pw1 ->
-                forAll (genValid `suchThat` (/= pw1)) $ \pw2 ->
+                forAllValid $ \em1 ->
                   -- Sign up user 1 but not user 2
-                  do
-                    NoContent <-
-                      testClientOrErr cenv $
-                        postRegister pactClient $
-                          RegistrationForm
-                            { registrationFormUsername = un1,
-                              registrationFormPassword = pw1
-                            }
+                  forAll (genValid `suchThat` (/= pw1)) $ \pw2 -> do
+                    void . testClientOrErr cenv . postRegister pactClient $
+                      RegistrationForm
+                        { registrationFormUsername = un1,
+                          registrationFormPassword = pw1,
+                          registrationFormEmail = em1
+                        }
                     errOrRes1 <-
                       testClient cenv $
                         postLogin pactClient $
@@ -69,10 +67,7 @@ spec =
                             }
                     () <$ errOrRes1 `shouldBe` () <$ errOrRes2
       it "succeeds after registration" $ \cenv ->
-        forAllValid $ \rf -> do
-          _ <-
-            testClientOrErr cenv $ do
-              NoContent <- postRegister pactClient rf
-              postLogin pactClient $
-                registrationFormToLoginForm rf
-          pure ()
+        forAllValid $ \rf -> void . testClientOrErr cenv $ do
+          _ <- postRegister pactClient rf
+          postLogin pactClient $
+            registrationFormToLoginForm rf

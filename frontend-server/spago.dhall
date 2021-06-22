@@ -13,6 +13,10 @@ to generate this file without the comments in this block.
 { name = "my-project"
 , dependencies =
   [ "aff"
+  , "affjax"
+  , "argonaut-core"
+  , "bifunctors"
+  , "codec"
   , "codec-argonaut"
   , "console"
   , "datetime"
@@ -22,6 +26,7 @@ to generate this file without the comments in this block.
   , "formatters"
   , "halogen"
   , "halogen-store"
+  , "http-methods"
   , "maybe"
   , "newtype"
   , "now"
@@ -32,6 +37,7 @@ to generate this file without the comments in this block.
   , "routing-duplex"
   , "safe-coerce"
   , "transformers"
+  , "tuples"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

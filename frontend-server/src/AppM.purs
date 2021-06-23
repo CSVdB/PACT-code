@@ -7,6 +7,7 @@ import PACT.Capability.Now (class Now)
 import PACT.Capability.Log (class Log)
 import PACT.Capability.Log as Log
 import PACT.Capability.Navigate (class Navigate, navigate)
+import PACT.API.Request (BaseURL, removeToken)
 import Data.Maybe (Maybe(..))
 import Halogen as H
 import Halogen.Store.Monad (class MonadStore, StoreT, runStoreT, getStore, updateStore)
@@ -30,6 +31,7 @@ derive instance Ord LogLevel
 type Store =
   { logLevel :: LogLevel
   , currentUser :: Maybe Profile
+  , baseURL :: BaseURL
   }
 
 -- An action that can update the store.
@@ -72,6 +74,6 @@ instance Log AppM where
 instance Navigate AppM where
   navigate route = liftEffect $ setHash $ print Route.routeCodec route
   logoutUser = do
-      -- TODO: Once authentication is implemented, remove the token here !!!
+      liftEffect removeToken
       updateStore LogoutUser
       navigate Route.Home

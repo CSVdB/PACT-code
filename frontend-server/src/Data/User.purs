@@ -34,7 +34,7 @@ toString (Username n) = n
 
 -- Implementing `FromJSON` and `ToJSON` in one go
 usernameCodec :: JsonCodec Username
-usernameCodec = dimap (\(Username n) -> n) Username CA.string
+usernameCodec = dimap toString Username CA.string
 
 type Profile = 
   { username :: Username
@@ -48,7 +48,7 @@ profileCodec = CAR.object "Profile"
   }
 
 type InitialForm row =
-  ( email :: EmailAddress
+  ( username :: Username
   , password :: String
   | row
   )
@@ -57,11 +57,11 @@ type LoginForm = { | InitialForm () }
 
 loginFormCodec :: JsonCodec LoginForm
 loginFormCodec = CAR.object "LoginForm"
-  { email: emailAddressCodec
+  { username: usernameCodec
   , password: CA.string
   }
 
-type RegistrationForm = { | InitialForm (username :: Username) }
+type RegistrationForm = { | InitialForm (email :: EmailAddress) }
 
 registrationFormCodec :: JsonCodec RegistrationForm
 registrationFormCodec = CAR.object "RegistrationForm"

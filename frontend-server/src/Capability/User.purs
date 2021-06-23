@@ -1,6 +1,6 @@
 module PACT.Capability.User where
 
-import Prelude
+import Prelude (class Monad, (<<<))
 import PACT.Data.User
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)

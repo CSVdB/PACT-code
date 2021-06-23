@@ -2,6 +2,7 @@ module Main where
 
 import Prelude
 import PACT.AppM (runAppM, LogLevel(..), AppM)
+import PACT.API.Request (currentUser, BaseURL(..))
 import Data.Maybe (Maybe(..), fromMaybe)
 import Effect (Effect)
 import Effect.Console (log)
@@ -105,6 +106,9 @@ main = do
     htmlBody <- HA.awaitBody
     -- We now have to link a Halogen component with `htmlBody`, usually the
     -- router component.
+    let baseUrl = BaseURL "localhost"
+    user <- currentUser baseUrl
+    let initialStore = { logLevel: Dev, currentUser: user, baseURL: baseUrl }
     productionRootComponent <- runAppM initialStore rootComponent
     -- Bind component to htmlBody
     halogenIO <- runUI productionRootComponent Home htmlBody
@@ -115,7 +119,3 @@ main = do
       $ matchesWith (RD.parse routeCodec) \old new ->
           when (old /= Just new) do
             launchAff_ $ halogenIO.query $ H.mkTell $ Navigate new
-  where
-  -- TODO: Once authentication is implemented, check if there's a token from
-  -- which to derive the current user instead.
-  initialStore = { logLevel: Dev, currentUser: Nothing }

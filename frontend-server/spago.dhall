@@ -15,11 +15,13 @@ to generate this file without the comments in this block.
   [ "aff"
   , "affjax"
   , "argonaut-core"
+  , "arrays"
   , "bifunctors"
   , "codec"
   , "codec-argonaut"
   , "console"
   , "datetime"
+  , "debug"
   , "effect"
   , "either"
   , "foldable-traversable"
@@ -38,6 +40,9 @@ to generate this file without the comments in this block.
   , "safe-coerce"
   , "transformers"
   , "tuples"
+  , "typelevel"
+  , "web-html"
+  , "web-storage"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

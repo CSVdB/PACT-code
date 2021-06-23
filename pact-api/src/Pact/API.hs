@@ -21,7 +21,8 @@ data PactRoutes route = PactRoutes
   { postRegister :: !(route :- PostRegister),
     postLogin :: !(route :- PostLogin),
     getGreet :: !(route :- GetGreet),
-    postNumber :: !(route :- PostNumber)
+    postNumber :: !(route :- PostNumber),
+    getUser :: !(route :- GetUser)
   }
   deriving (Generic)
 
@@ -36,3 +37,5 @@ type ProtectAPI = Auth '[JWT] AuthCookie
 type GetGreet = ProtectAPI :> "greet" :> Get '[JSON] Text
 
 type PostNumber = ProtectAPI :> "number" :> Capture "number" Int :> Post '[JSON] NoContent
+
+type GetUser = ProtectAPI :> "user" :> Get '[JSON] Profile

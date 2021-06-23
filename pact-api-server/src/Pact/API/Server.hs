@@ -53,7 +53,8 @@ pactHandlers =
     { postRegister = handlePostRegister,
       postLogin = handlePostLogin,
       getGreet = protected handleGetGreet,
-      postNumber = protected handlePostNumber
+      postNumber = protected handlePostNumber,
+      getUser = protected handleGetUser
     }
 
 protected :: ThrowAll m => (authCookie -> m) -> AuthResult authCookie -> m

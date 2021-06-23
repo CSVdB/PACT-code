@@ -47,7 +47,7 @@ newtype BaseURL
 data Endpoint
   = Login
   | Register
-  | User -- Who is the current user, if any is authenticated?
+  | User -- Get current user's profile (if authenticated)
   | Greet
   | Number Int
 

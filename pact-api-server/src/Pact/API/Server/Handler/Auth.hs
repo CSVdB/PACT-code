@@ -45,3 +45,6 @@ handlePostLogin LoginForm {..} = do
             Just setCookie ->
               return $
                 addHeader (TE.decodeUtf8 setCookie) $ toProfile user
+
+handleGetUser :: AuthCookie -> H Profile
+handleGetUser AuthCookie {..} = withUser authCookieUsername pure

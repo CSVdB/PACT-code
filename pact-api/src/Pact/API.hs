@@ -27,7 +27,7 @@ data PactRoutes route = PactRoutes
   deriving (Generic)
 
 type PostRegister =
-  "register" :> ReqBody '[JSON] RegistrationForm :> Post '[JSON] Profile
+  "register" :> ReqBody '[JSON] RegistrationForm :> Post '[JSON] (Headers '[Header "Set-Cookie" Text] Profile)
 
 type PostLogin =
   "login" :> ReqBody '[JSON] LoginForm :> Post '[JSON] (Headers '[Header "Set-Cookie" Text] Profile)

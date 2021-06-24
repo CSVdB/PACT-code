@@ -10,7 +10,20 @@ import Debug.Trace (trace)
 import Pact.API.Server.Handler.Import
 import Servant.Auth.Server (makeSessionCookieBS)
 
-handlePostRegister :: RegistrationForm -> H Profile
+type ProfileWithCookie = Headers '[Header "Set-Cookie" Text] Profile
+
+profileWithCookie :: User -> H (Headers '[Header "Set-Cookie" Text] Profile)
+profileWithCookie user = do
+  cookieSettings <- asks envCookieSettings
+  jwtSettings <- asks envJWTSettings
+  mCookie <- liftIO $ makeSessionCookieBS cookieSettings jwtSettings authCookie
+  case mCookie of
+    Nothing -> throwError err401
+    Just setCookie -> pure $ addHeader (TE.decodeUtf8 setCookie) $ toProfile user
+  where
+    authCookie = AuthCookie {authCookieUsername = userName user}
+
+handlePostRegister :: RegistrationForm -> H ProfileWithCookie
 handlePostRegister reg@RegistrationForm {..} = do
   mUser <- getUser registrationFormUsername
   case mUser of
@@ -18,10 +31,9 @@ handlePostRegister reg@RegistrationForm {..} = do
     Nothing -> do
       user <- registrationToUser reg
       runDB $ insert_ user
-      pure $ toProfile user
+      profileWithCookie user
 
-handlePostLogin ::
-  LoginForm -> H (Headers '[Header "Set-Cookie" Text] Profile)
+handlePostLogin :: LoginForm -> H ProfileWithCookie
 handlePostLogin LoginForm {..} = do
   mUser <- getUser loginFormUsername
   case mUser of

@@ -2,8 +2,9 @@ module PACT.AppM where
 
 import Prelude
 import PACT.Data.Router as Route
+import PACT.Data.User (Profile)
 import PACT.Store (LogLevel(..), Store, StoreAction(..), reduce)
-import PACT.API.Request (writeToken, removeToken, login, register)
+import PACT.API.Request (writeToken, removeToken, login, register, Token)
 import PACT.Capability.Now (class Now)
 import PACT.Capability.Log (class Log)
 import PACT.Capability.Log as Log
@@ -57,21 +58,22 @@ instance Navigate AppM where
       updateStore LogoutUser
       navigate Route.Home
 
-instance ManageUser AppM where
-  loginUser form = do
-    { baseURL } <- getStore
-    login baseURL form >>= case _ of
+processToken :: Either String (Tuple Token Profile) -> AppM (Maybe Profile)
+processToken = case _ of
       Left err -> Log.logError err *> pure Nothing
       Right (Tuple token profile) -> do
          liftEffect $ writeToken token
          updateStore $ LoginUser profile
          pure $ Just profile
 
+instance ManageUser AppM where
+  loginUser form = do
+    { baseURL } <- getStore
+    login baseURL form >>= processToken
+
   registerUser form = do
     { baseURL } <- getStore
-    register baseURL form >>= case _ of
-      Left err -> Log.logError err *> pure Nothing
-      Right profile -> pure $ Just profile
+    register baseURL form >>= processToken
 
   getCurrentUser = do
     { currentUser } <- getStore

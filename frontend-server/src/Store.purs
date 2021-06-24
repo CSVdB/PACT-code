@@ -2,9 +2,8 @@ module PACT.Store where
 
 import Prelude
 import PACT.Data.User (Profile)
-import PACT.API.Request (BaseURL, removeToken)
+import PACT.API.Request (BaseURL)
 import Data.Maybe (Maybe(..))
-import Halogen.Store.Monad (class MonadStore, StoreT, runStoreT, getStore, updateStore)
 
 data LogLevel
   = Dev

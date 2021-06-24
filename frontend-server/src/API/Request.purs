@@ -2,8 +2,6 @@ module PACT.API.Request where
 
 import Prelude hiding ((/))
 import PACT.Data.User (LoginForm, Profile, RegistrationForm, loginFormCodec, profileCodec, registrationFormCodec)
-import PACT.Capability.Now (class Now)
-import PACT.Capability.Log (class Log, LogType (..), log)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..), hush)
 import Data.Tuple (Tuple(..))
@@ -20,7 +18,6 @@ import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Effect.Aff.Class (class MonadAff, liftAff)
-import Halogen.Store.Monad (getStore)
 import Routing.Duplex (RouteDuplex', int, root, segment, print)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
@@ -33,7 +30,6 @@ import Web.HTML (window)
 import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
 import Debug (spy)
-import Data.Typelevel.Undefined (undefined)
 
 -- Represent JWT token used for authentication.
 newtype Token
@@ -105,24 +101,33 @@ apiRequest url endpoint method codec = do
     Left err -> Left $ printError err
     Right resp -> lmap printJsonDecodeError $ Codec.decode codec resp.body
 
--- The response contains a `Token` in the header, so `login` cannot just use
--- `apiRequest`.
-login :: forall m. MonadAff m => BaseURL -> LoginForm -> m (Either String (Tuple Token Profile))
-login url form = do
+apiRequestWithToken :: forall m a. MonadAff m
+  => BaseURL -> Endpoint -> RequestMethod -> JsonCodec a -> m (Either String (Tuple Token a))
+apiRequestWithToken url endpoint method codec = do
   res <- liftAff <<< request $ defaultRequest url Nothing endpoint method
   pure $ case res of
     Left err -> Left $ printError err
     Right resp -> do
-      result <- lmap printJsonDecodeError $ Codec.decode codec resp.body
-      case head resp.headers of
-          Nothing -> Left $ "No headers present after login!"
-          Just header ->
-            let tokenStr = spy (name header) $ value header
-            in Right $ Tuple (Token tokenStr) result
+       result <- lmap printJsonDecodeError $ Codec.decode codec resp.body
+       case head resp.headers of
+           Nothing -> Left "No headers present!"
+           Just header ->
+             let tokenStr = spy (name header) $ value header
+             in Right $ Tuple (Token tokenStr) result
+
+-- The response contains a `Token` in the header, so `login` cannot just use
+-- `apiRequest`.
+login :: forall m. MonadAff m =>
+  BaseURL -> LoginForm -> m (Either String (Tuple Token Profile))
+login url form = apiRequestWithToken url Login method profileCodec
   where
-    endpoint = Login
     method = Post <<< Just $ Codec.encode loginFormCodec form
-    codec = profileCodec
+
+register :: forall m. MonadAff m =>
+  BaseURL -> RegistrationForm -> m (Either String (Tuple Token Profile))
+register url form = apiRequestWithToken url Register method profileCodec
+  where
+  method = Post $ Just $ Codec.encode registrationFormCodec form
 
 currentUser :: BaseURL -> Aff (Maybe Profile)
 currentUser baseUrl = do
@@ -136,11 +141,6 @@ currentUser baseUrl = do
                 Right v -> hush $ lmap printJsonDecodeError $ do
                    u <- Codec.decode (CAR.object "User" { user: CA.json }) v.body
                    CA.decode profileCodec u.user
-
-register :: forall m. MonadAff m => BaseURL -> RegistrationForm -> m (Either String Profile)
-register url form = apiRequest url Register method profileCodec
-  where
-  method = Post $ Just $ Codec.encode registrationFormCodec form
 
 greet :: forall m. MonadAff m => BaseURL -> m (Either String String)
 greet url = apiRequest url Greet Get CA.string

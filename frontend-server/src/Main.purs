@@ -1,6 +1,6 @@
 module Main where
 
-import Prelude (Unit, bind, discard, void, when, ($), (/=))
+import Prelude (Unit, unit, bind, discard, void, when, ($), (/=))
 import PACT.AppM (runAppM)
 import PACT.Store (LogLevel(..))
 import PACT.Data.Router
@@ -27,9 +27,9 @@ main = do
     let baseUrl = BaseURL "localhost"
     user <- currentUser baseUrl
     let initialStore = { logLevel: Dev, currentUser: user, baseURL: baseUrl }
-    productionRootComponent <- runAppM initialStore Router.component
+    rootComponent <- runAppM initialStore Router.component
     -- Bind component to htmlBody
-    halogenIO <- runUI productionRootComponent Home htmlBody
+    halogenIO <- runUI rootComponent unit htmlBody
     -- This result now has two records:
     -- * `query`: Send queries to the root component
     -- * `subscribe`: Listen and react to root component's output

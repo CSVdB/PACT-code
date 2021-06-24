@@ -1,25 +1,36 @@
 module PACT.Component.Router where
 
 import Prelude
-import PACT.AppM (AppM)
 import PACT.Data.Router (Route(..), routeCodec)
+import PACT.Data.User (Profile)
+import PACT.Store as Store
+import PACT.Capability.Log (class Log)
+import PACT.Capability.Navigate (class Navigate)
+import PACT.Capability.User (class ManageUser)
 import PACT.Page.Register as Register
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Either (hush)
+import Data.Foldable (elem)
+import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.Component (ComponentSlot)
-import Halogen.Query.HalogenQ (HalogenQ)
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Select (selectEq)
+import Halogen.Store.Monad (class MonadStore)
 import Routing.Hash (setHash, getHash)
 import Routing.Duplex as RD
 import Type.Proxy (Proxy(..))
 
 type State =
   { route :: Maybe Route
+  -- We want to expand `Input` (using `connect`) to make changes in
+  -- `currentUser` trigger a change in the component.
+  , currentUser :: Maybe Profile 
   }
 
 data Action
   = Initialize
+  | Receive (Connected (Maybe Profile) Unit)
 
 -- The world talks to the component
 data Query a
@@ -27,7 +38,7 @@ data Query a
 
 -- A parent talks to the component
 type Input
-  = Route
+  = Unit
 
 -- Talk to the parent component
 type Output
@@ -42,50 +53,63 @@ type ChildSlots
   = ( home :: OpaqueSlot Unit
     , login :: OpaqueSlot Unit
     , register :: OpaqueSlot Unit
+    , greet :: OpaqueSlot Unit
     )
 
-eval :: HalogenQ Query Action Input ~> H.HalogenM State Action ChildSlots Output AppM
-eval =
-  H.mkEval
-    $ H.defaultEval
-        { handleQuery = handleQuery
-        , handleAction =
-          handleAction
-        , receive = receive
-        , initialize = initialize
-        }
+-- The pages we route to
+type Page m = H.ComponentHTML Action ChildSlots m
+
+component
+  :: forall m
+   . MonadAff m
+  => MonadStore Store.StoreAction Store.Store m
+  => Log m
+  => Navigate m
+  => ManageUser m
+  => H.Component Query Input Output m
+component = connect (selectEq _.currentUser) $ H.mkComponent
+  { initialState: \{ context: currentUser } -> { route: Nothing, currentUser }
+  , render
+  , eval: H.mkEval $ H.defaultEval
+      { handleQuery = handleQuery
+      , handleAction = handleAction
+      , receive = Just <<< Receive
+      , initialize = Just Initialize
+      }
+  }
   where
-  -- If the `a` in `Maybe a` is `Nothing`, the component doesn't re-render.
-  handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots Void AppM (Maybe a)
-  handleQuery (Navigate dest a) = do
-    { route: currRoute } <- H.get
-    -- Don't re-render unless the route has changed
-    when (currRoute /= Just dest)
-      $ do H.modify_ $ _ { route = Just dest }
-    pure $ Just a
+    -- If the `a` in `Maybe a` is `Nothing`, the component doesn't re-render.
+    handleQuery :: forall a. Query a -> H.HalogenM State Action ChildSlots Void m (Maybe a)
+    handleQuery = case _ of
+      Navigate dest a -> do
+        { route, currentUser } <- H.get
+        when (route /= Just dest) $
+          case (isJust currentUser && dest `elem` [ Login, Register ]) of
+            false -> H.modify_ (_ { route = Just dest })
+            -- Don't go to login or registration page if you're already logged in.
+            _ -> pure unit
+        pure $ Just a -- Don't re-render unless the route has changed
 
-  handleAction :: Action -> H.HalogenM State Action ChildSlots Void AppM Unit
-  handleAction Initialize = do
-    -- Get route the user landed on
-    initialRoute <- hush <<< (RD.parse routeCodec) <$> H.liftEffect getHash
-    -- Navigate to this route. If it doesn't exist, go to `Home`.
-    H.liftEffect <<< setHash <<< RD.print routeCodec $ fromMaybe Home initialRoute
+    handleAction :: Action -> H.HalogenM State Action ChildSlots Void m Unit
+    handleAction = case _ of
+      Initialize -> do
+        -- Get route the user landed on
+        initialRoute <- hush <<< (RD.parse routeCodec) <$> H.liftEffect getHash
+        -- Navigate to this route. If it doesn't exist, go to `Home`.
+        H.liftEffect <<< setHash <<< RD.print routeCodec $ fromMaybe Home initialRoute
+      Receive { context: currentUser } -> H.modify_ _ { currentUser = currentUser }
 
-  receive :: Input -> Maybe Action
-  receive = const Nothing
+    authorize :: Maybe Profile -> Page m -> Page m
+    authorize mProfile html = case mProfile of
+      -- TODO: Replace this by `Login.component` once it exists!
+      Nothing -> HH.slot (Proxy :: _ "login") unit Register.component unit absurd
+      Just _ -> html
 
-  initialize :: Maybe Action
-  initialize = Just Initialize
-
-render :: State -> HH.HTML (ComponentSlot ChildSlots AppM Action) Action
-render { route: Nothing } = HH.div_ [ HH.text "Oh no! That page wasn't found." ]
-
-render { route: Just r } = case r of
-  Home -> HH.div_ [ HH.text "Hello, world!" ]
-  Login -> HH.div_ [ HH.text "Welcome to the login page!" ]
-  Register -> HH.slot_ (Proxy :: _ "register") unit Register.component unit
-
-component :: H.Component Query Input Output AppM
-component = H.mkComponent { initialState, render, eval }
-  where
-    initialState = const { route: Just Home }
+    render :: State -> Page m
+    render { route: Nothing, currentUser: _ } = HH.div_ [ HH.text "Oh no! That page wasn't found." ]
+    
+    render { route: Just r, currentUser: mProfile } = case r of
+      Home -> HH.div_ [ HH.text "Hello, world!" ]
+      Login -> HH.div_ [ HH.text "Welcome to the login page!" ]
+      Register -> HH.slot_ (Proxy :: _ "register") unit Register.component unit
+      Greet -> authorize mProfile $ HH.div_ [HH.text "Greetings!" ]

@@ -10,6 +10,7 @@ data Route
   = Home
   | Login
   | Register
+  | Greet
 
 derive instance Generic Route _
 derive instance Eq Route
@@ -30,4 +31,5 @@ routeCodec =
         { "Home": noArgs
         , "Login": "login" / noArgs
         , "Register": "register" / noArgs
+        , "Greet": "greet" / noArgs
         }

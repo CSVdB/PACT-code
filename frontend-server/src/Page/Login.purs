@@ -32,10 +32,6 @@ type State
 type Input
   = { redirect :: Boolean }
 
--- Default `ChildSlots` type for Formless
-type ChildSlots
-  = ( formless :: F.Slot LoginForm FormQuery () LoginFields Unit )
-
 -- The component for the full login page. Focus on rendering and navigation. The
 -- functionality happens in the child component for the login form.
 component ::

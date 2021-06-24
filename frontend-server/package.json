@@ -1,0 +1,31 @@
+{
+    "author": "Nick Van den Broeck",
+    "dependencies": {
+        "decimal.js": "^10.2.0",
+        "marked": "^2.0.0"
+    },
+    "description": "PACT frontend server",
+    "devDependencies": {
+        "http-server": "^0.12.3",
+        "parcel": "^2.0.0-beta.1"
+    },
+    "license": "MIT",
+    "name": "PACT-frontend-server",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CSVdB/PACT-code.git"
+    },
+    "scripts": {
+        "build": "spago build",
+        "bundle": "npm run bundle:build && npm run bundle:dce && npm run bundle:parcel",
+        "bundle:build": "spago build --purs-args '--codegen corefn'",
+        "bundle:dce": "zephyr -f Main.main",
+        "bundle:parcel": "parcel build assets/index.html --public-url '.' --no-source-maps",
+        "clean": "rm -rf node_modules output dce-output .spago dist/* *.lock .cache",
+        "postinstall": "spago install",
+        "serve": "http-server dist",
+        "serve-dev": "parcel dev/index.html --open",
+        "test": "spago test",
+        "watch": "spago build --watch"
+    }
+}

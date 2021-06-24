@@ -6,8 +6,8 @@ import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
 
 class Monad m <= ManageUser m where
-  loginUser :: LoginForm -> m (Maybe Profile)
-  registerUser :: RegistrationForm -> m (Maybe Profile)
+  loginUser :: LoginFields -> m (Maybe Profile)
+  registerUser :: RegisterFields -> m (Maybe Profile)
   getCurrentUser :: m (Maybe Profile)
 
 instance ManageUser m => ManageUser (HalogenM st act slots out m) where

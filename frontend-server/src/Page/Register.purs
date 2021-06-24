@@ -22,7 +22,7 @@ import Formless as F
 import Type.Proxy (Proxy(..))
 
 data Action
-  = HandleRegisterForm RegistrationForm
+  = HandleRegisterForm RegisterFields
 
 -- The component for the full registration page. Focus on rendering and
 -- navigation. The functionality happens in the child component for the
@@ -82,7 +82,7 @@ newtype RegisterForm (r :: Row Type -> Type) f = RegisterForm (r
 
 derive instance Newtype (RegisterForm r f) _
 
-spec :: forall input m. Monad m => F.Spec' RegisterForm RegistrationForm input m
+spec :: forall input m. Monad m => F.Spec' RegisterForm RegisterFields input m
 spec = F.defaultSpec { render = render, handleEvent = F.raiseResult }
   where
     proxies = F.mkSProxies (Proxy :: _ RegisterForm)
@@ -128,5 +128,5 @@ input =
 
 formComponent
   :: forall input m. MonadAff m
-  => F.Component RegisterForm (Const Void) () input RegistrationForm m
+  => F.Component RegisterForm (Const Void) () input RegisterFields m
 formComponent = F.component (const input) spec

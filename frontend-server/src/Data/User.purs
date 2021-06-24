@@ -7,10 +7,10 @@ module PACT.Data.User
   , profileCodec
   , InitialForm
   , Password
-  , LoginForm
-  , loginFormCodec
-  , RegistrationForm
-  , registrationFormCodec
+  , LoginFields
+  , loginFieldsCodec
+  , RegisterFields
+  , registerFieldsCodec
   ) where
 
 import Prelude
@@ -56,18 +56,18 @@ type InitialForm row =
   | row
   )
 
-type LoginForm = { | InitialForm () }
+type LoginFields = { | InitialForm () }
 
-loginFormCodec :: JsonCodec LoginForm
-loginFormCodec = CAR.object "LoginForm"
+loginFieldsCodec :: JsonCodec LoginFields
+loginFieldsCodec = CAR.object "LoginFields"
   { username: usernameCodec
   , password: CA.string
   }
 
-type RegistrationForm = { | InitialForm (email :: EmailAddress) }
+type RegisterFields = { | InitialForm (email :: EmailAddress) }
 
-registrationFormCodec :: JsonCodec RegistrationForm
-registrationFormCodec = CAR.object "RegistrationForm"
+registerFieldsCodec :: JsonCodec RegisterFields
+registerFieldsCodec = CAR.object "RegisterFields"
   { username: usernameCodec
   , email: emailAddressCodec
   , password: CA.string

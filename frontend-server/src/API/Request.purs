@@ -1,7 +1,8 @@
 module PACT.API.Request where
 
 import Prelude hiding ((/))
-import PACT.Data.User (LoginForm, Profile, RegistrationForm, loginFormCodec, profileCodec, registrationFormCodec)
+import PACT.Data.User (LoginFields, Profile, RegisterFields, loginFieldsCodec,
+profileCodec, registerFieldsCodec)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..), hush)
 import Data.Tuple (Tuple(..))
@@ -118,16 +119,16 @@ apiRequestWithToken url endpoint method codec = do
 -- The response contains a `Token` in the header, so `login` cannot just use
 -- `apiRequest`.
 login :: forall m. MonadAff m =>
-  BaseURL -> LoginForm -> m (Either String (Tuple Token Profile))
+  BaseURL -> LoginFields -> m (Either String (Tuple Token Profile))
 login url form = apiRequestWithToken url Login method profileCodec
   where
-    method = Post <<< Just $ Codec.encode loginFormCodec form
+    method = Post <<< Just $ Codec.encode loginFieldsCodec form
 
 register :: forall m. MonadAff m =>
-  BaseURL -> RegistrationForm -> m (Either String (Tuple Token Profile))
+  BaseURL -> RegisterFields -> m (Either String (Tuple Token Profile))
 register url form = apiRequestWithToken url Register method profileCodec
   where
-  method = Post $ Just $ Codec.encode registrationFormCodec form
+  method = Post $ Just $ Codec.encode registerFieldsCodec form
 
 currentUser :: BaseURL -> Aff (Maybe Profile)
 currentUser baseUrl = do

@@ -7,6 +7,7 @@ import PACT.Store as Store
 import PACT.Capability.Log (class Log)
 import PACT.Capability.Navigate (class Navigate)
 import PACT.Capability.User (class ManageUser)
+import PACT.Page.Login as Login
 import PACT.Page.Register as Register
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Either (hush)
@@ -101,8 +102,7 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
 
     authorize :: Maybe Profile -> Page m -> Page m
     authorize mProfile html = case mProfile of
-      -- TODO: Replace this by `Login.component` once it exists!
-      Nothing -> HH.slot (Proxy :: _ "login") unit Register.component unit absurd
+      Nothing -> HH.slot (Proxy :: _ "login") unit Login.component { redirect: true } absurd
       Just _ -> html
 
     render :: State -> Page m
@@ -110,6 +110,6 @@ component = connect (selectEq _.currentUser) $ H.mkComponent
     
     render { route: Just r, currentUser: mProfile } = case r of
       Home -> HH.div_ [ HH.text "Hello, world!" ]
-      Login -> HH.div_ [ HH.text "Welcome to the login page!" ]
+      Login -> HH.slot_ (Proxy :: _ "login") unit Login.component { redirect: true }
       Register -> HH.slot_ (Proxy :: _ "register") unit Register.component unit
       Greet -> authorize mProfile $ HH.div_ [HH.text "Greetings!" ]

@@ -2,9 +2,9 @@ module PACT.Component.HTML.Header where
 
 import Prelude
 import PACT.Data.Router (Route(..))
-import PACT.Data.User (Profile(..))
+import PACT.Data.User (Profile)
 import PACT.Component.HTML.Utils (css, safeHref, whenElem)
-import Data.Maybe (Maybe(..), isJust, isNothing)
+import Data.Maybe (Maybe, isJust, isNothing)
 import Data.Monoid (guard)
 import Halogen.HTML as HH
 

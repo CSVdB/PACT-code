@@ -20,7 +20,7 @@
         "bundle": "npm run bundle:build && npm run bundle:dce && npm run bundle:parcel",
         "bundle:build": "spago build --purs-args '--codegen corefn'",
         "bundle:dce": "zephyr -f Main.main",
-        "bundle:parcel": "parcel build assets/index.html --public-url '.' --no-source-maps",
+        "bundle:parcel": "parcel build dist/index.html --public-url '.' --no-source-maps",
         "clean": "rm -rf node_modules output dce-output .spago dist/* *.lock .cache",
         "postinstall": "spago install",
         "serve": "http-server dist",

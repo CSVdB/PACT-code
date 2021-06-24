@@ -3,9 +3,7 @@ module PACT.Form.Validation where
 import Prelude
 import PACT.Data.Email (EmailAddress(..))
 import PACT.Data.User (Username, mkUsername)
-import Data.Eq ((/=))
 import Data.Either (Either(..), note)
-import Data.Monoid (class Monoid)
 import Data.String as String
 import Formless as F
 

@@ -20,6 +20,6 @@ maybeElem :: forall p i a. Maybe a -> (a -> HH.HTML p i) -> HH.HTML p i
 maybeElem (Just x) f = f x
 maybeElem Nothing _ = HH.text ""
 
-whenElem :: forall p i a. Boolean -> HH.HTML p i -> HH.HTML p i
+whenElem :: forall p i. Boolean -> HH.HTML p i -> HH.HTML p i
 whenElem true html = html
 whenElem false _ = HH.text ""

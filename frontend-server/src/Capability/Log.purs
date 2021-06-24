@@ -11,9 +11,9 @@ module PACT.Capability.Log
   , debugHush
   ) where
 
-import Prelude
+import Prelude (class Monad, Unit, pure, ($), (*>), (<<<), (<=<), (>>=))
 import PACT.Capability.Now (class Now)
-import PACT.Data.Log
+import PACT.Data.Log (LogEntry, LogType(..), logContents, logType, mkLogEntry)
 import Halogen (HalogenM)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..))
@@ -27,7 +27,7 @@ instance Log m => Log (HalogenM st act slots out m) where
   logMessage = lift <<< logMessage
 
 log :: forall m. Log m => LogType -> String -> m Unit
-log logType = logMessage <=< mkLogEntry logType
+log logT = logMessage <=< mkLogEntry logT
 
 -- | Log a message for debugging purposes
 logDebug :: forall m. Log m => Now m => String -> m Unit

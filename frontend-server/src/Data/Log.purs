@@ -43,9 +43,9 @@ formatLog = case _ of
   Error -> "ERROR"
 
 mkLogEntry :: forall m. Now m => LogType -> String -> m LogEntry
-mkLogEntry logType inputMessage = do
+mkLogEntry logT inputMessage = do
   now <- nowDateTime
-  pure $ LogEntry { logType: logType, logTimestamp: now, logContents: headerWith now }
+  pure $ LogEntry { logType: logT, logTimestamp: now, logContents: headerWith now }
   where
   formatTimestamp =
     either (const "(Failed to assign time)") identity
@@ -54,7 +54,7 @@ mkLogEntry logType inputMessage = do
   headerWith time =
     fold
       [ "["
-      , formatLog logType
+      , formatLog logT
       , ": "
       , formatTimestamp time
       , "]\n"

@@ -1,9 +1,9 @@
 module PACT.Page.Register where
 
-import Prelude
+import Prelude (class Monad, Unit, Void, bind, const, unit, ($), (>>>))
 import PACT.Data.Router (Route(..))
 import PACT.Data.Email (EmailAddress)
-import PACT.Data.User
+import PACT.Data.User (RegisterFields, Username)
 import PACT.Capability.Log (class Log)
 import PACT.Capability.User (class ManageUser, registerUser)
 import PACT.Capability.Navigate (class Navigate, navigate)

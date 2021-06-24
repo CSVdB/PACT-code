@@ -6,6 +6,7 @@ import PACT.Data.User (LoginFields, Username)
 import PACT.Capability.Log (class Log)
 import PACT.Capability.User (class ManageUser, loginUser)
 import PACT.Capability.Navigate (class Navigate, navigate)
+import PACT.Component.HTML.Header (header)
 import PACT.Component.HTML.Utils (css, safeHref, whenElem)
 import PACT.Form.Validation as V
 import PACT.Form.Field as Field
@@ -53,7 +54,7 @@ component =
   container html =
     HH.div
       [ css "auth-page" ]
-      [ -- header Nothing Register, -- Add header here! HH.div
+      [ header Nothing Login,
         HH.div
           [ css "container page" ]
           [ HH.div

@@ -2,6 +2,8 @@ module PACT.API.Request where
 
 import Prelude hiding ((/))
 import PACT.Data.User (LoginForm, Profile, RegistrationForm, loginFormCodec, profileCodec, registrationFormCodec)
+import PACT.Capability.Now (class Now)
+import PACT.Capability.Log (class Log, LogType (..), log)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..), hush)
 import Data.Tuple (Tuple(..))
@@ -18,6 +20,7 @@ import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Effect.Aff.Class (class MonadAff, liftAff)
+import Halogen.Store.Monad (getStore)
 import Routing.Duplex (RouteDuplex', int, root, segment, print)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
@@ -30,6 +33,7 @@ import Web.HTML (window)
 import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
 import Debug (spy)
+import Data.Typelevel.Undefined (undefined)
 
 -- Represent JWT token used for authentication.
 newtype Token

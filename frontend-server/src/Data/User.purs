@@ -6,6 +6,7 @@ module PACT.Data.User
   , Profile(..)
   , profileCodec
   , InitialForm
+  , Password
   , LoginForm
   , loginFormCodec
   , RegistrationForm
@@ -47,9 +48,11 @@ profileCodec = CAR.object "Profile"
   , email: emailAddressCodec
   }
 
+type Password = String
+
 type InitialForm row =
   ( username :: Username
-  , password :: String
+  , password :: Password
   | row
   )
 

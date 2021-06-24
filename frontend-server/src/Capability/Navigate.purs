@@ -1,7 +1,7 @@
 module PACT.Capability.Navigate where
 
 import Prelude
-import PACT.Router (Route)
+import PACT.Data.Router (Route)
 import Halogen (HalogenM, lift)
 
 class Monad m <= Navigate m where

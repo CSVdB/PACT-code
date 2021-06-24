@@ -8,3 +8,4 @@ signing-key.json
 *.dat
 .parcel-cache/
 dist/
+frontend-server/dist/Main.js

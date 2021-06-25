@@ -1,6 +1,6 @@
 module PACT.Page.Register where
 
-import Prelude (class Monad, Unit, Void, bind, const, unit, ($), (>>>))
+import Prelude (class Monad, Unit, Void, bind, const, unit, ($), (>>>), (<<<), discard)
 import PACT.Data.Router (Route(..))
 import PACT.Data.Email (EmailAddress)
 import PACT.Data.User (RegisterFields, Username)
@@ -14,6 +14,7 @@ import PACT.Form.Field as Field
 import Data.Maybe (Maybe(..))
 import Data.Const (Const)
 import Data.Newtype (class Newtype)
+import Effect.Class (class MonadEffect)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -21,6 +22,7 @@ import Halogen.HTML.Properties as HP
 import Halogen.HTML.Events as HE
 import Formless as F
 import Type.Proxy (Proxy(..))
+import Web.Event.Event as Event
 
 data Action
   = HandleRegisterForm RegisterFields
@@ -83,14 +85,29 @@ newtype RegisterForm (r :: Row Type -> Type) f = RegisterForm (r
 
 derive instance Newtype (RegisterForm r f) _
 
-spec :: forall input m. Monad m => F.Spec' RegisterForm RegisterFields input m
-spec = F.defaultSpec { render = render, handleEvent = F.raiseResult }
+data FormAction
+  = Submit Event.Event
+
+spec :: forall i m. Monad m => MonadEffect m => MonadAff m
+  => F.Spec RegisterForm () (Const Void) FormAction () i RegisterFields m
+spec = F.defaultSpec
+  { render = render,
+    handleEvent = handleEvent,
+    handleAction = handleAction
+  }
   where
     proxies = F.mkSProxies (Proxy :: _ RegisterForm)
 
+    handleEvent = F.raiseResult
+
+    handleAction = case _ of
+      Submit event -> do
+         H.liftEffect $ Event.preventDefault event
+         F.handleAction handleAction handleEvent F.submit
+
     render { form } =
       HH.form
-        [ HE.onClick $ const F.submit ]
+      [ HE.onSubmit $ F.injAction <<< Submit ]
         [ HH.fieldset_
             [ username
             , email

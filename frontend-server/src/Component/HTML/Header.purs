@@ -19,6 +19,9 @@ header currentUser route =
             , safeHref Home
             ]
             [ HH.text "PACT" ]
+            , HH.div
+                [ css "text-xs-center" ]
+                [ HH.text "Building an energized and inspired life, together!" ]
         , HH.ul
             [ css "nav navbar-nav pull-xs-right" ]
             [ navItem Home [ HH.text "Home" ]

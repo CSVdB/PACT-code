@@ -24,9 +24,11 @@ main = do
     htmlBody <- HA.awaitBody
     -- We now have to link a Halogen component with `htmlBody`, usually the
     -- router component.
-    let baseUrl = BaseURL "localhost"
+    let
+      baseUrl = BaseURL "localhost"
     user <- currentUser baseUrl
-    let initialStore = { logLevel: Dev, currentUser: user, baseURL: baseUrl }
+    let
+      initialStore = { logLevel: Dev, currentUser: user, baseURL: baseUrl }
     rootComponent <- runAppM initialStore Router.component
     -- Bind component to htmlBody
     halogenIO <- runUI rootComponent unit htmlBody

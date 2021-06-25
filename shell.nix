@@ -22,6 +22,7 @@ pkgs.haskell.lib.buildStackProject {
     pursPkgs.purs
     pursPkgs.spago
     pursPkgs.zephyr
+    pursPkgs.purty
     pkgs.nodejs-14_x
   ] ++ pre-commit.tools;
   shellHook = pre-commit.run.shellHook;

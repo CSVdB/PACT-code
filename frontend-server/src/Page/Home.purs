@@ -31,17 +31,19 @@ component ::
   forall q o m.
   MonadStore Store.StoreAction Store.Store m =>
   Log m => H.Component q Input o m
-component = connect (selectEq _.currentUser) $ H.mkComponent
-    { initialState: \{ context: currentUser } -> { currentUser }
-    , render
-    , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
-    }
+component =
+  connect (selectEq _.currentUser)
+    $ H.mkComponent
+        { initialState: \{ context: currentUser } -> { currentUser }
+        , render
+        , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
+        }
   where
   container currentUser html =
     HH.div
       [ css "auth-page" ]
-      [ header currentUser Home,
-        HH.div
+      [ header currentUser Home
+      , HH.div
           [ css "container page" ]
           [ HH.div
               [ css "row" ]

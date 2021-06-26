@@ -33,6 +33,7 @@ to generate this file without the comments in this block.
   , "halogen-store"
   , "http-methods"
   , "maybe"
+  , "naturals"
   , "newtype"
   , "now"
   , "prelude"

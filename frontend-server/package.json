@@ -27,6 +27,6 @@
         "serve": "http-server dist",
         "serve-dev": "parcel dev/index.html --open",
         "test": "spago test",
-        "watch": "spago build --watch"
+        "watch": "spago build -wl"
     }
 }

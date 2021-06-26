@@ -109,8 +109,8 @@ input =
   , validators:
       LoginForm
         -- Parse the input from the forms to the right type
-        { username: V.required >>> V.usernameFormat
-        , password: V.required >>> V.minLength 8
+        { username: V.usernameValidator
+        , password: V.passwordValidator
         }
   }
 

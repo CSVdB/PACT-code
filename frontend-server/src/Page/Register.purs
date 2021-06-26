@@ -1,6 +1,6 @@
 module PACT.Page.Register where
 
-import Prelude (class Monad, Unit, Void, bind, const, unit, ($), (>>>), (<<<), discard)
+import Prelude (class Monad, Unit, Void, const, unit, ($), (<<<), discard, (>>=), pure)
 import PACT.Data.Router (Route(..))
 import PACT.Data.Email (EmailAddress)
 import PACT.Data.User (RegisterFields, Username)
@@ -74,8 +74,10 @@ component =
 
   handleAction = case _ of
     HandleRegisterForm form -> do
-      _ <- registerUser form
-      navigate Home
+      registerUser form >>= case _ of
+        Nothing -> pure unit -- TODO: This should send some error around saying
+        -- something went wrong on the backend, and whom to contact for help.
+        Just _ -> navigate Home
 
 newtype RegisterForm (r :: Row Type -> Type) f = RegisterForm (r
   ( username :: f V.FormError String Username
@@ -138,9 +140,9 @@ input =
   { initialInputs: Nothing -- Initial values for the form
   , validators: RegisterForm
       -- Parse the input from the forms to the right type
-      { username: V.required >>> V.usernameFormat
-      , email: V.required >>> V.minLength 3 >>> V.emailFormat
-      , password: V.required >>> V.minLength 8
+      { username: V.usernameValidator
+      , email: V.emailValidator
+      , password: V.passwordValidator
       }
   }
 

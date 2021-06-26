@@ -1,9 +1,9 @@
 module PACT.Page.Register where
 
-import Prelude (class Monad, Unit, Void, const, unit, ($), (<<<), discard, (>>=), pure)
+import Prelude (class Monad, Unit, Void, const, unit, ($), (<<<), discard, (>>=), pure, (>>>))
 import PACT.Data.Router (Route(..))
 import PACT.Data.Email (EmailAddress)
-import PACT.Data.User (RegisterFields, Username)
+import PACT.Data.User (RegisterFields, Username, InitialForm, Password)
 import PACT.Capability.Log (class Log)
 import PACT.Capability.User (class ManageUser, registerUser)
 import PACT.Capability.Navigate (class Navigate, navigate)
@@ -12,7 +12,9 @@ import PACT.Component.HTML.Utils (css, safeHref)
 import PACT.Form.Validation as V
 import PACT.Form.Field as Field
 import Data.Maybe (Maybe(..))
+import Data.Either (Either(..))
 import Data.Const (Const)
+import Data.Eq ((==))
 import Data.Newtype (class Newtype)
 import Effect.Class (class MonadEffect)
 import Effect.Aff.Class (class MonadAff)
@@ -24,8 +26,21 @@ import Formless as F
 import Type.Proxy (Proxy(..))
 import Web.Event.Event as Event
 
+type MyFields =
+  { | InitialForm ( email :: EmailAddress, passwordCheck :: Password )
+  }
+
+toRegisterFields :: MyFields -> Maybe RegisterFields
+toRegisterFields myFields = if myFields.password == myFields.passwordCheck
+  then Just
+        { username: myFields.username
+        , password: myFields.password
+        , email: myFields.email
+        }
+  else Nothing
+
 data Action
-  = HandleRegisterForm RegisterFields
+  = HandleRegisterForm MyFields
 
 -- The component for the full registration page. Focus on rendering and
 -- navigation. The functionality happens in the child component for the
@@ -73,8 +88,9 @@ component =
       ]
 
   handleAction = case _ of
-    HandleRegisterForm form -> do
-      registerUser form >>= case _ of
+    HandleRegisterForm myFields -> case toRegisterFields myFields of
+      Nothing -> pure unit
+      Just fields -> registerUser fields >>= case _ of
         Nothing -> pure unit -- TODO: This should send some error around saying
         -- something went wrong on the backend, and whom to contact for help.
         Just _ -> navigate Home
@@ -83,6 +99,7 @@ newtype RegisterForm (r :: Row Type -> Type) f = RegisterForm (r
   ( username :: f V.FormError String Username
   , email :: f V.FormError String EmailAddress
   , password :: f V.FormError String String
+  , passwordCheck :: f V.FormError String String
   ))
 
 derive instance Newtype (RegisterForm r f) _
@@ -91,7 +108,7 @@ data FormAction
   = Submit Event.Event
 
 spec :: forall i m. Monad m => MonadEffect m => MonadAff m
-  => F.Spec RegisterForm () (Const Void) FormAction () i RegisterFields m
+  => F.Spec RegisterForm () (Const Void) FormAction () i MyFields m
 spec = F.defaultSpec
   { render = render,
     handleEvent = handleEvent,
@@ -114,6 +131,7 @@ spec = F.defaultSpec
             [ username
             , email
             , password
+            , passwordCheck
             ]
         , HH.input
           [ css "btn btn-lg btn-primary pull-xs-right"
@@ -134,6 +152,10 @@ spec = F.defaultSpec
           Field.input proxies.password form
             [ HP.placeholder "Password" , HP.type_ HP.InputPassword ]
 
+        passwordCheck =
+          Field.input proxies.passwordCheck form
+            [ HP.placeholder "Check password" , HP.type_ HP.InputPassword ]
+
 
 input :: forall m. Monad m => F.Input' RegisterForm m
 input =
@@ -143,10 +165,21 @@ input =
       { username: V.usernameValidator
       , email: V.emailValidator
       , password: V.passwordValidator
+      , passwordCheck: equalsPasswordValidator
       }
   }
+  where
+    equalsPasswordValidator = checkEquals >>> V.required
+
+    checkEquals :: F.Validation RegisterForm m V.FormError String Password
+    checkEquals = F.hoistFnE $ \form pass2 ->
+        let pass1 = F.getInput (Proxy :: Proxy "password") form
+         in if pass1 == pass2
+          then Right pass2
+          else Left V.PasswordsUnequal
+
 
 formComponent
   :: forall input m. MonadAff m
-  => F.Component RegisterForm (Const Void) () input RegisterFields m
+  => F.Component RegisterForm (Const Void) () input MyFields m
 formComponent = F.component (const input) spec

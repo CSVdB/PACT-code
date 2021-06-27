@@ -11,6 +11,8 @@ import Database.Persist.Sql
 import Database.Persist.Sqlite
 import Network.Wai as Wai
 import Network.Wai.Handler.Warp as Warp
+import Network.Wai.Middleware.Cors
+import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Pact.API as API
 import Pact.API.Server.Env
 import Pact.API.Server.Handler
@@ -24,23 +26,39 @@ pactAPIServer :: IO ()
 pactAPIServer = do
   Settings {..} <- getSettings
   runStderrLoggingT $
-    withSqlitePool (T.pack (fromAbsFile settingDbFile)) 1 $
-      \pool -> do
-        runSqlPool (runMigration serverMigration) pool
-        liftIO $ do
-          jwk <- loadSigningKey settingSigningKeyFile
-          let serverEnv =
-                Env
-                  { envConnectionPool = pool,
-                    envCookieSettings = defaultCookieSettings,
-                    envJWTSettings = defaultJWTSettings jwk
-                  }
-          Warp.run settingPort $ pactAPIServerApp serverEnv
+    filterLogger (\_ ll -> ll >= settingsLogLevel) $
+      withSqlitePool (T.pack (fromAbsFile settingDbFile)) 1 $
+        \pool -> do
+          runSqlPool (runMigration serverMigration) pool
+          liftIO $ do
+            jwk <- loadSigningKey settingSigningKeyFile
+            let serverEnv =
+                  Env
+                    { envConnectionPool = pool,
+                      envCookieSettings = defaultCookieSettings,
+                      envJWTSettings = defaultJWTSettings jwk
+                    }
+            Warp.run settingPort . corsMiddleware . loggingMiddleware $ pactAPIServerApp serverEnv
+
+-- To make a custom logger, use `logStdoutDev { outputFormat =
+-- customOutputFormat }`:
+-- https://hackage.haskell.org/package/wai-extra-3.1.6/docs/Network-Wai-Middleware-RequestLogger.html#t:OutputFormat
+loggingMiddleware :: Middleware
+loggingMiddleware = logStdoutDev
+
+corsMiddleware :: Middleware
+corsMiddleware = cors (const $ Just policy)
+  where
+    policy =
+      simpleCorsResourcePolicy
+        { corsRequestHeaders = ["Content-type"],
+          corsMethods = ["GET", "POST", "HEAD", "DELETE"]
+        }
 
 pactAPIServerApp :: Env -> Wai.Application
 pactAPIServerApp env =
   genericServeTWithContext
-    (flip runReaderT env)
+    (flip runReaderT env . runStderrLoggingT)
     pactHandlers
     (pactContext env)
 

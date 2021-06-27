@@ -34,6 +34,8 @@ library:
     - validity
     - validity-persistent
     - wai
+    - wai-cors
+    - wai-extra
     - warp
     - yaml
     - yamlparse-applicative

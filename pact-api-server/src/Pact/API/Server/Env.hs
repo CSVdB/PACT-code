@@ -1,6 +1,7 @@
 module Pact.API.Server.Env where
 
 import Control.Monad.IO.Class
+import Control.Monad.Logger
 import Control.Monad.Reader
 import Database.Persist.Sql
 import Pact.API.Data
@@ -8,7 +9,7 @@ import Pact.API.Server.DB
 import Servant
 import Servant.Auth.Server
 
-type H = ReaderT Env Handler
+type H = LoggingT (ReaderT Env Handler)
 
 data Env = Env
   { envConnectionPool :: ConnectionPool,
@@ -16,6 +17,7 @@ data Env = Env
     envJWTSettings :: JWTSettings
   }
 
+-- This automatically logs using `MonadLogger`.
 runDB :: SqlPersistT IO a -> H a
 runDB func = do
   pool <- asks envConnectionPool

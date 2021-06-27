@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Pact.API.Server.Handler.Auth where
@@ -12,7 +13,7 @@ import Servant.Auth.Server (makeSessionCookieBS)
 
 type ProfileWithCookie = Headers '[Header "Set-Cookie" Text] Profile
 
-profileWithCookie :: User -> H (Headers '[Header "Set-Cookie" Text] Profile)
+profileWithCookie :: User -> H ProfileWithCookie
 profileWithCookie user = do
   cookieSettings <- asks envCookieSettings
   jwtSettings <- asks envJWTSettings

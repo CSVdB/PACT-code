@@ -75,6 +75,4 @@ instance ManageUser AppM where
     { baseURL } <- getStore
     register baseURL form >>= processToken
 
-  getCurrentUser = do
-    { currentUser } <- getStore
-    pure currentUser
+  getCurrentUser = map (_.currentUser) getStore

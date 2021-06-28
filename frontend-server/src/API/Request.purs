@@ -1,8 +1,8 @@
 module PACT.API.Request where
 
 import Prelude hiding ((/))
-import PACT.Data.User (LoginFields, Profile, RegisterFields, loginFieldsCodec,
-profileCodec, registerFieldsCodec)
+import PACT.Data.User (LoginFields, Profile, RegisterFields, loginFieldsCodec, profileCodec, registerFieldsCodec)
+import PACT.Capability.Log (class Log)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..), hush)
 import Data.Tuple (Tuple(..))
@@ -26,11 +26,10 @@ import Affjax (Request, request, printError)
 import Affjax.RequestBody as RB
 import Affjax.ResponseFormat as RF
 import Affjax.RequestHeader (RequestHeader(..))
-import Affjax.ResponseHeader (name, value)
+import Affjax.ResponseHeader (value)
 import Web.HTML (window)
 import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
-import Debug (spy)
 
 -- Represent JWT token used for authentication.
 newtype Token
@@ -109,12 +108,10 @@ apiRequestWithToken url endpoint method codec = do
   pure $ case res of
     Left err -> Left $ printError err
     Right resp -> do
-       result <- lmap printJsonDecodeError $ Codec.decode codec resp.body
-       case head resp.headers of
-           Nothing -> Left "No headers present!"
-           Just header ->
-             let tokenStr = spy (name header) $ value header
-             in Right $ Tuple (Token tokenStr) result
+      result <- lmap printJsonDecodeError $ Codec.decode codec resp.body
+      case head resp.headers of
+        Nothing -> Left "No headers present!"
+        Just header -> Right $ Tuple (Token $ value header) result
 
 -- The response contains a `Token` in the header, so `login` cannot just use
 -- `apiRequest`.
@@ -139,7 +136,7 @@ currentUser baseUrl = do
           res <- request $ defaultRequest baseUrl (Just token) User Get
           pure $ case res of 
                 Left _ -> Nothing
-                Right v -> hush $ lmap printJsonDecodeError $ do
+                Right v -> hush $ do
                    u <- Codec.decode (CAR.object "User" { user: CA.json }) v.body
                    CA.decode profileCodec u.user
 

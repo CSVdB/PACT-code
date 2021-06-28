@@ -4,7 +4,7 @@ import Prelude (class Monad, Unit, Void, const, unit, ($), (<<<), discard, (>>=)
 import PACT.Data.Router (Route(..))
 import PACT.Data.Email (EmailAddress)
 import PACT.Data.User (RegisterFields, Username, InitialForm, Password)
-import PACT.Capability.Log (class Log)
+import PACT.Capability.Log (class Log, logError)
 import PACT.Capability.User (class ManageUser, registerUser)
 import PACT.Capability.Navigate (class Navigate, navigate)
 import PACT.Component.HTML.Header (header)
@@ -89,7 +89,7 @@ component =
 
   handleAction = case _ of
     HandleRegisterForm myFields -> case toRegisterFields myFields of
-      Nothing -> pure unit
+      Nothing -> logError $ "HandleRegisterForm: Couldn't turn MyFields into RegisterFields"
       Just fields -> registerUser fields >>= case _ of
         Nothing -> pure unit -- TODO: This should send some error around saying
         -- something went wrong on the backend, and whom to contact for help.

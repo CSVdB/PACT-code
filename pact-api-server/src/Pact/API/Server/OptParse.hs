@@ -2,11 +2,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Pact.API.Server.OptParse where
 
 import Control.Applicative
+import Control.Monad.Logger (LogLevel (..))
 import Data.Maybe
 import qualified Data.Text as T
 import Data.Yaml
@@ -28,13 +30,17 @@ getSettings = do
 data Settings = Settings
   { settingPort :: Int,
     settingDbFile :: Path Abs File,
-    settingSigningKeyFile :: Path Abs File
+    settingSigningKeyFile :: Path Abs File,
+    settingsLogLevel :: !LogLevel
   }
   deriving (Show, Eq, Generic)
 
 combineToSettings :: Flags -> Environment -> Maybe Configuration -> IO Settings
 combineToSettings Flags {..} Environment {..} mConf = do
   let settingPort = fromMaybe 8000 $ flagPort <|> envPort <|> mc configPort
+  let settingsLogLevel =
+        fromMaybe LevelDebug $
+          flagLogLevel <|> envLogLevel <|> mc configLogLevel
   settingDbFile <-
     case flagDbFile <|> envDbFile <|> mc configDbFile of
       Nothing -> resolveFile' "pact.sqlite3"
@@ -47,7 +53,8 @@ combineToSettings Flags {..} Environment {..} mConf = do
 
 data Configuration = Configuration
   { configPort :: Maybe Int,
-    configDbFile :: Maybe FilePath
+    configDbFile :: Maybe FilePath,
+    configLogLevel :: Maybe LogLevel
   }
   deriving (Show, Eq, Generic)
 
@@ -60,6 +67,7 @@ instance YamlSchema Configuration where
       Configuration
         <$> optionalField "port" "The port to serve api requests on"
         <*> optionalField "database" "Path to the database"
+        <*> optionalFieldWith "log-level" "Level to which the server logs" viaRead
 
 getConfiguration :: Flags -> Environment -> IO (Maybe Configuration)
 getConfiguration Flags {..} Environment {..} =
@@ -77,7 +85,8 @@ defaultConfigFile = do
 data Environment = Environment
   { envConfigFile :: Maybe FilePath,
     envPort :: Maybe Int,
-    envDbFile :: Maybe FilePath
+    envDbFile :: Maybe FilePath,
+    envLogLevel :: Maybe LogLevel
   }
   deriving (Show, Eq, Generic)
 
@@ -97,6 +106,10 @@ environmentParser =
         (fmap Just . Env.str)
         "DATABASE"
         (mE <> Env.help "Path to the database file")
+      <*> Env.var
+        (fmap Just . Env.auto)
+        "LOGLEVEL"
+        (mE <> Env.help "Level to which the server logs")
   where
     mE = Env.def Nothing
 
@@ -129,7 +142,8 @@ flagsParser =
 data Flags = Flags
   { flagConfigFile :: Maybe FilePath,
     flagPort :: Maybe Int,
-    flagDbFile :: Maybe FilePath
+    flagDbFile :: Maybe FilePath,
+    flagLogLevel :: Maybe LogLevel
   }
   deriving (Show, Eq, Generic)
 
@@ -158,4 +172,9 @@ parseFlags =
                 metavar "FILEPATH"
               ]
           )
+      )
+    <*> optional
+      ( option
+          auto
+          (mconcat [long "log-level", help "Level to which the server logs"])
       )

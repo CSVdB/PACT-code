@@ -16,14 +16,9 @@ derive instance Generic Route _
 derive instance Eq Route
 derive instance Ord Route
 
--- | Next, we'll define a bidirectional codec for our route parsing. Our single
--- | codec will handle both parsing browser locations and serializing our data
--- | type to a browser location. We'll skip the boilerplate of separate encoding
--- | and decoding functions, and we'll ensure our parsing and printing is always
--- | in sync.
--- |
--- | Our codec will cause a compile-time error if we fail to handle any of our
--- | route cases.
+-- | Bidirectional codec for route parsing. This will handle both parsing
+-- | browser locations and serializing our data type to a browser location.
+-- | Causes a compile-error if any of the routes is missing.
 routeCodec :: RouteDuplex' Route
 routeCodec =
   root

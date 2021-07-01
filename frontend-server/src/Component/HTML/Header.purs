@@ -7,6 +7,7 @@ import PACT.Component.HTML.Utils (css, safeHref, whenElem)
 import Data.Maybe (Maybe, isJust, isNothing)
 import Data.Monoid (guard)
 import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
 
 header :: forall i p. Maybe Profile -> Route -> HH.HTML i p
 header currentUser route =
@@ -22,19 +23,24 @@ header currentUser route =
             , HH.div
                 [ css "text-xs-center" ]
                 [ HH.text "Building an energized and inspired life, together!" ]
-        , HH.ul
-            [ css "nav navbar-nav pull-xs-right" ]
-            [ navItem Home [ HH.text "Home" ]
-            , whenElem (isJust currentUser)
-                $ navItem Greet
-                    [ HH.i [ css "ion-compose" ] [ HH.text " Greet" ] ]
-            , whenElem (isNothing currentUser)
-                $ navItem Login
-                    [ HH.text "Log in" ]
-            , whenElem (isNothing currentUser)
-                $ navItem Register
-                    [ HH.text "Sign up" ]
-            ]
+            , HH.img
+              [ HP.src logoSrc
+              , HP.width 30
+              , HP.height 30
+              ]
+            , HH.ul
+              [ css "nav navbar-nav pull-xs-right" ]
+              [ navItem Home [ HH.text "Home" ]
+              , whenElem (isJust currentUser)
+                  $ navItem Greet
+                      [ HH.i [ css "ion-compose" ] [ HH.text " Greet" ] ]
+              , whenElem (isNothing currentUser)
+                  $ navItem Login
+                      [ HH.text "Log in" ]
+              , whenElem (isNothing currentUser)
+                  $ navItem Register
+                      [ HH.text "Sign up" ]
+              ]
         ]
     ]
   where
@@ -47,3 +53,4 @@ header currentUser route =
           ]
           html
       ]
+  logoSrc = "https://image.shutterstock.com/image-vector/business-handshake-contract-agreement-line-600w-281423633.jpg"

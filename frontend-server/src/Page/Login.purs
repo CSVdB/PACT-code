@@ -76,7 +76,13 @@ component =
           ]
       -- Link child component
       , HH.slot F._formless unit formComponent unit HandleLoginForm
+      , HH.iframe [
+          HP.src videoSrc
+        , HP.width 600
+        , HP.height 300
+        ]
       ]
+  videoSrc = "https://www.youtube.com/embed/zS1cLOIxsQ8"
 
   handleAction = case _ of
     HandleLoginForm form -> do

@@ -2,7 +2,6 @@ module PACT.API.Request where
 
 import Prelude hiding ((/))
 import PACT.Data.User (LoginFields, Profile, RegisterFields, loginFieldsCodec, profileCodec, registerFieldsCodec)
-import PACT.Capability.Log (class Log)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..), hush)
 import Data.Tuple (Tuple(..))

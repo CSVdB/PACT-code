@@ -1,7 +1,7 @@
 module PACT.API.Request where
 
 import Prelude hiding ((/))
-import PACT.Data.User (LoginFields, Profile, RegisterFields, loginFieldsCodec, profileCodec, registerFieldsCodec)
+import PACT.Data.User (LoginFields, Profile, RegisterFields)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..), hush)
 import Data.Tuple (Tuple(..))
@@ -10,10 +10,7 @@ import Data.Bifunctor (lmap)
 import Data.HTTP.Method (Method(..))
 import Data.Argonaut.Core (Json)
 import Data.Generic.Rep (class Generic)
-import Data.Codec as Codec
-import Data.Codec.Argonaut (printJsonDecodeError, JsonCodec)
-import Data.Codec.Argonaut as CA
-import Data.Codec.Argonaut.Record as CAR
+import Data.Argonaut as A
 import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
@@ -29,6 +26,9 @@ import Affjax.ResponseHeader (value)
 import Web.HTML (window)
 import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
+import Debug
+import Data.Codec as Codec
+import Data.Codec.Argonaut (printJsonDecodeError)
 
 -- Represent JWT token used for authentication.
 newtype Token
@@ -73,9 +73,7 @@ data RequestMethod
 defaultRequest :: BaseURL -> Maybe Token -> Endpoint -> RequestMethod -> Request Json
 defaultRequest (BaseURL url) auth endpoint method =
   { content: RB.json <$> body
-  , headers: case auth of
-      Nothing -> []
-      Just (Token t) -> [ RequestHeader "Authorization" $ "Token " <> t ]
+  , headers: headers
   , method: Left requestMethod
   , password: Nothing
   , responseFormat: RF.json
@@ -90,24 +88,29 @@ defaultRequest (BaseURL url) auth endpoint method =
     Post b -> Tuple POST b
     Put b -> Tuple PUT b
     Delete -> Tuple DELETE Nothing
+  headers = case auth of
+      Nothing -> []
+      Just (Token t) -> [ RequestHeader "Authorization" $ "Token " <> t ]
 
 -- Actually execute the API call and decode the result
-apiRequest :: forall m a. MonadAff m
-  => BaseURL -> Endpoint -> RequestMethod -> JsonCodec a -> m (Either String a)
-apiRequest url endpoint method codec = do
-  res <- liftAff <<< request $ defaultRequest url Nothing endpoint method
+apiRequest :: forall m a. MonadAff m => A.DecodeJson a
+  => BaseURL -> Endpoint -> RequestMethod -> m (Either String a)
+apiRequest url endpoint method = do
+  mToken <- liftEffect readToken
+  res <- liftAff <<< request $ defaultRequest url mToken endpoint method
   pure $ case res of
     Left err -> Left $ printError err
-    Right resp -> lmap printJsonDecodeError $ Codec.decode codec resp.body
+    Right resp -> lmap A.printJsonDecodeError $ A.decodeJson resp.body
 
-apiRequestWithToken :: forall m a. MonadAff m
-  => BaseURL -> Endpoint -> RequestMethod -> JsonCodec a -> m (Either String (Tuple Token a))
-apiRequestWithToken url endpoint method codec = do
-  res <- liftAff <<< request $ defaultRequest url Nothing endpoint method
+apiRequestWithToken :: forall m a. MonadAff m => A.DecodeJson a
+  => BaseURL -> Endpoint -> RequestMethod -> m (Either String (Tuple Token a))
+apiRequestWithToken url endpoint method = do
+  mToken <- liftEffect readToken
+  res <- liftAff <<< request $ defaultRequest url mToken endpoint method
   pure $ case res of
     Left err -> Left $ printError err
     Right resp -> do
-      result <- lmap printJsonDecodeError $ Codec.decode codec resp.body
+      result <- lmap A.printJsonDecodeError $ A.decodeJson resp.body
       case head resp.headers of
         Nothing -> Left "No headers present!"
         Just header -> Right $ Tuple (Token $ value header) result
@@ -116,15 +119,15 @@ apiRequestWithToken url endpoint method codec = do
 -- `apiRequest`.
 login :: forall m. MonadAff m =>
   BaseURL -> LoginFields -> m (Either String (Tuple Token Profile))
-login url form = apiRequestWithToken url Login method profileCodec
+login url form = apiRequestWithToken url Login method
   where
-    method = Post <<< Just $ Codec.encode loginFieldsCodec form
+    method = Post <<< Just $ A.encodeJson form
 
 register :: forall m. MonadAff m =>
   BaseURL -> RegisterFields -> m (Either String (Tuple Token Profile))
-register url form = apiRequestWithToken url Register method profileCodec
+register url form = apiRequestWithToken url Register method
   where
-  method = Post $ Just $ Codec.encode registerFieldsCodec form
+  method = Post $ Just $ A.encodeJson form
 
 currentUser :: BaseURL -> Aff (Maybe Profile)
 currentUser baseUrl = do
@@ -135,12 +138,10 @@ currentUser baseUrl = do
           res <- request $ defaultRequest baseUrl (Just token) User Get
           pure $ case res of 
                 Left _ -> Nothing
-                Right v -> hush $ do
-                   u <- Codec.decode (CAR.object "User" { user: CA.json }) v.body
-                   CA.decode profileCodec u.user
+                Right v -> hush $ A.decodeJson v.body
 
 greet :: forall m. MonadAff m => BaseURL -> m (Either String String)
-greet url = apiRequest url Greet Get CA.string
+greet url = apiRequest url Greet Get
 
 tokenKey :: String
 tokenKey = "token"

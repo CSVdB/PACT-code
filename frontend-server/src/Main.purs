@@ -1,7 +1,7 @@
 module Main where
 
 import Prelude (Unit, unit, bind, discard, void, when, ($), (/=), (<<<))
-import PACT.AppM (runAppM)
+import PACT.AppM (runAppMComponent)
 import PACT.Store (LogLevel(..))
 import PACT.Data.Router
 import PACT.Component.Router as Router
@@ -25,7 +25,7 @@ main = do
     -- We now have to link a Halogen component with `htmlBody`, usually the
     -- router component.
     user <- currentUser baseUrl
-    rootComponent <- runAppM (initialStore user) Router.component
+    rootComponent <- runAppMComponent (initialStore user) Router.component
     -- Bind component to htmlBody
     halogenIO <- runUI rootComponent unit htmlBody
     -- This result now has two records:

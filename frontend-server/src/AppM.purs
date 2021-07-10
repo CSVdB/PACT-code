@@ -13,14 +13,17 @@ import PACT.Capability.Navigate (class Navigate, navigate)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..))
 import Data.Tuple (Tuple(..))
+import Control.Monad.Reader.Trans (runReaderT)
 import Halogen as H
-import Halogen.Store.Monad (class MonadStore, StoreT, runStoreT, getStore, updateStore)
+import Halogen.Store.Monad (class MonadStore, StoreT(..), runStoreT, getStore, updateStore)
+import Halogen.Subscription as HS
 import Effect.Aff (Aff)
 import Effect.Console as Console
 import Safe.Coerce (coerce)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Now as Now
+import Effect.Ref as Ref
 import Routing.Duplex (print)
 import Routing.Hash (setHash)
 
@@ -37,9 +40,19 @@ derive newtype instance MonadEffect AppM
 derive newtype instance MonadAff AppM
 derive newtype instance MonadStore StoreAction Store AppM
 
+runAppM :: forall a.  Store -> AppM a -> Aff a
+runAppM initialStore (AppM (StoreT s)) = do
+  hs <- liftEffect do
+    value <- Ref.new initialStore
+    { emitter, listener } <- HS.create
+    pure { value, emitter, listener, reducer }
+  runReaderT s hs
+  where
+    reducer = reduce
+
 -- Note: `coerce` here turns `AppM` into `StoreT Store Aff`.
-runAppM :: forall q i o. Store -> H.Component q i o AppM -> Aff (H.Component q i o Aff)
-runAppM initStore = runStoreT initStore reduce <<< coerce
+runAppMComponent :: forall q i o. Store -> H.Component q i o AppM -> Aff (H.Component q i o Aff)
+runAppMComponent initStore = runStoreT initStore reduce <<< coerce
 
 instance Now AppM where
   nowDateTime = liftEffect Now.nowDateTime

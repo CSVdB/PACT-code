@@ -25,9 +25,11 @@ newtype EmailAddress = EmailAddress String deriving (Show, Eq, Ord, Generic)
 
 instance Validity EmailAddress
 
-instance ToJSON EmailAddress
+instance ToJSON EmailAddress where
+  toJSON (EmailAddress s) = String $ T.pack s
 
-instance FromJSON EmailAddress
+instance FromJSON EmailAddress where
+  parseJSON = withText "EmailAddress" $ pure . EmailAddress . T.unpack
 
 instance PersistField EmailAddress where
   toPersistValue (EmailAddress s) = toPersistValue s
@@ -55,14 +57,14 @@ instance Validity RegistrationForm where
 instance ToJSON RegistrationForm where
   toJSON RegistrationForm {..} =
     object
-      [ "name" .= registrationFormUsername,
+      [ "username" .= registrationFormUsername,
         "password" .= registrationFormPassword,
         "email" .= registrationFormEmail
       ]
 
 instance FromJSON RegistrationForm where
   parseJSON = withObject "RegistrationForm" $ \o ->
-    RegistrationForm <$> o .: "name" <*> o .: "password" <*> o .: "email"
+    RegistrationForm <$> o .: "username" <*> o .: "password" <*> o .: "email"
 
 data LoginForm = LoginForm
   { loginFormUsername :: Username,
@@ -97,7 +99,7 @@ instance ToJWT AuthCookie
 newtype Username = Username
   { usernameText :: Text
   }
-  deriving (Show, Eq, Ord, Generic, FromJSONKey, ToJSONKey, FromJSON, ToJSON)
+  deriving (Show, Eq, Ord, Generic, FromJSONKey, ToJSONKey)
 
 instance Validity Username where
   validate (Username t) =
@@ -122,6 +124,12 @@ instance PersistFieldSql Username where
 instance YamlSchema Username where
   yamlSchema = eitherParser parseUsernameOrErr yamlSchema
 
+instance FromJSON Username where
+  parseJSON = withText "Username" $ pure . Username
+
+instance ToJSON Username where
+  toJSON (Username t) = String t
+
 parseUsername :: Text -> Maybe Username
 parseUsername = constructValid . Username
 
@@ -136,6 +144,13 @@ data Profile = Profile
 
 instance Validity Profile
 
-instance ToJSON Profile
+instance ToJSON Profile where
+  toJSON Profile {..} =
+    object
+      [ "username" .= profileName,
+        "email" .= profileEmail
+      ]
 
-instance FromJSON Profile
+instance FromJSON Profile where
+  parseJSON = withObject "Profile" $ \o ->
+    Profile <$> o .: "username" <*> o .: "email"

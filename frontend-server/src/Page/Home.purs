@@ -10,6 +10,7 @@ import PACT.Component.HTML.Utils (css)
 import Data.Maybe (Maybe)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Elements as HE
 import Halogen.Store.Connect (connect)
 import Halogen.Store.Select (selectEq)
 import Halogen.Store.Monad (class MonadStore)
@@ -51,7 +52,23 @@ component =
                   [ css "col-md-6 offset-md-3 col-xs12" ]
                   html
               ]
-          , HH.p_ [ HH.text "Let's make a PACT to change the world!" ]
+          , HE.br_
+          , HE.br_
+          , HH.p [ css "text-xs-center" ]
+              [ HH.h2_
+                  [ HH.text "It's our mission to provide the support you need"
+                  , HE.br_
+                  , HH.text "to live an energetic and inspired life."
+                  ]
+              , HE.br_
+              , HE.br_
+              , HE.br_
+              , HH.text "Make a PACT"
+              , HE.br_
+              , HH.text "Join the team"
+              , HE.br_
+              , HH.text "Change your world!"
+              ]
           ]
       ]
 

@@ -1,5 +1,4 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Pact.API.Server.Handler.Auth where
@@ -7,7 +6,6 @@ module Pact.API.Server.Handler.Auth where
 import Control.Monad.IO.Class
 import Data.Password.Bcrypt
 import qualified Data.Text.Encoding as TE
-import Debug.Trace (trace)
 import Pact.API.Server.Handler.Import
 import Servant.Auth.Server (makeSessionCookieBS)
 
@@ -38,10 +36,10 @@ handlePostLogin :: LoginForm -> H ProfileWithCookie
 handlePostLogin LoginForm {..} = do
   mUser <- getUser loginFormUsername
   case mUser of
-    Nothing -> trace "Non-existent" $ throwError err401 -- Not 404, because then we leak data about users.
+    Nothing -> throwError err401
     Just (Entity _ user@User {..}) ->
       case checkPassword (mkPassword loginFormPassword) userPassword of
-        PasswordCheckFail -> trace "Wrong password" $ throwError err401
+        PasswordCheckFail -> throwError err401
         PasswordCheckSuccess -> do
           let authCookie =
                 AuthCookie {authCookieUsername = loginFormUsername}

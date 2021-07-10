@@ -19,15 +19,14 @@ header currentUser route =
             [ css "navbar-brand"
             , safeHref Home
             ]
-            [ HH.text "PACT" ]
-            , HH.div
-                [ css "text-xs-center" ]
-                [ HH.text "Building an energized and inspired life, together!" ]
-            , HH.img
+            [ HH.img
               [ HP.src logoSrc
-              , HP.width 30
-              , HP.height 30
-              ]
+              , HP.width 220
+              , HP.height 150
+             ] ]
+            -- , HH.div
+            --     [ css "text-xs-center" ]
+            --     [ HH.text "Building an energized and inspired life, together!" ]
             , HH.ul
               [ css "nav navbar-nav pull-xs-right" ]
               [ navItem Home [ HH.text "Home" ]
@@ -53,4 +52,4 @@ header currentUser route =
           ]
           html
       ]
-  logoSrc = "https://image.shutterstock.com/image-vector/business-handshake-contract-agreement-line-600w-281423633.jpg"
+  logoSrc = "https://i.ibb.co/J3VQpX4/209095110-526812831853287-3496152201546800433-n.jpg"

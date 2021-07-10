@@ -12,8 +12,7 @@ How to run this in development:
   frontend codebase
 
 How to run this in deployment:
-- Within a nix shell, from `frontend-server`, run `npm install; npm run build;
-  npm run bundle; npm run serve`
+- Within a nix shell, from `frontend-server`, run `npm run s`
 - The frontend server is set up on `localhost:8080`
 
 

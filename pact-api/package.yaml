@@ -13,11 +13,13 @@ library:
   source-dirs: src
   dependencies:
     - aeson
+    - either
     - jose
     - persistent
     - servant
     - servant-auth
     - servant-auth-server
+    - servant-client-core
     - text
     - validity
     - validity-text

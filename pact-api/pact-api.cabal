@@ -1,29 +1,28 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5236e5f377bf7efab4e769baa8b26aa4afccb60e45b1839143849105de72ce44
+-- hash: 60d413ca0f438a40976666f8b894e94a317cda0d5939898ce66a053db7f45ce7
 
 name:           pact-api
 version:        0.0.0.0
-homepage:       https://github.com/NorfairKing/pact-api-cli-login#readme
-bug-reports:    https://github.com/NorfairKing/pact-api-cli-login/issues
-author:         Tom Sydney Kerckhove
-maintainer:     syd@cs-syd.eu
-copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+homepage:       https://github.com/CSVdB/pact-code#readme
+bug-reports:    https://github.com/CSVdB/pact-code/issues
+author:         PACT
+maintainer:     vandenbroeck@cs-vdb.com
+copyright:      Copyright (c) 2021 PACT
 license:        AllRightsReserved
 build-type:     Simple
 
 source-repository head
   type: git
-  location: https://github.com/NorfairKing/pact-api-cli-login
+  location: https://github.com/CSVdB/pact-code
 
 library
   exposed-modules:
       Pact.API
-      Pact.API.Data
   other-modules:
       Paths_pact_api
   hs-source-dirs:
@@ -31,11 +30,14 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , either
     , jose
+    , pact-db
     , persistent
     , servant
     , servant-auth
     , servant-auth-server
+    , servant-client-core
     , text
     , validity
     , validity-text

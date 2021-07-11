@@ -4,8 +4,8 @@ import Control.Monad.IO.Class
 import Control.Monad.Logger
 import Control.Monad.Reader
 import Database.Persist.Sql
-import Pact.API.Data
-import Pact.API.Server.DB
+import Pact.DB
+import Pact.Data
 import Servant
 import Servant.Auth.Server
 

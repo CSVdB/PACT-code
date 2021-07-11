@@ -1,9 +1,11 @@
-resolver: lts-16.12
+resolver: lts-18.2
 packages:
 - pact-api
+- pact-db
 - pact-api-gen
 - pact-api-server
 - pact-api-server-gen
+- pact-db
 - pact-client
 extra-deps:
 - github: NorfairKing/yamlparse-applicative
@@ -58,8 +60,6 @@ extra-deps:
   - genvalidity-unordered-containers
   - genvalidity-uuid
   - genvalidity-vector
-
-- servant-auth-client-0.4.1.0@sha256:a93f041c3c293eca6e2e2e1a2ed97e58fbbd0e123caeff9e484a68d56272632f,3342
 
 nix:
   shell-file: shell.nix

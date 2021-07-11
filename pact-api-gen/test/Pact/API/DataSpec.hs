@@ -5,8 +5,8 @@ module Pact.API.DataSpec
   )
 where
 
-import Pact.API.Data
 import Pact.API.Data.Gen ()
+import Pact.Data
 import Test.Hspec
 import Test.Validity
 

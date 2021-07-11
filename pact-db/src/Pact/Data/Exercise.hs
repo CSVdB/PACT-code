@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Pact.API.Data.Exercise where
+module Pact.Data.Exercise where
 
 import Data.Aeson
 import Data.Either.Combinators (mapLeft)

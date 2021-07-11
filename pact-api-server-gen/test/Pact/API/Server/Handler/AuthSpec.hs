@@ -6,10 +6,10 @@ where
 import Data.Functor (void)
 import Network.HTTP.Types as HTTP
 import Pact.API
-import Pact.API.Data
 import Pact.API.Data.Gen ()
 import Pact.API.Server.TestUtils
 import Pact.Client
+import Pact.Data
 import Test.Hspec
 import Test.QuickCheck
 import Test.Validity

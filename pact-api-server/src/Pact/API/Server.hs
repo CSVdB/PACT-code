@@ -12,7 +12,7 @@ import Database.Persist.Sqlite
 import Network.Wai as Wai
 import Network.Wai.Handler.Warp as Warp
 import Network.Wai.Middleware.Cors
-import Network.Wai.Middleware.RequestLogger (logStdoutDev)
+import Network.Wai.Middleware.RequestLogger
 import Pact.API as API
 import Pact.API.Server.Env
 import Pact.API.Server.Handler
@@ -38,13 +38,13 @@ pactAPIServer = do
                       envCookieSettings = defaultCookieSettings,
                       envJWTSettings = defaultJWTSettings jwk
                     }
-            Warp.run settingPort . corsMiddleware . loggingMiddleware $ pactAPIServerApp serverEnv
+            Warp.run settingPort . loggingMiddleware . corsMiddleware $ pactAPIServerApp serverEnv
 
 -- To make a custom logger, use `logStdoutDev { outputFormat =
 -- customOutputFormat }`:
 -- https://hackage.haskell.org/package/wai-extra-3.1.6/docs/Network-Wai-Middleware-RequestLogger.html#t:OutputFormat
 loggingMiddleware :: Middleware
-loggingMiddleware = logStdoutDev
+loggingMiddleware = logStdout
 
 corsMiddleware :: Middleware
 corsMiddleware = cors (const $ Just policy)
@@ -52,7 +52,8 @@ corsMiddleware = cors (const $ Just policy)
     policy =
       simpleCorsResourcePolicy
         { corsRequestHeaders = ["Content-type"],
-          corsMethods = ["GET", "POST", "HEAD", "DELETE"]
+          corsMethods = ["GET", "POST", "HEAD", "DELETE", "PUT"],
+          corsExposedHeaders = Just ["Content-type"]
         }
 
 pactAPIServerApp :: Env -> Wai.Application
@@ -71,8 +72,8 @@ pactHandlers =
     { postRegister = handlePostRegister,
       postLogin = handlePostLogin,
       getGreet = protected handleGetGreet,
-      postNumber = protected handlePostNumber,
-      getUser = protected handleGetUser
+      getUser = protected handleGetUser,
+      postExercise = protected handlePostExercise
     }
 
 protected :: ThrowAll m => (authCookie -> m) -> AuthResult authCookie -> m

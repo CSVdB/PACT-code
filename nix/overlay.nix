@@ -28,6 +28,7 @@ with final.haskell.lib;
       "pact-api-gen" = pactPkg "pact-api-gen";
       "pact-api-server" = pactPkgWithOwnComp "pact-api-server";
       "pact-api-server-gen" = pactPkg "pact-api-server-gen";
+      "pact-db" = pactPkg "pact-db";
       "pact-client" = pactPkg "pact-client";
     };
 

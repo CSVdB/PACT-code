@@ -1,7 +1,6 @@
 resolver: lts-18.2
 packages:
 - pact-api
-- pact-db
 - pact-api-gen
 - pact-api-server
 - pact-api-server-gen

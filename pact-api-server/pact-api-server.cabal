@@ -3,8 +3,6 @@ cabal-version: 1.12
 -- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: aa92a9b1369c543379276d6f2c296cdaf93fb67e987af046154282846d29b98e
 
 name:           pact-api-server
 version:        0.0.0.0
@@ -29,7 +27,6 @@ library
       Pact.API.Server.Handler.Exercise
       Pact.API.Server.Handler.Greet
       Pact.API.Server.Handler.Import
-      Pact.API.Server.Handler.Number
       Pact.API.Server.OptParse
       Pact.API.Server.SigningKey
   other-modules:

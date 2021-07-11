@@ -8,7 +8,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Pact.API.Data.User where
+module Pact.Data.User where
 
 import Data.Aeson
 import Data.Text (Text)

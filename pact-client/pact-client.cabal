@@ -1,24 +1,24 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 602514136642b6aa0a68cf0336712cc037a00212e877b30bb5fa19b075e1a43b
+-- hash: d52211e9810eeb79d6393206a56355df47ed5fcbb91da7e16ce5e237182c6eec
 
 name:           pact-client
 version:        0.0.0.0
-homepage:       https://github.com/NorfairKing/pact#readme
-bug-reports:    https://github.com/NorfairKing/pact/issues
-author:         Tom Sydney Kerckhove
-maintainer:     syd@cs-syd.eu
-copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+homepage:       https://github.com/CSVdB/pact-code#readme
+bug-reports:    https://github.com/CSVdB/pact-code/issues
+author:         PACT
+maintainer:     vandenbroeck@cs-vdb.com
+copyright:      Copyright (c) 2021 PACT
 license:        AllRightsReserved
 build-type:     Simple
 
 source-repository head
   type: git
-  location: https://github.com/NorfairKing/pact
+  location: https://github.com/CSVdB/pact-code
 
 library
   exposed-modules:

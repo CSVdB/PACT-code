@@ -3,10 +3,8 @@ cabal-version: 1.12
 -- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: 6b8efd68940cae021626b9f341a6cd0c8b46373cb2f671f53d369f6efedf74b9
 
-name:           pact-api-gen
+name:           pact-db
 version:        0.0.0.0
 homepage:       https://github.com/CSVdB/pact-code#readme
 bug-reports:    https://github.com/CSVdB/pact-code/issues
@@ -22,34 +20,31 @@ source-repository head
 
 library
   exposed-modules:
-      Pact.API.Data.Gen
+      Pact.Data
+      Pact.Data.Exercise
+      Pact.Data.User
+      Pact.DB
   other-modules:
-      Paths_pact_api_gen
+      Paths_pact_db
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
-    , genvalidity
-    , genvalidity-text
-    , pact-api
-    , pact-db
+      aeson
+    , base >=4.7 && <5
+    , either
+    , jose
+    , password
+    , password-instances
+    , persistent
+    , persistent-sqlite
+    , persistent-template
+    , servant
+    , servant-auth
+    , servant-auth-server
+    , servant-client-core
     , text
-  default-language: Haskell2010
-
-test-suite pact-api-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Pact.API.DataSpec
-      Paths_pact_api_gen
-  hs-source-dirs:
-      test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      base >=4.7 && <5
-    , genvalidity-hspec
-    , hspec
-    , pact-api
-    , pact-api-gen
-    , pact-db
+    , validity
+    , validity-persistent
+    , validity-text
+    , yamlparse-applicative
   default-language: Haskell2010

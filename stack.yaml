@@ -4,6 +4,7 @@ packages:
 - pact-api-gen
 - pact-api-server
 - pact-api-server-gen
+- pact-db
 - pact-client
 extra-deps:
 - github: NorfairKing/yamlparse-applicative

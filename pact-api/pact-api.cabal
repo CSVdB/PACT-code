@@ -4,28 +4,25 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9c2e8ddb08de9cd329e4f681a90dbf01e7a0b476d384f88075e37201fe12fc18
+-- hash: 60d413ca0f438a40976666f8b894e94a317cda0d5939898ce66a053db7f45ce7
 
 name:           pact-api
 version:        0.0.0.0
-homepage:       https://github.com/NorfairKing/pact-api-cli-login#readme
-bug-reports:    https://github.com/NorfairKing/pact-api-cli-login/issues
-author:         Tom Sydney Kerckhove
-maintainer:     syd@cs-syd.eu
-copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+homepage:       https://github.com/CSVdB/pact-code#readme
+bug-reports:    https://github.com/CSVdB/pact-code/issues
+author:         PACT
+maintainer:     vandenbroeck@cs-vdb.com
+copyright:      Copyright (c) 2021 PACT
 license:        AllRightsReserved
 build-type:     Simple
 
 source-repository head
   type: git
-  location: https://github.com/NorfairKing/pact-api-cli-login
+  location: https://github.com/CSVdB/pact-code
 
 library
   exposed-modules:
       Pact.API
-      Pact.API.Data
-      Pact.API.Data.Exercise
-      Pact.API.Data.User
   other-modules:
       Paths_pact_api
   hs-source-dirs:
@@ -35,6 +32,7 @@ library
     , base >=4.7 && <5
     , either
     , jose
+    , pact-db
     , persistent
     , servant
     , servant-auth

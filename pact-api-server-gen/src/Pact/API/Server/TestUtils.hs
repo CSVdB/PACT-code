@@ -13,12 +13,12 @@ import Database.Persist.Sqlite
 import Network.HTTP.Client as HTTP
 import Network.Wai.Handler.Warp as Warp
 import Pact.API
-import Pact.API.Data
 import Pact.API.Data.Gen ()
 import Pact.API.Server
-import Pact.API.Server.DB
 import Pact.API.Server.Env
 import Pact.Client
+import Pact.DB
+import Pact.Data
 import Servant.Auth.Server
 import Test.Hspec
 import Test.Hspec.QuickCheck

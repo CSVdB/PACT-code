@@ -1,4 +1,4 @@
-name:                pact-api
+name:                pact-db
 version:             0.0.0.0
 github:              "CSVdB/pact-code"
 license:             AllRightsReserved
@@ -15,13 +15,17 @@ library:
     - aeson
     - either
     - jose
-    - pact-db
+    - password
+    - password-instances
     - persistent
+    - persistent-sqlite
+    - persistent-template
     - servant
     - servant-auth
     - servant-auth-server
     - servant-client-core
     - text
     - validity
+    - validity-persistent
     - validity-text
     - yamlparse-applicative

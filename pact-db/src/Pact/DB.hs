@@ -41,11 +41,6 @@ User
 
   deriving Show Eq Ord Generic
 
-MyRandomInt
-  myRandomTypeInt Int
-
-  deriving Show Eq Ord Generic
-
 Exercise
   title Text
   easier [Exercise] -- If exercise is too hard, replace by these

@@ -72,7 +72,6 @@ pactHandlers =
     { postRegister = handlePostRegister,
       postLogin = handlePostLogin,
       getGreet = protected handleGetGreet,
-      postNumber = protected handlePostNumber,
       getUser = protected handleGetUser,
       postExercise = protected handlePostExercise
     }

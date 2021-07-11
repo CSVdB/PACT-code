@@ -1,5 +1,7 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -16,7 +18,6 @@ module Pact.DB where
 
 import Control.Monad.IO.Class (MonadIO)
 import Data.Aeson
-import Data.Password
 import Data.Password.Bcrypt
 import Data.Password.Instances ()
 import Data.Text (Text)

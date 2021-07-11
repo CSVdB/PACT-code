@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6b8efd68940cae021626b9f341a6cd0c8b46373cb2f671f53d369f6efedf74b9
+-- hash: 52f45b527f43821e71a0b658430c3074f58ec38b24a69e6b6011f2275bee4b98
 
 name:           pact-api-gen
 version:        0.0.0.0
@@ -28,11 +28,15 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      QuickCheck
+    , base >=4.7 && <5
     , genvalidity
+    , genvalidity-path
     , genvalidity-text
     , pact-api
     , pact-db
+    , path
+    , servant-client-core
     , text
   default-language: Haskell2010
 

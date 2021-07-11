@@ -9,4 +9,4 @@ import Database.Persist as X
 import Pact.API.Server.Env as X
 import Pact.DB as X
 import Pact.Data as X
-import Servant as X
+import Servant as X hiding (Unique)

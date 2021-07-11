@@ -13,9 +13,13 @@ library:
   source-dirs: src
   dependencies:
     - genvalidity
+    - genvalidity-path
     - genvalidity-text
     - pact-api
     - pact-db
+    - path
+    - QuickCheck
+    - servant-client-core
     - text
 
 tests:

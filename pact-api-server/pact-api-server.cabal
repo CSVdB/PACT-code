@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 55babe83e82a37e9a0940780d0739552cd69b22a066bb85aeadc65794c6ca3a4
+-- hash: aa92a9b1369c543379276d6f2c296cdaf93fb67e987af046154282846d29b98e
 
 name:           pact-api-server
 version:        0.0.0.0
@@ -26,6 +26,7 @@ library
       Pact.API.Server.Env
       Pact.API.Server.Handler
       Pact.API.Server.Handler.Auth
+      Pact.API.Server.Handler.Exercise
       Pact.API.Server.Handler.Greet
       Pact.API.Server.Handler.Import
       Pact.API.Server.Handler.Number

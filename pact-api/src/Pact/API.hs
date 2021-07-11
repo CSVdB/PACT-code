@@ -7,7 +7,7 @@ module Pact.API where
 import Data.Proxy
 import Data.Text (Text)
 import Data.Validity.Text ()
-import Pact.API.Data
+import Pact.Data
 import Servant.API
 import Servant.API.Generic
 import Servant.Auth
@@ -27,10 +27,12 @@ data PactRoutes route = PactRoutes
   deriving (Generic)
 
 type PostRegister =
-  "register" :> ReqBody '[JSON] RegistrationForm :> Post '[JSON] (Headers '[Header "Set-Cookie" Text] Profile)
+  "register" :> ReqBody '[JSON] RegistrationForm
+    :> Post '[JSON] (Headers '[Header "Set-Cookie" Text] Profile)
 
 type PostLogin =
-  "login" :> ReqBody '[JSON] LoginForm :> Post '[JSON] (Headers '[Header "Set-Cookie" Text] Profile)
+  "login" :> ReqBody '[JSON] LoginForm
+    :> Post '[JSON] (Headers '[Header "Set-Cookie" Text] Profile)
 
 type ProtectAPI = Auth '[JWT] AuthCookie
 

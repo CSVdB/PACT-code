@@ -4,7 +4,7 @@ module Pact.API.Data.Gen where
 
 import Data.GenValidity
 import Data.GenValidity.Text ()
-import Pact.API.Data
+import Pact.Data
 
 instance GenValid EmailAddress where
   genValid = genValidStructurally

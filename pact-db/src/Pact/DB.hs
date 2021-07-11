@@ -12,7 +12,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Pact.API.Server.DB where
+module Pact.DB where
 
 import Control.Monad.IO.Class (MonadIO)
 import Data.Aeson
@@ -25,7 +25,7 @@ import Data.Validity.Persist ()
 import Database.Persist.Sqlite
 import Database.Persist.TH
 import GHC.Generics (Generic)
-import Pact.API.Data
+import Pact.Data
 
 share
   [mkPersist sqlSettings, mkMigrate "serverMigration"]

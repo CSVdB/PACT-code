@@ -1,10 +1,10 @@
 name:                pact-api-server
 version:             0.0.0.0
-github:              "NorfairKing/pact"
+github:              "CSVdB/pact-code"
 license:             AllRightsReserved
-author:              "Tom Sydney Kerckhove"
-maintainer:          "syd@cs-syd.eu"
-copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
+author:              "PACT"
+maintainer:          "vandenbroeck@cs-vdb.com"
+copyright:           "Copyright (c) 2021 PACT"
 
 dependencies:
 - base >= 4.7 && < 5
@@ -15,24 +15,23 @@ library:
     - aeson
     - bytestring
     - envparse
-    - pact-api
     - jose
     - monad-logger
     - mtl
     - optparse-applicative
+    - pact-api
+    - pact-db
     - password
     - password-instances
     - path
     - path-io
     - persistent
     - persistent-sqlite
-    - persistent-template
     - servant-auth-server
     - servant-server
     - text
     - time
     - validity
-    - validity-persistent
     - wai
     - wai-cors
     - wai-extra

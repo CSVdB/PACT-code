@@ -1,10 +1,10 @@
 name:                pact-client
 version:             0.0.0.0
-github:              "NorfairKing/pact"
+github:              "CSVdB/pact-code"
 license:             AllRightsReserved
-author:              "Tom Sydney Kerckhove"
-maintainer:          "syd@cs-syd.eu"
-copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
+author:              "PACT"
+maintainer:          "vandenbroeck@cs-vdb.com"
+copyright:           "Copyright (c) 2021 PACT"
 
 dependencies:
 - base >= 4.7 && < 5

@@ -7,6 +7,7 @@ module Pact.API where
 import Data.Proxy
 import Data.Text (Text)
 import Data.Validity.Text ()
+import Pact.DB
 import Pact.Data
 import Servant.API
 import Servant.API.Generic
@@ -22,7 +23,8 @@ data PactRoutes route = PactRoutes
     postLogin :: !(route :- PostLogin),
     getGreet :: !(route :- GetGreet),
     postNumber :: !(route :- PostNumber),
-    getUser :: !(route :- GetUser)
+    getUser :: !(route :- GetUser),
+    postExercise :: !(route :- PostExercise)
   }
   deriving (Generic)
 
@@ -36,8 +38,20 @@ type PostLogin =
 
 type ProtectAPI = Auth '[JWT] AuthCookie
 
-type GetGreet = ProtectAPI :> "greet" :> Get '[JSON] Text
+type GetGreet =
+  ProtectAPI :> "greet"
+    :> Get '[JSON] Text
 
-type PostNumber = ProtectAPI :> "number" :> Capture "number" Int :> Post '[JSON] NoContent
+type PostNumber =
+  ProtectAPI :> "number"
+    :> Capture "number" Int
+    :> Post '[JSON] NoContent
 
-type GetUser = ProtectAPI :> "user" :> Get '[JSON] Profile
+type GetUser =
+  ProtectAPI :> "user"
+    :> Get '[JSON] Profile
+
+type PostExercise =
+  ProtectAPI :> "exercise"
+    :> ReqBody '[JSON] Exercise
+    :> Post '[JSON] NoContent

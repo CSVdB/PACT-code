@@ -5,7 +5,7 @@ import PACT.Data.User (LoginFields, Profile, RegisterFields)
 import Data.Maybe (Maybe(..))
 import Data.Either (Either(..), hush)
 import Data.Tuple (Tuple(..))
-import Data.Array (head)
+import Data.Array (filter)
 import Data.Bifunctor (lmap)
 import Data.HTTP.Method (Method(..))
 import Data.Argonaut.Core (Json)
@@ -22,13 +22,10 @@ import Affjax (Request, request, printError)
 import Affjax.RequestBody as RB
 import Affjax.ResponseFormat as RF
 import Affjax.RequestHeader (RequestHeader(..))
-import Affjax.ResponseHeader (value)
+import Affjax.ResponseHeader (name, value)
 import Web.HTML (window)
 import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (getItem, removeItem, setItem)
-import Debug
-import Data.Codec as Codec
-import Data.Codec.Argonaut (printJsonDecodeError)
 
 -- Represent JWT token used for authentication.
 newtype Token
@@ -111,9 +108,10 @@ apiRequestWithToken url endpoint method = do
     Left err -> Left $ printError err
     Right resp -> do
       result <- lmap A.printJsonDecodeError $ A.decodeJson resp.body
-      case head resp.headers of
-        Nothing -> Left "No headers present!"
-        Just header -> Right $ Tuple (Token $ value header) result
+      case filter (\h -> name h == "content-type") resp.headers of
+        [] -> Left "No headers present!"
+        [header] -> Right $ Tuple (Token $ value header) result
+        _ -> Left "More than one header present!"
 
 -- The response contains a `Token` in the header, so `login` cannot just use
 -- `apiRequest`.

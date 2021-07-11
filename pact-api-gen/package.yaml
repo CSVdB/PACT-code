@@ -1,10 +1,10 @@
 name:                pact-api-gen
 version:             0.0.0.0
-github:              "NorfairKing/pact-api-cli-login"
+github:              "CSVdB/pact-code"
 license:             AllRightsReserved
-author:              "Tom Sydney Kerckhove"
-maintainer:          "syd@cs-syd.eu"
-copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
+author:              "PACT"
+maintainer:          "vandenbroeck@cs-vdb.com"
+copyright:           "Copyright (c) 2021 PACT"
 
 dependencies:
 - base >= 4.7 && < 5
@@ -13,8 +13,13 @@ library:
   source-dirs: src
   dependencies:
     - genvalidity
+    - genvalidity-path
     - genvalidity-text
     - pact-api
+    - pact-db
+    - path
+    - QuickCheck
+    - servant-client-core
     - text
 
 tests:
@@ -30,3 +35,4 @@ tests:
     - hspec
     - pact-api
     - pact-api-gen
+    - pact-db

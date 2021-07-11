@@ -3,33 +3,30 @@ cabal-version: 1.12
 -- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: b8e461cd69afb68ff4bc0176294dbde77b6a5c4571e0464b7ca47b982c6db272
 
 name:           pact-api-server
 version:        0.0.0.0
-homepage:       https://github.com/NorfairKing/pact#readme
-bug-reports:    https://github.com/NorfairKing/pact/issues
-author:         Tom Sydney Kerckhove
-maintainer:     syd@cs-syd.eu
-copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+homepage:       https://github.com/CSVdB/pact-code#readme
+bug-reports:    https://github.com/CSVdB/pact-code/issues
+author:         PACT
+maintainer:     vandenbroeck@cs-vdb.com
+copyright:      Copyright (c) 2021 PACT
 license:        AllRightsReserved
 build-type:     Simple
 
 source-repository head
   type: git
-  location: https://github.com/NorfairKing/pact
+  location: https://github.com/CSVdB/pact-code
 
 library
   exposed-modules:
       Pact.API.Server
-      Pact.API.Server.DB
       Pact.API.Server.Env
       Pact.API.Server.Handler
       Pact.API.Server.Handler.Auth
+      Pact.API.Server.Handler.Exercise
       Pact.API.Server.Handler.Greet
       Pact.API.Server.Handler.Import
-      Pact.API.Server.Handler.Number
       Pact.API.Server.OptParse
       Pact.API.Server.SigningKey
   other-modules:
@@ -46,19 +43,18 @@ library
     , mtl
     , optparse-applicative
     , pact-api
+    , pact-db
     , password
     , password-instances
     , path
     , path-io
     , persistent
     , persistent-sqlite
-    , persistent-template
     , servant-auth-server
     , servant-server
     , text
     , time
     , validity
-    , validity-persistent
     , wai
     , wai-cors
     , wai-extra

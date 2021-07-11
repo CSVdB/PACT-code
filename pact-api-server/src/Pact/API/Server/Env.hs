@@ -4,8 +4,8 @@ import Control.Monad.IO.Class
 import Control.Monad.Logger
 import Control.Monad.Reader
 import Database.Persist.Sql
-import Pact.API.Data
-import Pact.API.Server.DB
+import Pact.DB
+import Pact.Data
 import Servant
 import Servant.Auth.Server
 
@@ -24,11 +24,11 @@ runDB func = do
   liftIO $ runSqlPool func pool
 
 getUser :: Username -> H (Maybe (Entity User))
-getUser name = runDB . getBy $ UniqueUsername name
+getUser un = runDB . getBy $ UniqueUsername un
 
 getProfile :: Username -> H Profile
-getProfile name = do
-  mu <- getUser name
+getProfile un = do
+  mu <- getUser un
   case mu of
     Nothing -> throwError err404
     Just user -> pure . toProfile $ entityVal user

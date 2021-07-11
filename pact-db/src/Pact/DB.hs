@@ -1,8 +1,11 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -11,18 +14,19 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Pact.API.Server.DB where
+module Pact.DB where
 
 import Control.Monad.IO.Class (MonadIO)
-import Data.Password
+import Data.Aeson
 import Data.Password.Bcrypt
 import Data.Password.Instances ()
+import Data.Text (Text)
 import Data.Validity
 import Data.Validity.Persist ()
 import Database.Persist.Sqlite
 import Database.Persist.TH
 import GHC.Generics (Generic)
-import Pact.API.Data
+import Pact.Data
 
 share
   [mkPersist sqlSettings, mkMigrate "serverMigration"]
@@ -37,11 +41,17 @@ User
 
   deriving Show Eq Ord Generic
 
-MyRandomInt
-  myRandomTypeInt Int
+Exercise
+  title Text
+  easier [Exercise] -- If exercise is too hard, replace by these
+  difficulty Difficulty
+  muscleGroups [MuscleGroup]
+  formTips [FormTip]
+  videos [SourceURI] -- For now, this is a URL from the internet.
+    -- Eventually, a relative path where the video is deployed on our platform.
+  images [SourceURI] -- Dito
 
   deriving Show Eq Ord Generic
-
 |]
 
 instance Validity (Salt a) where
@@ -67,3 +77,27 @@ registrationToUser RegistrationForm {..} = do
         userPassword = pass,
         userEmail = registrationFormEmail
       }
+
+instance Validity Exercise -- Any value with well-formed Texts and such, is valid
+
+instance FromJSON Exercise where
+  parseJSON = withObject "Exercise" $ \o ->
+    Exercise <$> o .: "title"
+      <*> o .: "easierExercises"
+      <*> o .: "difficulty"
+      <*> o .: "muscleGroups"
+      <*> o .: "formTips"
+      <*> o .: "videos"
+      <*> o .: "images"
+
+instance ToJSON Exercise where
+  toJSON Exercise {..} =
+    object
+      [ "title" .= exerciseTitle,
+        "easierExercises" .= exerciseEasier,
+        "difficulty" .= exerciseDifficulty,
+        "muscleGroups" .= exerciseMuscleGroups,
+        "formTips" .= exerciseFormTips,
+        "videos" .= exerciseVideos,
+        "images" .= exerciseImages
+      ]

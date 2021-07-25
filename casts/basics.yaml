@@ -1,0 +1,8 @@
+packages:
+- pact-tui
+working-dir: .
+input:
+- type: "pact-tui\n"
+- wait: 2000
+- send: "q"
+- wait: 500

@@ -1,6 +1,10 @@
 name:                pact-web-server
 version:             0.0.0.0
+github:              "CSVdB/pact-code"
 license:             AllRightsReserved
+author:              "Nick Van den Broeck"
+maintainer:          "vandenbroeck@cs-vdb.com"
+copyright:           "Copyright (c) 2021 PACT"
 
 dependencies:
 - base >= 4.7 && < 5
@@ -48,17 +52,30 @@ tests:
   pact-web-server-test:
     main: Spec.hs
     source-dirs: test
-    build-tools: hspec-discover
+    build-tools: sydtest-discover
     ghc-options:
     - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - pact-web-server
+    - genvalidity
     - genvalidity-hspec
+    - genvalidity-text
     - hspec
+    - http-client
     - monad-logger
+    - lens
+    - pact-db
+    - pact-web-server
+    - password
+    - path-io
+    - persistent
+    - persistent-sqlite
+    - QuickCheck
+    - sydtest
+    - sydtest-wai
+    - sydtest-yesod
     - text
     - yesod
-    - yesod-test
+    - yesod-auth

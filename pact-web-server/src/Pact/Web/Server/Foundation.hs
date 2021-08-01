@@ -41,6 +41,7 @@ mkYesodData "App" $(makeRelativeToProject "routes.txt" >>= parseRoutesFile)
 instance Yesod App where
   defaultLayout widget = do
     app <- getYesod
+    messages <- getMessages
     currentRoute <- getCurrentRoute
     navbarPC <- widgetToPageContent $(widgetFile "navbar")
     pageContent <- widgetToPageContent $(widgetFile "default-body")
@@ -55,8 +56,8 @@ instance Yesod App where
 
   authRoute _ = Just $ AuthR LoginR
 
-  -- List each route explicitly to avoid mistakes
   -- Split off AccountR, CoachR and AdminR.
+  -- List each route explicitly to avoid mistakes.
   isAuthorized _ _ = pure Authorized
 
 instance RenderMessage App FormMessage where

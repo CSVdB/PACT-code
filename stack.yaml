@@ -13,5 +13,22 @@ extra-deps:
   subdirs:
   - validity-persistent
 
+- github: NorfairKing/safe-coloured-text
+  commit: 7f157485e55528648a95edf3508a122b2e55779e
+  subdirs:
+    - safe-coloured-text
+    - safe-coloured-text-terminfo
+
+- github: NorfairKing/sydtest
+  commit: 4b8c307ac0fd7bbe9a6bf26150f9982f82cf0a89
+  subdirs:
+    - sydtest
+    - sydtest-aeson
+    - sydtest-discover
+    - sydtest-persistent
+    - sydtest-persistent-sqlite
+    - sydtest-wai
+    - sydtest-yesod
+
 nix:
   shell-file: shell.nix

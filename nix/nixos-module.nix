@@ -27,7 +27,7 @@ in
                   hosts =
                     mkOption {
                       type = types.listOf (types.str);
-                      example = "pact.cs-syd.eu";
+                      example = "pactcommunity.be";
                       description = "The host to serve web requests on";
                     };
                   port =

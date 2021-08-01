@@ -8,7 +8,7 @@ name:           pact-db
 version:        0.0.0.0
 homepage:       https://github.com/CSVdB/pact-code#readme
 bug-reports:    https://github.com/CSVdB/pact-code/issues
-author:         PACT
+author:         Nick Van den Broeck
 maintainer:     vandenbroeck@cs-vdb.com
 copyright:      Copyright (c) 2021 PACT
 license:        AllRightsReserved

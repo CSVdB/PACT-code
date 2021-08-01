@@ -1,7 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -10,7 +9,7 @@
 
 module Pact.Data.User where
 
-import Data.Aeson
+import Data.Password.Bcrypt
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Validity
@@ -18,88 +17,40 @@ import Data.Validity.Text ()
 import Database.Persist
 import Database.Persist.Sql
 import Servant.API.Generic
-import Servant.Auth.Server
 import YamlParse.Applicative
 
-newtype EmailAddress = EmailAddress String deriving (Show, Eq, Ord, Generic)
-
-instance Validity EmailAddress
-
-instance ToJSON EmailAddress where
-  toJSON (EmailAddress s) = String $ T.pack s
-
-instance FromJSON EmailAddress where
-  parseJSON = withText "EmailAddress" $ pure . EmailAddress . T.unpack
-
-instance PersistField EmailAddress where
-  toPersistValue (EmailAddress s) = toPersistValue s
-  fromPersistValue v = EmailAddress <$> fromPersistValue v
-
-instance PersistFieldSql EmailAddress where
-  sqlType _ = SqlString
-
-data RegistrationForm = RegistrationForm
-  { registrationFormUsername :: Username,
-    registrationFormPassword :: Text,
-    registrationFormEmail :: EmailAddress
+data RegisterForm = RegisterForm
+  { registerFormUsername :: Username,
+    registerFormPassword :: Password,
+    registerFormConfirmPassword :: Password
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving (Show, Generic)
 
-instance Validity RegistrationForm where
-  validate rf@RegistrationForm {..} =
+instance Validity Password where
+  validate = trivialValidation
+
+confirmPasswords :: RegisterForm -> Bool
+confirmPasswords RegisterForm {..} = unsafeShowPassword registerFormPassword == unsafeShowPassword registerFormConfirmPassword
+
+instance Validity RegisterForm where
+  validate rf@RegisterForm {..} =
     mconcat
       [ genericValidate rf,
-        declare "The password is nonempty" $
-          not $
-            T.null registrationFormPassword
+        declare "ConfirmPassword confirms the password" $ confirmPasswords rf
       ]
-
-instance ToJSON RegistrationForm where
-  toJSON RegistrationForm {..} =
-    object
-      [ "username" .= registrationFormUsername,
-        "password" .= registrationFormPassword,
-        "email" .= registrationFormEmail
-      ]
-
-instance FromJSON RegistrationForm where
-  parseJSON = withObject "RegistrationForm" $ \o ->
-    RegistrationForm <$> o .: "username" <*> o .: "password" <*> o .: "email"
 
 data LoginForm = LoginForm
   { loginFormUsername :: Username,
-    loginFormPassword :: Text
+    loginFormPassword :: Password
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving (Show, Generic)
 
 instance Validity LoginForm
-
-instance ToJSON LoginForm where
-  toJSON LoginForm {..} =
-    object
-      ["username" .= loginFormUsername, "password" .= loginFormPassword]
-
-instance FromJSON LoginForm where
-  parseJSON = withObject "LoginForm" $ \o ->
-    LoginForm <$> o .: "username" <*> o .: "password"
-
-data AuthCookie = AuthCookie
-  { authCookieUsername :: Username
-  }
-  deriving (Show, Eq, Ord, Generic)
-
-instance FromJSON AuthCookie
-
-instance ToJSON AuthCookie
-
-instance FromJWT AuthCookie
-
-instance ToJWT AuthCookie
 
 newtype Username = Username
   { usernameText :: Text
   }
-  deriving (Show, Eq, Ord, Generic, FromJSONKey, ToJSONKey)
+  deriving (Show, Eq, Ord, Generic)
 
 instance Validity Username where
   validate (Username t) =
@@ -112,10 +63,7 @@ instance Validity Username where
 
 instance PersistField Username where
   toPersistValue (Username t) = PersistText t
-  fromPersistValue (PersistText t) =
-    case parseUsername t of
-      Nothing -> Left "Text isn't a valid username"
-      Just un -> Right un
+  fromPersistValue (PersistText t) = parseUsername t
   fromPersistValue _ = Left "Not text"
 
 instance PersistFieldSql Username where
@@ -124,33 +72,19 @@ instance PersistFieldSql Username where
 instance YamlSchema Username where
   yamlSchema = eitherParser parseUsernameOrErr yamlSchema
 
-instance FromJSON Username where
-  parseJSON = withText "Username" $ pure . Username
+mapLeft :: (a -> c) -> Either a b -> Either c b
+mapLeft f (Left a) = Left $ f a
+mapLeft _ (Right b) = Right b
 
-instance ToJSON Username where
-  toJSON (Username t) = String t
-
-parseUsername :: Text -> Maybe Username
-parseUsername = constructValid . Username
+parseUsername :: Text -> Either Text Username
+parseUsername = mapLeft T.pack . prettyValidate . Username
 
 parseUsernameOrErr :: Text -> Either String Username
 parseUsernameOrErr = prettyValidate . Username
 
-data Profile = Profile
-  { profileName :: Username,
-    profileEmail :: EmailAddress
+newtype Profile = Profile
+  { profileName :: Username
   }
   deriving (Show, Eq, Ord, Generic)
 
 instance Validity Profile
-
-instance ToJSON Profile where
-  toJSON Profile {..} =
-    object
-      [ "username" .= profileName,
-        "email" .= profileEmail
-      ]
-
-instance FromJSON Profile where
-  parseJSON = withObject "Profile" $ \o ->
-    Profile <$> o .: "username" <*> o .: "email"

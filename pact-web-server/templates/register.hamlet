@@ -1,6 +1,0 @@
-<h1 .text-xs-center>Sign Up
-<div .text-xs-center>
-  <a href=@{LoginR}>
-    Already have an account?
-  <p>
-    This is where the form will come!

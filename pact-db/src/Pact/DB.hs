@@ -16,7 +16,6 @@
 
 module Pact.DB where
 
-import Control.Monad.IO.Class (MonadIO)
 import Data.Password.Bcrypt
 import Data.Password.Instances ()
 import Data.Text (Text)
@@ -34,7 +33,6 @@ share
 User
   name Username
   password (PasswordHash Bcrypt)
-  email EmailAddress
 
   UniqueUsername name
 
@@ -62,25 +60,12 @@ Exercise
 instance Validity (Salt a) where
   validate = trivialValidation
 
-instance Validity Password where
-  validate = trivialValidation
-
 instance Validity (PasswordHash a) where
   validate = trivialValidation
 
 instance Validity User
 
 toProfile :: User -> Profile
-toProfile User {..} = Profile {profileName = userName, profileEmail = userEmail}
-
-registrationToUser :: MonadIO m => RegistrationForm -> m User
-registrationToUser RegistrationForm {..} = do
-  pass <- hashPassword $ mkPassword registrationFormPassword
-  pure $
-    User
-      { userName = registrationFormUsername,
-        userPassword = pass,
-        userEmail = registrationFormEmail
-      }
+toProfile User {..} = Profile {profileName = userName}
 
 instance Validity Exercise -- Any value with well-formed Texts and such, is valid

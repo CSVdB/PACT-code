@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 894e96a98592d73ef99305ec3d24c55b0d8fa2e0c192895939c29bd4c51a8929
+-- hash: d1c0830578bc4d3d0a6921fcc01194ceec38c56ea25f1b60898d7aab52e033a1
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -20,8 +20,6 @@ library
       Pact.Web.Server.Handler
       Pact.Web.Server.Handler.Home
       Pact.Web.Server.Handler.Import
-      Pact.Web.Server.Handler.Login
-      Pact.Web.Server.Handler.Register
       Pact.Web.Server.OptParse
       Pact.Web.Server.Static
       Pact.Web.Server.Static.TH
@@ -34,17 +32,27 @@ library
       base >=4.7 && <5
     , data-default
     , envparse
+    , file-embed
+    , http-client
+    , http-client-tls
+    , lens
     , monad-logger
     , optparse-applicative
+    , pact-db
     , path
     , path-io
+    , persistent
+    , persistent-sqlite
     , pretty-show
     , shakespeare
     , template-haskell
     , text
+    , wai-extra
+    , warp
     , yaml
     , yamlparse-applicative
     , yesod
+    , yesod-auth
     , yesod-static
   default-language: Haskell2010
 

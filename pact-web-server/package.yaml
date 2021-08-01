@@ -10,17 +10,27 @@ library:
   dependencies:
   - data-default
   - envparse
+  - file-embed
+  - http-client
+  - http-client-tls
+  - lens
   - monad-logger
   - optparse-applicative
+  - pact-db
   - path
   - path-io
+  - persistent
+  - persistent-sqlite
   - pretty-show
   - shakespeare
   - template-haskell
   - text
+  - wai-extra
+  - warp
   - yaml
   - yamlparse-applicative
   - yesod
+  - yesod-auth
   - yesod-static
 
 executables:

@@ -1,7 +1,0 @@
-<h1 .text-xs-center>Sign In
-<div .text-xs-center>
-  <a href=@{RegisterR}>
-    Need an account?
-  <p>
-    This is where the form will come!
-  <iframe src="https://www.youtube.com/embed/zS1cLOIxsQ8">

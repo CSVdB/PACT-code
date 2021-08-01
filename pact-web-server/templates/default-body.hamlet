@@ -1,8 +1,7 @@
-<div .auth-page>
-  <div .navbar .navbar-light>
-    ^{pageBody navbarPC}
+<div .navbar .navbar-light>
+  ^{pageBody navbarPC}
 
-  <div .container .page>
-    <div .row>
-      <div .col-md-6 .offset-md-3 .col-xs12>
-        ^{widget}
+<div .container .page>
+  <div .row>
+    <div .col-md-6 .offset-md-3 .col-xs12>
+      ^{widget}

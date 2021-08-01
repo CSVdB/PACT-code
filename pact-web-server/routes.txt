@@ -1,5 +1,4 @@
 / HomeR GET
-/login LoginR GET
-/register RegisterR GET
 /static StaticR EmbeddedStatic appStatic
+/auth AuthR Auth getAuth
 /favicon.ico FaviconR GET

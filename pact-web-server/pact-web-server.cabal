@@ -60,6 +60,7 @@ library
     , yamlparse-applicative
     , yesod
     , yesod-auth
+    , yesod-autoreload
     , yesod-static
   default-language: Haskell2010
 

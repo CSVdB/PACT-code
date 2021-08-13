@@ -87,6 +87,7 @@ with final.haskell.lib;
                   appendful-persistent = appendfulPkg "appendful-persistent";
                   genvalidity-appendful = appendfulPkg "genvalidity-appendful";
                   base16 = base16Pkg;
+                  yesod-autoreload = self.callCabal2nix "yesod-autoreload" sources.yesod-autoreload { };
                 }
             );
       }

@@ -17,6 +17,7 @@ import Database.Persist.Sql
 import Network.HTTP.Client as HTTP
 import Pact.DB
 import Pact.Data
+import Pact.Web.Server.Constants
 import Pact.Web.Server.Static
 import Pact.Web.Server.Widget
 import Path
@@ -24,6 +25,7 @@ import Text.Hamlet
 import Yesod
 import Yesod.Auth
 import Yesod.Auth.Message
+import Yesod.AutoReload
 import Yesod.EmbeddedStatic
 
 data App = App
@@ -43,8 +45,12 @@ instance Yesod App where
     app <- getYesod
     messages <- getMessages
     currentRoute <- getCurrentRoute
+    let withAutoReload =
+          if development
+            then (<> autoReloadWidgetFor ReloadR)
+            else id
     navbarPC <- widgetToPageContent $(widgetFile "navbar")
-    pageContent <- widgetToPageContent $(widgetFile "default-body")
+    pageContent <- widgetToPageContent $ withAutoReload $(widgetFile "default-body")
     withUrlRenderer $(hamletFile "templates/default-page.hamlet")
 
   makeSessionBackend a = Just <$> defaultClientSessionBackend (60 * 24 * 365 * 10) (fromAbsFile (appSessionKeyFile a))
@@ -109,6 +115,9 @@ navbarRoutesNotLoggedIn =
     (AuthR LoginR, "Log in"),
     (AuthR registerR, "Sign up")
   ]
+
+getReloadR :: Handler ()
+getReloadR = getAutoReloadR
 
 pactAuthPluginName :: Text
 pactAuthPluginName = "pact"

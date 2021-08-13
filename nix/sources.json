@@ -53,10 +53,10 @@
         "homepage": "https://cs-syd.eu/posts/2021-03-07-safe-coloured-text",
         "owner": "NorfairKing",
         "repo": "safe-coloured-text",
-        "rev": "d840dd7b0f13f4d0fd693c1dd93be33f9ee94605",
-        "sha256": "06ca0fzlly630dhlc2cv76b0ax0xjyr4ilw4nz2bb5f8acclq8q0",
+        "rev": "7f157485e55528648a95edf3508a122b2e55779e",
+        "sha256": "0ayxfay78s4rlir3ls76bb5kw2fxwnj1kak9lwd86zvdqjwl02l5",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/safe-coloured-text/archive/d840dd7b0f13f4d0fd693c1dd93be33f9ee94605.tar.gz",
+        "url": "https://github.com/NorfairKing/safe-coloured-text/archive/7f157485e55528648a95edf3508a122b2e55779e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "sydtest": {
@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "NorfairKing",
         "repo": "sydtest",
-        "rev": "aafd8e0c2e97143af950e2f9742c5e1bd167c77b",
-        "sha256": "0i0il3j32zqj56byngg6jrlnbkmgmq6piw7k4di7j040j5knp2jh",
+        "rev": "4b8c307ac0fd7bbe9a6bf26150f9982f82cf0a89",
+        "sha256": "0d6l6cpj2a43mz55pxwnmypwa55ry6x4bg30p4ml63gi47g0vcl9",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/sydtest/archive/aafd8e0c2e97143af950e2f9742c5e1bd167c77b.tar.gz",
+        "url": "https://github.com/NorfairKing/sydtest/archive/4b8c307ac0fd7bbe9a6bf26150f9982f82cf0a89.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "validity": {
@@ -77,10 +77,10 @@
         "homepage": "https://www.youtube.com/watch?v=eIs9qNh17SM",
         "owner": "NorfairKing",
         "repo": "validity",
-        "rev": "86a824729519c154c23f0757f2ce4b9ab93b675a",
+        "rev": "2ef8be2fba631460d770d8cbc7dd67709400fe3d",
         "sha256": "153028qywr85lrhf0yrjf9v7wf9bnbsn6w7lv3skppqi1k4igpvl",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/validity/archive/86a824729519c154c23f0757f2ce4b9ab93b675a.tar.gz",
+        "url": "https://github.com/NorfairKing/validity/archive/2ef8be2fba631460d770d8cbc7dd67709400fe3d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "yamlparse-applicative": {

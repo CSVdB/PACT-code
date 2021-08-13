@@ -1,6 +1,9 @@
 final: previous:
 with final.haskell.lib;
 
+let
+  sources = import ./sources.nix;
+in
 {
   pactPackages =
     let
@@ -24,6 +27,7 @@ with final.haskell.lib;
 
     in
     {
+      "pact-db" = pactPkg "pact-db";
       "pact-web-server" = pactPkg "pact-web-server";
     };
 

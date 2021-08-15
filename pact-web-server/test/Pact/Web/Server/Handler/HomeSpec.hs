@@ -5,6 +5,6 @@ import Pact.Web.Server.Handler.TestImport
 spec :: Spec
 spec = pactWebServerSpec $
   describe "HomeR" $
-    yit "GETs a 200" $ do
+    it "GETs a 200" $ do
       get HomeR
       statusIs 200

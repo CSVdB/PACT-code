@@ -97,16 +97,19 @@ testLogout = do
 testLoginUser :: TestUser -> YesodExample App ()
 testLoginUser TestUser {..} = testLogin testUsername testUserPassword
 
+loginRequest :: Username -> Text -> YesodExample App ()
+loginRequest username password = request $ do
+  setMethod methodPost
+  setUrl $ AuthR loginR
+  addToken
+  addPostParam "username" $ usernameText username
+  addPostParam "password" password
+
 testLogin :: Username -> Text -> YesodExample App ()
 testLogin username password = do
   get $ AuthR LoginR
   statusIs 200
-  request $ do
-    setMethod methodPost
-    setUrl $ AuthR loginR
-    addToken
-    addPostParam "username" $ usernameText username
-    addPostParam "password" password
+  loginRequest username password
   statusIs 303
   locationShouldBe HomeR
   _ <- followRedirect
@@ -116,13 +119,19 @@ testLoginFailed :: Username -> Text -> YesodExample App ()
 testLoginFailed username password = do
   get $ AuthR LoginR
   statusIs 200
-  request $ do
-    setMethod methodPost
-    setUrl $ AuthR loginR
-    addToken
-    addPostParam "username" $ usernameText username
-    addPostParam "password" password
+  loginRequest username password
   statusIs 303
   locationShouldBe $ AuthR LoginR -- Failed to log in
   _ <- followRedirect
   statusIs 200
+
+testCanReach :: Route App -> YesodExample App ()
+testCanReach route = do
+  get route
+  statusIs 200
+
+testCannotReach :: Route App -> YesodExample App ()
+testCannotReach route = do
+  get route
+  statusIs 303
+  locationShouldBe $ AuthR LoginR

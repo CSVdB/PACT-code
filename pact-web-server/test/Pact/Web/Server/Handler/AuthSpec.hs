@@ -29,11 +29,16 @@ spec = pactWebServerSpec $ do
           testLogout
           testRegisterFail (testUsername testUser) password password
 
-  describe "LogoutR" $
+  describe "LogoutR" $ do
     it "doesn't crash" $ \yc ->
       forAllValid $ \testUser -> runYesodClientM yc $ do
         testRegisterUser testUser
         testLogout
+    it "doesn't crash" $ \yc ->
+      forAllValid $ \testUser -> runYesodClientM yc $ do
+        testRegisterUser testUser
+        testLogout
+        testCannotReach $ ExerciseR AddR
 
   describe "LoginR" $ do
     it "GETs a 200" $ do

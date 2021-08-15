@@ -2,7 +2,7 @@
   <img src=@{StaticR logo_jpg} width=220 height=150>
 
 <ul .nav .navbar-nav .pull-xs-right>
-  $forall (link, msg) <- navbarRoutesNotLoggedIn
+  $forall (link, msg) <- navbarRoutes
     <li .nav-item>
       $if Just link == currentRoute
         <a .nav-link .active href=@{link}>

@@ -40,4 +40,4 @@
 
       <input .btn .btn-lg .btn-primary .pull-xs-right
         type="submit"
-        value="Sign in">
+        value="Sign up">

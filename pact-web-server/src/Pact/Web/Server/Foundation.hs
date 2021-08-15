@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
@@ -12,6 +13,7 @@
 module Pact.Web.Server.Foundation where
 
 import Data.FileEmbed (makeRelativeToProject)
+import Data.Functor
 import Data.Text (Text)
 import Database.Persist.Sql
 import Network.HTTP.Client as HTTP
@@ -49,6 +51,7 @@ instance Yesod App where
           if development
             then (<> autoReloadWidgetFor ReloadR)
             else id
+    navbarRoutes <- navbarRoutesH
     navbarPC <- widgetToPageContent $(widgetFile "navbar")
     pageContent <- widgetToPageContent $ withAutoReload $(widgetFile "default-body")
     withUrlRenderer $(hamletFile "templates/default-page.hamlet")
@@ -64,7 +67,13 @@ instance Yesod App where
 
   -- Split off AccountR, CoachR and AdminR.
   -- List each route explicitly to avoid mistakes.
-  isAuthorized _ _ = pure Authorized
+  isAuthorized route _ = case route of
+    ExerciseR _ ->
+      -- Has to be logged in
+      maybeAuthId >>= \case
+        Nothing -> pure AuthenticationRequired
+        Just _ -> pure Authorized
+    _ -> pure Authorized
 
 instance RenderMessage App FormMessage where
   renderMessage _ _ = defaultFormMessage
@@ -109,11 +118,25 @@ genToken = do
 getFaviconR :: Handler TypedContent
 getFaviconR = redirect $ StaticR logo_jpg
 
+-- TODO: Once admin and coach users are created, add those options here
+navbarRoutesH :: Handler [(Route App, String)]
+navbarRoutesH =
+  maybeAuth <&> \mAuth -> (HomeR, "Home") : specificNavbarRoutes mAuth
+  where
+    specificNavbarRoutes = \case
+      Nothing -> navbarRoutesNotLoggedIn
+      Just _ -> navbarRoutesLoggedIn
+
 navbarRoutesNotLoggedIn :: [(Route App, String)]
 navbarRoutesNotLoggedIn =
-  [ (HomeR, "Home"),
-    (AuthR LoginR, "Log in"),
+  [ (AuthR LoginR, "Log in"),
     (AuthR registerR, "Sign up")
+  ]
+
+navbarRoutesLoggedIn :: [(Route App, String)]
+navbarRoutesLoggedIn =
+  [ (ExerciseR AddR, "Add exercise"),
+    (AuthR LogoutR, "Logout")
   ]
 
 getReloadR :: Handler ()

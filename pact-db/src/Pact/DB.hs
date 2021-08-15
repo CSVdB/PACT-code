@@ -43,8 +43,6 @@ Exercise
   name Text
   difficulty Difficulty
   formTips FormTips
-  material ExerciseMaterial Maybe
-  elasticsPossible Elastics
   notes Text
 
   UniqueExerciseUUID uuid

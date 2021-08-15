@@ -39,19 +39,15 @@ User
   deriving Show Eq Ord Generic
 
 Exercise
+  uuid ExerciseUUID
   name Text
-  alternativeNames Text -- List of names as comma-separated values
-  easier [Text] -- If exercise is too hard, replace by these
   difficulty Difficulty
-  muscleGroups [MuscleGroup]
   formTips FormTips
-  video SourceURI Maybe -- For now, this is a URL from the internet.
-    -- Eventually, a relative path where the video is deployed on our platform.
-  images [SourceURI] -- Dito
   material ExerciseMaterial Maybe
   elasticsPossible Elastics
   notes Text
 
+  UniqueExerciseUUID uuid
   UniqueExerciseName name
 
   deriving Show Eq Ord Generic

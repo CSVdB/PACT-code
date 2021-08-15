@@ -8,13 +8,24 @@ import Data.Aeson
 import Data.Either.Combinators (mapLeft)
 import Data.Text (Text)
 import qualified Data.Text as T
+import Data.UUID
 import Data.Validity
 import Data.Validity.Text ()
+import Data.Validity.UUID ()
 import Database.Persist
 import Database.Persist.Sql
 import GHC.Generics (Generic)
 import Servant.Client.Core (BaseUrl, parseBaseUrl, showBaseUrl)
 import Text.Read (readEither)
+
+type ExerciseUUID = UUID
+
+instance PersistField UUID where
+  toPersistValue = toPersistValue . show
+  fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v
+
+instance PersistFieldSql UUID where
+  sqlType _ = SqlString
 
 data Difficulty = Easy | Medium | Hard deriving (Show, Eq, Ord, Generic, Read)
 
@@ -90,6 +101,7 @@ instance PersistField BaseUrl where
 instance PersistFieldSql BaseUrl where
   sqlType _ = SqlString
 
+-- Type synonym as reminder that form tips should be printed as a list.
 type FormTips = Text
 
 data ExerciseMaterial

@@ -4,7 +4,7 @@ let
   pre-commit-hooks = import ./nix/pre-commit.nix { inherit sources; };
 in
 {
-  "release" = pkgs.pactRelease;
+  "release" = pkgs.pactRelease; # This automatically runs all tests
   "pre-commit-hooks" = pre-commit-hooks.run;
   "nixos-module-test" = import ./nix/nixos-module-test.nix {
     inherit sources;

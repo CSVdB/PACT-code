@@ -78,7 +78,7 @@
         "owner": "NorfairKing",
         "repo": "validity",
         "rev": "2ef8be2fba631460d770d8cbc7dd67709400fe3d",
-        "sha256": "153028qywr85lrhf0yrjf9v7wf9bnbsn6w7lv3skppqi1k4igpvl",
+        "sha256": "15cn4p2irb5pff977587lp2967gmb84dq9y9lkgvfkkjjad6fd9m",
         "type": "tarball",
         "url": "https://github.com/NorfairKing/validity/archive/2ef8be2fba631460d770d8cbc7dd67709400fe3d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"

@@ -26,6 +26,7 @@ library:
     - servant-auth-server
     - servant-client-core
     - text
+    - typed-uuid
     - uuid
     - validity
     - validity-bytestring

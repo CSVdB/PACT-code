@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: faca545761424430865c7c57e342bcb335fe537764b3215c7197c0cc410fed11
+-- hash: 4df682fdf159c417a7613aa7f398ba9967a77e1224d32402695f0a59b404113b
 
 name:           pact-db
 version:        0.0.0.0
@@ -47,6 +47,7 @@ library
     , servant-auth-server
     , servant-client-core
     , text
+    , typed-uuid
     , uuid
     , validity
     , validity-bytestring

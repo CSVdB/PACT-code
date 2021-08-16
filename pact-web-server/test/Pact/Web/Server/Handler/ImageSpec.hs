@@ -2,7 +2,7 @@
 
 module Pact.Web.Server.Handler.ImageSpec (spec) where
 
-import Data.UUID.V4 (nextRandom)
+import Data.UUID.Typed (nextRandomUUID)
 import qualified Database.Persist.Class as P
 import qualified Database.Persist.Types as P
 import Pact.DB
@@ -24,6 +24,6 @@ spec = pactWebServerSpec . describe "Image" $ do
           get $ ImageR $ imageUuid image
           statusIs 200
     it "GETs a 404 for a nonexistent image" $ do
-      uuid <- liftIO nextRandom
+      uuid <- liftIO nextRandomUUID
       get $ ImageR uuid
       statusIs 404

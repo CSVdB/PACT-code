@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b506d098e0bd990b991273883283e0e21cfe0f2dd872f8dd35602474a03a82f8
+-- hash: c9425448259156a00e3e30ed35057ee05584ad3df7f591c2439e0a2d1498c683
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -60,6 +60,7 @@ library
     , shakespeare
     , template-haskell
     , text
+    , typed-uuid
     , uuid
     , validity
     , wai-extra
@@ -111,6 +112,7 @@ test-suite pact-web-server-test
     , genvalidity-bytestring
     , genvalidity-hspec
     , genvalidity-text
+    , genvalidity-typed-uuid
     , genvalidity-uuid
     , hspec
     , http-client
@@ -127,6 +129,7 @@ test-suite pact-web-server-test
     , sydtest-wai
     , sydtest-yesod
     , text
+    , typed-uuid
     , uuid
     , yesod
     , yesod-auth

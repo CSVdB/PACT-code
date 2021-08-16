@@ -7,7 +7,7 @@
 module Pact.Web.Server.Handler.Exercise where
 
 import qualified Data.Text as T
-import Data.UUID.V4 (nextRandom)
+import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity
 import Database.Persist.Types
 import Pact.Web.Server.Handler.Import
@@ -77,9 +77,9 @@ postAddR = do
 
 addExercise :: AddExerciseForm -> FileInfo -> FileInfo -> Handler Html
 addExercise AddExerciseForm {..} ii vi = do
-  exUuid <- liftIO nextRandom
-  imageUuid <- liftIO nextRandom
-  videoUuid <- liftIO nextRandom
+  exUuid <- liftIO nextRandomUUID
+  imageUuid <- liftIO nextRandomUUID
+  videoUuid <- liftIO nextRandomUUID
   imageContents <- fileSourceByteString ii
   videoContents <- fileSourceByteString vi
   runDB $ do

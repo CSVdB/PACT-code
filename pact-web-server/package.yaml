@@ -30,6 +30,7 @@ library:
   - shakespeare
   - template-haskell
   - text
+  - typed-uuid
   - uuid
   - validity
   - wai-extra
@@ -69,6 +70,7 @@ tests:
     - genvalidity-bytestring
     - genvalidity-hspec
     - genvalidity-text
+    - genvalidity-typed-uuid
     - genvalidity-uuid
     - hspec
     - http-client
@@ -86,6 +88,7 @@ tests:
     - sydtest-wai
     - sydtest-yesod
     - text
+    - typed-uuid
     - uuid
     - yesod
     - yesod-auth

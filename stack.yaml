@@ -8,6 +8,11 @@ extra-deps:
 - github: supki/envparse
   commit: de5944fb09e9d941fafa35c0f05446af348e7b4d
 
+- github: NorfairKing/typed-uuid
+  commit: ec82b82a545d06094ac355bd65a03f25f86c0a48
+  subdirs:
+    - typed-uuid
+
 - github: NorfairKing/validity
   commit: 2ef8be2fba631460d770d8cbc7dd67709400fe3d
   subdirs:

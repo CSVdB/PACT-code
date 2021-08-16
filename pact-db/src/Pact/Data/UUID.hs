@@ -1,29 +1,39 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Pact.Data.UUID where
 
-import Data.Either.Combinators (mapLeft)
-import qualified Data.Text as T
-import Data.UUID
+import qualified Data.ByteString.Lazy as LB
+import qualified Data.UUID as UUID
+import Data.UUID.Typed
 import Data.Validity.UUID ()
 import Database.Persist
 import Database.Persist.Sql
-import Text.Read (readEither)
 import Yesod
 
-type ExerciseUUID = UUID
+data E -- Phantom type representing exercises
 
-type ImageUUID = UUID
+data I -- Phantom type representing images
 
-type VideoUUID = UUID
+data V -- Phantom type representing videos
 
-instance PersistField UUID where
-  toPersistValue = toPersistValue . show
-  fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v
+type ExerciseUUID = UUID E
 
-instance PersistFieldSql UUID where
-  sqlType _ = SqlString
+type ImageUUID = UUID I
 
-instance PathPiece UUID where
-  fromPathPiece = fromText
-  toPathPiece = toText
+type VideoUUID = UUID V
+
+instance PersistField (UUID a) where
+  toPersistValue (UUID uuid) = PersistByteString $ LB.toStrict $ UUID.toByteString uuid
+  fromPersistValue pv = do
+    bs <- fromPersistValue pv
+    case UUID.fromByteString $ LB.fromStrict bs of
+      Nothing -> Left "Invalid Bytestring to convert to UUID"
+      Just uuid -> Right $ UUID uuid
+
+instance PersistFieldSql (UUID a) where
+  sqlType _ = SqlBlob -- UUIDs are bytestrings, so this is more efficient than SqlString.
+
+instance PathPiece (UUID a) where
+  fromPathPiece = parseUUIDText
+  toPathPiece = uuidText

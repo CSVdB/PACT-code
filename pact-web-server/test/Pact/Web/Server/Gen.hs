@@ -7,7 +7,7 @@ module Pact.Web.Server.Gen where
 import Data.GenValidity
 import Data.GenValidity.ByteString ()
 import Data.GenValidity.Text ()
-import Data.GenValidity.UUID ()
+import Data.GenValidity.UUID.Typed ()
 import qualified Data.Text as T
 import Pact.DB
 import Pact.Data

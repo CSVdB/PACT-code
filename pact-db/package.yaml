@@ -13,6 +13,7 @@ library:
   source-dirs: src
   dependencies:
     - aeson
+    - bytestring
     - either
     - jose
     - password

@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -5,22 +6,25 @@ module Pact.Web.Server.TestUtils where
 
 import Control.Lens ((&), (.~))
 import Control.Monad.Logger
-import Data.Text (Text)
+import Data.ByteString (ByteString)
+import qualified Data.ByteString as B
+import qualified Data.Text as T
 import qualified Database.Persist.Sql as DB
 import Database.Persist.Sqlite (fkEnabled, mkSqliteConnectionInfo, runMigration, runSqlPool, walEnabled, withSqlitePoolInfo)
+import GHC.Generics
 import Network.HTTP.Client as HTTP
 import Pact.DB
 import Pact.Data
 import Pact.Web.Server.Application ()
 import Pact.Web.Server.Foundation
 import Pact.Web.Server.Gen
-import Pact.Web.Server.Static
+import Pact.Web.Server.Handler hiding (get)
 import Path.IO
+import System.FilePath (takeExtension)
 import Test.Syd
 import Test.Syd.Path
 import Test.Syd.Wai (managerSpec)
 import Test.Syd.Yesod
-import Yesod.Auth
 
 type PactWebServerSpec = YesodSpec App
 
@@ -135,3 +139,31 @@ testCannotReach route = do
   get route
   statusIs 303
   locationShouldBe $ AuthR LoginR
+
+data TestFile = TestFile
+  { testFilePath :: !FilePath,
+    testFileContents :: !ByteString,
+    testFileType :: !(Maybe Text)
+  }
+  deriving (Show, Eq, Generic)
+
+readTestFile :: MonadIO m => FilePath -> m TestFile
+readTestFile testFilePath = do
+  testFileContents <- liftIO $ B.readFile testFilePath
+  let testFileType = case takeExtension testFilePath of
+        ".jpg" -> Just "image/jpeg"
+        ".jpeg" -> Just "image/jpeg"
+        ".png" -> Just "image/png"
+        _ -> Nothing
+  pure TestFile {..}
+
+addExerciseRequest :: AddExerciseForm -> TestFile -> YesodExample App ()
+addExerciseRequest AddExerciseForm {..} TestFile {..} = request $ do
+  setMethod methodPost
+  setUrl $ ExerciseR AddR
+  addToken
+  addPostParam "exerciseName" nameEF
+  addPostParam "difficulty" . T.pack $ show difficultyEF
+  addPostParam "formTips" $ unTextarea formTipsEF
+  addPostParam "notes" $ maybe "" unTextarea notesEF
+  addFileWith "image" testFilePath testFileContents testFileType

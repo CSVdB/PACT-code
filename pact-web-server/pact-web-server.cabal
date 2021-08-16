@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7a7412f7a4a29ab500d23d10a86b527f03025d63644e728c3608fdc15b07ac76
+-- hash: 80518433bb1ca30ce6b4f5988f7b122f0447fb6329317379a445c236c9246579
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -40,6 +40,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , data-default
     , envparse
     , file-embed
@@ -100,6 +101,8 @@ test-suite pact-web-server-test
   build-depends:
       QuickCheck
     , base >=4.7 && <5
+    , bytestring
+    , filepath
     , genvalidity
     , genvalidity-hspec
     , genvalidity-text

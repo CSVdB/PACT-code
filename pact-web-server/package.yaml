@@ -12,6 +12,7 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+  - bytestring
   - data-default
   - envparse
   - file-embed
@@ -62,6 +63,8 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - bytestring
+    - filepath
     - genvalidity
     - genvalidity-hspec
     - genvalidity-text

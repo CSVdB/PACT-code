@@ -6,7 +6,6 @@
 
 module Pact.Web.Server.Handler.Exercise where
 
-import Data.Functor
 import qualified Data.Text as T
 import Data.UUID.V4 (nextRandom)
 import Data.Validity
@@ -57,10 +56,10 @@ addExerciseForm =
 
 postAddR :: Handler Html
 postAddR = do
-  res <- runInputPostResult addExerciseForm
+  res <- runInputPostResult $ (,) <$> addExerciseForm <*> ireq fileField "image"
   token <- genToken
   case res of
-    FormSuccess form -> addExercise form
+    FormSuccess (form, fileInfo) -> addExercise form fileInfo
     FormMissing -> do
       addMessage "is-danger" "No form was filled in"
       messages <- getMessages
@@ -70,17 +69,26 @@ postAddR = do
       messages <- getMessages
       defaultLayout $(widgetFile "exercise/add")
 
-addExercise :: AddExerciseForm -> Handler Html
-addExercise AddExerciseForm {..} = do
-  uuid <- liftIO nextRandom
-  void . runDB $
-    insert
+addExercise :: AddExerciseForm -> FileInfo -> Handler Html
+addExercise AddExerciseForm {..} fi = do
+  exUuid <- liftIO nextRandom
+  imageUuid <- liftIO nextRandom
+  contents <- fileSourceByteString fi
+  runDB $ do
+    insert_
       Exercise
-        { exerciseUuid = uuid,
+        { exerciseUuid = exUuid,
+          exerciseImage = imageUuid,
           exerciseName = nameEF,
           exerciseDifficulty = difficultyEF,
           exerciseFormTips = unTextarea formTipsEF,
           exerciseNotes = maybe "" unTextarea notesEF
+        }
+    insert_
+      Image
+        { imageUuid = imageUuid,
+          imageContents = contents,
+          imageTyp = fileContentType fi
         }
   addMessage "is-success" "Successfully submitted an exercise!"
   -- TODO: Redirect to the newly created exercise instead

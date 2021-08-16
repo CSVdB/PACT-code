@@ -34,6 +34,13 @@
           optional
           type="textarea">
 
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="image"
+          placeholder="Image"
+          required
+          type="file">
+
       ^{token}
 
       $if not (null messages)

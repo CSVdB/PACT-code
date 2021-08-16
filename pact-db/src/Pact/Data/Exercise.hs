@@ -15,8 +15,6 @@ import Database.Persist.Sql
 import GHC.Generics (Generic)
 import Text.Read (readEither)
 
-type ExerciseUUID = UUID
-
 instance PersistField UUID where
   toPersistValue = toPersistValue . show
   fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v

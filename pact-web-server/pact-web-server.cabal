@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a578cb6bde0d64c78bbb1a5f376c83fd1ca22285b8df184f6a8ad9f26a6945a0
+-- hash: 7a7412f7a4a29ab500d23d10a86b527f03025d63644e728c3608fdc15b07ac76
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -28,7 +28,6 @@ library
       Pact.Web.Server.Foundation
       Pact.Web.Server.Handler
       Pact.Web.Server.Handler.Exercise
-      Pact.Web.Server.Handler.Exercise.Add
       Pact.Web.Server.Handler.Home
       Pact.Web.Server.Handler.Import
       Pact.Web.Server.OptParse
@@ -58,6 +57,8 @@ library
     , shakespeare
     , template-haskell
     , text
+    , uuid
+    , validity
     , wai-extra
     , warp
     , yaml

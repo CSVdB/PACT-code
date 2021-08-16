@@ -6,11 +6,10 @@ module Pact.Web.Server.Gen where
 
 import Data.GenValidity
 import Data.GenValidity.Text ()
-import Data.Text (Text)
 import qualified Data.Text as T
-import GHC.Generics (Generic)
 import Pact.DB
 import Pact.Data
+import Pact.Web.Server.Handler
 import Test.QuickCheck
 
 instance GenValid Password where
@@ -48,3 +47,15 @@ genValidPassword = genValid `suchThat` (not . T.null)
 instance GenValid TestUser where
   genValid = TestUser <$> genValid <*> genValidPassword
   shrinkValid _ = []
+
+instance GenValid Difficulty where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
+
+instance GenValid Textarea where
+  genValid = Textarea <$> genValid
+  shrinkValid (Textarea t) = Textarea <$> shrinkValid t
+
+instance GenValid AddExerciseForm where
+  genValid = genValidStructurally `suchThat` isValid
+  shrinkValid = filter isValid . shrinkValidStructurally

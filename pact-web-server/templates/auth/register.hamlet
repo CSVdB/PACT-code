@@ -11,8 +11,8 @@
         <input .form-control .form-control-lg
           name="username"
           placeholder="Username"
-          required=""
-          autofocus="autofocus"
+          required
+          autofocus
           type="text">
 
       <fieldset .form-group>
@@ -20,14 +20,14 @@
           name="password"
           placeholder="Password"
           type="password"
-          required="">
+          required>
 
       <fieldset .form-group>
         <input .form-control .form-control-lg
           name="confirmPassword"
           placeholder="Confirm password"
           type="password"
-          required="">
+          required>
 
       ^{token}
 

@@ -11,7 +11,7 @@
         <input .form-control .form-control-lg
           name="username"
           placeholder="Username"
-          required=""
+          required
           autofocus="autofocus"
           type="text">
 
@@ -19,7 +19,7 @@
         <input .form-control .form-control-lg
           name="password"
           placeholder="Password"
-          required=""
+          required
           type="password">
 
       ^{token}

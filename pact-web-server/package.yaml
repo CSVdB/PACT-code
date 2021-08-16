@@ -29,6 +29,8 @@ library:
   - shakespeare
   - template-haskell
   - text
+  - uuid
+  - validity
   - wai-extra
   - warp
   - yaml

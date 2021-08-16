@@ -1,6 +1,21 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
+
 module Pact.Web.Server.Handler.ExerciseSpec (spec) where
 
+import qualified Data.Text as T
+import Pact.Web.Server.Handler
 import Pact.Web.Server.Handler.TestImport
+
+addExerciseRequest :: AddExerciseForm -> YesodExample App ()
+addExerciseRequest AddExerciseForm {..} = request $ do
+  setMethod methodPost
+  setUrl $ ExerciseR AddR
+  addToken
+  addPostParam "exerciseName" nameEF
+  addPostParam "difficulty" . T.pack $ show difficultyEF
+  addPostParam "formTips" $ unTextarea formTipsEF
+  addPostParam "notes" $ maybe "" unTextarea notesEF
 
 spec :: Spec
 spec = pactWebServerSpec . describe "Exercise" $ do
@@ -20,5 +35,14 @@ spec = pactWebServerSpec . describe "Exercise" $ do
         loginRequest (testUsername testUser) $ testUserPassword testUser
         statusIs 303
         locationShouldBe $ ExerciseR AddR
+        _ <- followRedirect
+        statusIs 200
+    it "can POST when logged in" $ \yc ->
+      forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
+        testRegisterUser testUser
+        testCanReach $ ExerciseR AddR
+        addExerciseRequest form
+        statusIs 303
+        locationShouldBe HomeR -- TODO: Fix this once individual exercises can be visualized
         _ <- followRedirect
         statusIs 200

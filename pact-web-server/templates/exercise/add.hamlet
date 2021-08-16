@@ -1,2 +1,47 @@
-<h1 .text-xs-center>
-  Form to add exercises!
+<h1 .text-xs-center> Form to add exercises!
+<div .text-xs-center>
+  <form
+    method="post"
+    action=@{ExerciseR AddR}>
+    <div>
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="exerciseName"
+          placeholder="Name"
+          required
+          autofocus
+          type="text">
+
+      <fieldset .form-group>
+        $forall diff <- difficulties
+          <input
+            type="radio"
+            name="difficulty"
+            id="#{show diff}"
+            value="#{show diff}"> <label for="#{show diff}">#{show diff}</label>
+
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="formTips"
+          placeholder="Form tips"
+          required
+          type="textarea">
+
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="notes"
+          placeholder="Notes"
+          optional
+          type="textarea">
+
+      ^{token}
+
+      $if not (null messages)
+        <div .field>
+          $forall (_, message) <- messages
+            <p .help .is-danger>
+              #{message}
+
+      <input .btn .btn-lg .btn-primary .pull-xs-right
+        type="submit"
+        value="Add exercise">

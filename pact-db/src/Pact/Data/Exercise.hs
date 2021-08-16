@@ -24,7 +24,11 @@ instance PersistField UUID where
 instance PersistFieldSql UUID where
   sqlType _ = SqlString
 
-data Difficulty = Easy | Medium | Hard deriving (Show, Eq, Ord, Generic, Read)
+data Difficulty
+  = Easy
+  | Medium
+  | Hard
+  deriving (Show, Eq, Ord, Generic, Read, Enum, Bounded)
 
 instance Validity Difficulty -- Any value is valid
 

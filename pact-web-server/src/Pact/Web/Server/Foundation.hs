@@ -86,7 +86,7 @@ instance YesodPersist App where
 
 instance YesodAuth App where
   type AuthId App = UserId
-  loginDest _ = HomeR -- TODO: Set login destination
+  loginDest _ = HomeR
   logoutDest _ = HomeR
   authenticate Creds {..} = case credsPlugin of
     "impersonation" -> byUser

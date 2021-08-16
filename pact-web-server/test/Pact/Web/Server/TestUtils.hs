@@ -177,7 +177,7 @@ submitExercise form file = do
   statusIs 303
   getLocation >>= \case
     Left err -> fail $ T.unpack err
-    Right HomeR -> do
+    Right (ExerciseR (ViewR _)) -> do
       _ <- followRedirect
       statusIs 200
     Right _ -> fail "Redirect after submitting an exercise ends up in the wrong location"

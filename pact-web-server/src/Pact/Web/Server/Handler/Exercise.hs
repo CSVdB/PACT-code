@@ -92,9 +92,7 @@ addExercise AddExerciseForm {..} fi = do
           imageTyp = fileContentType fi
         }
   addMessage "is-success" "Successfully submitted an exercise!"
-  -- TODO: Redirect to the newly created exercise instead
-  -- redirect $ ExerciseR uuid
-  redirect HomeR
+  redirect . ExerciseR $ ViewR exUuid
 
 getViewR :: ExerciseUUID -> Handler Html
 getViewR uuid = do
@@ -102,5 +100,5 @@ getViewR uuid = do
   case res of
     Nothing -> notFound
     Just (Entity _ Exercise {..}) -> defaultLayout $ do
-      setTitle "bla"
+      setTitleI exerciseName
       $(widgetFile "exercise/view")

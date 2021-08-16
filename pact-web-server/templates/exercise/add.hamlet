@@ -1,6 +1,7 @@
 <h1 .text-xs-center> Form to add exercises!
 <div .text-xs-center>
   <form
+    enctype="multipart/form-data"
     method="post"
     action=@{ExerciseR AddR}>
     <div>
@@ -15,10 +16,10 @@
       <fieldset .form-group>
         $forall diff <- difficulties
           <input
-            type="radio"
             name="difficulty"
             id="#{show diff}"
-            value="#{show diff}"> <label for="#{show diff}">#{show diff}</label>
+            value="#{show diff}"
+            type="radio"> <label for="#{show diff}">#{show diff}</label>
 
       <fieldset .form-group>
         <input .form-control .form-control-lg

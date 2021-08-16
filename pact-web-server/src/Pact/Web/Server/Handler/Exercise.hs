@@ -57,10 +57,15 @@ addExerciseForm =
 
 postAddR :: Handler Html
 postAddR = do
-  res <- runInputPostResult $ (,) <$> addExerciseForm <*> ireq fileField "image"
+  res <-
+    runInputPostResult $
+      (,,)
+        <$> addExerciseForm
+        <*> ireq fileField "image"
+        <*> ireq fileField "video"
   token <- genToken
   case res of
-    FormSuccess (form, fileInfo) -> addExercise form fileInfo
+    FormSuccess (form, imageInfo, videoInfo) -> addExercise form imageInfo videoInfo
     FormMissing -> do
       addMessage "is-danger" "No form was filled in"
       messages <- getMessages
@@ -70,16 +75,19 @@ postAddR = do
       messages <- getMessages
       defaultLayout $(widgetFile "exercise/add")
 
-addExercise :: AddExerciseForm -> FileInfo -> Handler Html
-addExercise AddExerciseForm {..} fi = do
+addExercise :: AddExerciseForm -> FileInfo -> FileInfo -> Handler Html
+addExercise AddExerciseForm {..} ii vi = do
   exUuid <- liftIO nextRandom
   imageUuid <- liftIO nextRandom
-  contents <- fileSourceByteString fi
+  videoUuid <- liftIO nextRandom
+  imageContents <- fileSourceByteString ii
+  videoContents <- fileSourceByteString vi
   runDB $ do
     insert_
       Exercise
         { exerciseUuid = exUuid,
           exerciseImage = imageUuid,
+          exerciseVideo = videoUuid,
           exerciseName = nameEF,
           exerciseDifficulty = difficultyEF,
           exerciseFormTips = unTextarea formTipsEF,
@@ -88,8 +96,14 @@ addExercise AddExerciseForm {..} fi = do
     insert_
       Image
         { imageUuid = imageUuid,
-          imageContents = contents,
-          imageTyp = fileContentType fi
+          imageContents = imageContents,
+          imageTyp = fileContentType ii
+        }
+    insert_
+      Video
+        { videoUuid = videoUuid,
+          videoContents = videoContents,
+          videoTyp = fileContentType vi
         }
   addMessage "is-success" "Successfully submitted an exercise!"
   redirect . ExerciseR $ ViewR exUuid

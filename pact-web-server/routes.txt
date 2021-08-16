@@ -9,3 +9,4 @@
   /view/#ExerciseUUID ViewR GET
 
 /image/#ImageUUID ImageR GET
+/video/#VideoUUID VideoR GET

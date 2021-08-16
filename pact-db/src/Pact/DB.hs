@@ -43,6 +43,7 @@ User
 Exercise
   uuid ExerciseUUID
   image ImageUUID
+  video VideoUUID
   name Text
   difficulty Difficulty
   formTips FormTips
@@ -55,11 +56,20 @@ Exercise
   deriving Show Eq Ord Generic
 
 Image
-  uuid ImageUUID -- Replace this by a key based on the hash of the contents and type
+  uuid ImageUUID -- TODO: Replace this by a key based on the hash of the contents and type
   contents ByteString
   typ Text -- Content type
 
   UniqueImageUUID uuid
+
+  deriving Show Eq Ord Generic
+
+Video
+  uuid VideoUUID -- TODO: Replace this by a key based on the hash of the contents and type
+  contents ByteString
+  typ Text -- Content type
+
+  UniqueVideoUUID uuid
 
   deriving Show Eq Ord Generic
 |]
@@ -78,3 +88,5 @@ toProfile User {..} = Profile {profileName = userName}
 instance Validity Exercise -- Any value with well-formed Texts and such, is valid
 
 instance Validity Image
+
+instance Validity Video

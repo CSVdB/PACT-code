@@ -30,14 +30,12 @@ spec = pactWebServerSpec . describe "Exercise" $ do
     it "can POST when logged in" $ \yc ->
       forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
         testRegisterUser testUser
-        testFile <- readTestFile "test-resources/exercise/image/pushup.jpg"
-        submitExercise form testFile
+        testSubmitExercise form
   describe "ViewR" $ do
     it "GETs 200 if logged in" $ \yc -> do
       forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
         testRegisterUser testUser
-        testFile <- readTestFile "test-resources/exercise/image/pushup.jpg"
-        submitExercise form testFile
+        testSubmitExercise form
         exercises <- testDB $ P.selectFirst [] []
         case exercises of
           Nothing -> fail "No exercise present in the dB after submitting one"

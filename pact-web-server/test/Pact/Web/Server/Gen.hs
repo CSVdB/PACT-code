@@ -65,3 +65,7 @@ instance GenValid AddExerciseForm where
 instance GenValid Image where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
+
+instance GenValid Video where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally

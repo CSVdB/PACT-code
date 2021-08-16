@@ -156,11 +156,16 @@ readTestFile testFilePath = do
         ".jpg" -> Just "image/jpeg"
         ".jpeg" -> Just "image/jpeg"
         ".png" -> Just "image/png"
+        ".mp4" -> Just "video/mp4"
         _ -> Nothing
   pure TestFile {..}
 
-addExerciseRequest :: AddExerciseForm -> TestFile -> YesodExample App ()
-addExerciseRequest AddExerciseForm {..} TestFile {..} = request $ do
+addTestFileWith :: Text -> TestFile -> RequestBuilder App ()
+addTestFileWith parameterName TestFile {..} =
+  addFileWith parameterName testFilePath testFileContents testFileType
+
+addExerciseRequest :: AddExerciseForm -> TestFile -> TestFile -> YesodExample App ()
+addExerciseRequest AddExerciseForm {..} imageFile videoFile = request $ do
   setMethod methodPost
   setUrl $ ExerciseR AddR
   addToken
@@ -168,12 +173,13 @@ addExerciseRequest AddExerciseForm {..} TestFile {..} = request $ do
   addPostParam "difficulty" . T.pack $ show difficultyEF
   addPostParam "formTips" $ unTextarea formTipsEF
   addPostParam "notes" $ maybe "" unTextarea notesEF
-  addFileWith "image" testFilePath testFileContents testFileType
+  addTestFileWith "image" imageFile
+  addTestFileWith "video" videoFile
 
-submitExercise :: AddExerciseForm -> TestFile -> YesodExample App ()
-submitExercise form file = do
+submitExercise :: AddExerciseForm -> TestFile -> TestFile -> YesodExample App ()
+submitExercise form imageFile videoFile = do
   testCanReach $ ExerciseR AddR
-  addExerciseRequest form file
+  addExerciseRequest form imageFile videoFile
   statusIs 303
   getLocation >>= \case
     Left err -> fail $ T.unpack err
@@ -181,6 +187,12 @@ submitExercise form file = do
       _ <- followRedirect
       statusIs 200
     Right _ -> fail "Redirect after submitting an exercise ends up in the wrong location"
+
+testSubmitExercise :: AddExerciseForm -> YesodExample App ()
+testSubmitExercise form = do
+  imageFile <- readTestFile "test-resources/exercise/image/pushup.jpg"
+  videoFile <- readTestFile "test-resources/exercise/video/explosive-pushup.mp4"
+  submitExercise form imageFile videoFile
 
 testDB :: DB.SqlPersistT IO a -> YesodClientM App a
 testDB func = do

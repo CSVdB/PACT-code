@@ -60,20 +60,24 @@ instance Yesod App where
 
   shouldLogIO app _ ll = pure $ ll >= appLogLevel app
 
-  maximumContentLengthIO _ _ = pure . Just $ 2 * 1024 * 1024 -- 2 megabytes
-  -- Remove any limit for routes which add images or videos.
+  maximumContentLength _ route = case route of
+    -- Remove any limit for routes which add images or videos.
+    Just (ExerciseR AddR) -> Just $ 20 * 1024 * 1024 -- 20MB
+    _ -> Just $ 2 * 1024 * 1024 -- 2MB
 
   authRoute _ = Just $ AuthR LoginR
 
   -- Split off AccountR, CoachR and AdminR.
   -- List each route explicitly to avoid mistakes.
   isAuthorized route _ = case route of
-    ExerciseR _ ->
-      -- Has to be logged in
-      maybeAuthId >>= \case
-        Nothing -> pure AuthenticationRequired
-        Just _ -> pure Authorized
+    ExerciseR _ -> requiresUser
     _ -> pure Authorized
+    where
+      requiresUser =
+        -- Must be logged in as some type of user
+        maybeAuthId >>= \case
+          Nothing -> pure AuthenticationRequired
+          Just _ -> pure Authorized
 
 instance RenderMessage App FormMessage where
   renderMessage _ _ = defaultFormMessage

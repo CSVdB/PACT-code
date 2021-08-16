@@ -15,6 +15,8 @@ type ExerciseUUID = UUID
 
 type ImageUUID = UUID
 
+type VideoUUID = UUID
+
 instance PersistField UUID where
   toPersistValue = toPersistValue . show
   fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v

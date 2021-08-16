@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 90b937028cca33dfff39b3992da9f2308b06e37ef55a372f7fb4b33ddb6285f8
+-- hash: b506d098e0bd990b991273883283e0e21cfe0f2dd872f8dd35602474a03a82f8
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -31,6 +31,7 @@ library
       Pact.Web.Server.Handler.Home
       Pact.Web.Server.Handler.Image
       Pact.Web.Server.Handler.Import
+      Pact.Web.Server.Handler.Video
       Pact.Web.Server.OptParse
       Pact.Web.Server.Static
       Pact.Web.Server.Static.TH
@@ -93,6 +94,7 @@ test-suite pact-web-server-test
       Pact.Web.Server.Handler.HomeSpec
       Pact.Web.Server.Handler.ImageSpec
       Pact.Web.Server.Handler.TestImport
+      Pact.Web.Server.Handler.VideoSpec
       Pact.Web.Server.TestUtils
       Paths_pact_web_server
   hs-source-dirs:

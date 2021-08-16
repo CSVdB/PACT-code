@@ -1,4 +1,4 @@
-<h1 .text-xs-center> Form to add exercises!
+<h1 .text-xs-center> Submit new exercise
 <div .text-xs-center>
   <form
     enctype="multipart/form-data"
@@ -36,9 +36,17 @@
           type="textarea">
 
       <fieldset .form-group>
+        <label> Image (max 20MB in total)
         <input .form-control .form-control-lg
           name="image"
-          placeholder="Image"
+          required
+          type="file">
+          <i .fas .fa-upload>
+
+      <fieldset .form-group>
+        <label> Video (max 20MB in total)
+        <input .form-control .form-control-lg
+          name="video"
           required
           type="file">
 

@@ -9,6 +9,7 @@ module Pact.Web.Server.Handler.Exercise where
 import qualified Data.Text as T
 import Data.UUID.V4 (nextRandom)
 import Data.Validity
+import Database.Persist.Types
 import Pact.Web.Server.Handler.Import
 import Text.Read
 
@@ -94,3 +95,12 @@ addExercise AddExerciseForm {..} fi = do
   -- TODO: Redirect to the newly created exercise instead
   -- redirect $ ExerciseR uuid
   redirect HomeR
+
+getViewR :: ExerciseUUID -> Handler Html
+getViewR uuid = do
+  res <- runDB $ getBy $ UniqueExerciseUUID uuid
+  case res of
+    Nothing -> notFound
+    Just (Entity _ Exercise {..}) -> defaultLayout $ do
+      setTitle "bla"
+      $(widgetFile "exercise/view")

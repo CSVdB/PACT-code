@@ -1,5 +1,6 @@
 module Pact.Web.Server.Handler.TestImport (module X) where
 
+import Pact.DB as X
 import Pact.Web.Server.Foundation as X
 import Pact.Web.Server.Gen as X
 import Pact.Web.Server.TestUtils as X

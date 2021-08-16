@@ -27,10 +27,5 @@ spec = pactWebServerSpec . describe "Exercise" $ do
     it "can POST when logged in" $ \yc ->
       forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
         testRegisterUser testUser
-        testCanReach $ ExerciseR AddR
         testFile <- readTestFile "test-resources/exercise/image/pushup.jpg"
-        addExerciseRequest form testFile
-        statusIs 303
-        locationShouldBe HomeR -- TODO: Fix this once individual exercises can be visualized
-        _ <- followRedirect
-        statusIs 200
+        submitExercise form testFile

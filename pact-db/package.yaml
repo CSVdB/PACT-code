@@ -28,7 +28,9 @@ library:
     - text
     - uuid
     - validity
+    - validity-bytestring
     - validity-persistent
     - validity-text
     - validity-uuid
     - yamlparse-applicative
+    - yesod

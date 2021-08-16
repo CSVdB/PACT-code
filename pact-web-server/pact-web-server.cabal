@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 80518433bb1ca30ce6b4f5988f7b122f0447fb6329317379a445c236c9246579
+-- hash: 90b937028cca33dfff39b3992da9f2308b06e37ef55a372f7fb4b33ddb6285f8
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -29,6 +29,7 @@ library
       Pact.Web.Server.Handler
       Pact.Web.Server.Handler.Exercise
       Pact.Web.Server.Handler.Home
+      Pact.Web.Server.Handler.Image
       Pact.Web.Server.Handler.Import
       Pact.Web.Server.OptParse
       Pact.Web.Server.Static
@@ -90,6 +91,7 @@ test-suite pact-web-server-test
       Pact.Web.Server.Handler.AuthSpec
       Pact.Web.Server.Handler.ExerciseSpec
       Pact.Web.Server.Handler.HomeSpec
+      Pact.Web.Server.Handler.ImageSpec
       Pact.Web.Server.Handler.TestImport
       Pact.Web.Server.TestUtils
       Paths_pact_web_server
@@ -104,12 +106,15 @@ test-suite pact-web-server-test
     , bytestring
     , filepath
     , genvalidity
+    , genvalidity-bytestring
     , genvalidity-hspec
     , genvalidity-text
+    , genvalidity-uuid
     , hspec
     , http-client
     , lens
     , monad-logger
+    , mtl
     , pact-db
     , pact-web-server
     , password
@@ -120,6 +125,7 @@ test-suite pact-web-server-test
     , sydtest-wai
     , sydtest-yesod
     , text
+    , uuid
     , yesod
     , yesod-auth
   default-language: Haskell2010

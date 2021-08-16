@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -6,6 +7,7 @@ module Pact.Web.Server.TestUtils where
 
 import Control.Lens ((&), (.~))
 import Control.Monad.Logger
+import Control.Monad.Reader
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
 import qualified Data.Text as T
@@ -167,3 +169,20 @@ addExerciseRequest AddExerciseForm {..} TestFile {..} = request $ do
   addPostParam "formTips" $ unTextarea formTipsEF
   addPostParam "notes" $ maybe "" unTextarea notesEF
   addFileWith "image" testFilePath testFileContents testFileType
+
+submitExercise :: AddExerciseForm -> TestFile -> YesodExample App ()
+submitExercise form file = do
+  testCanReach $ ExerciseR AddR
+  addExerciseRequest form file
+  statusIs 303
+  getLocation >>= \case
+    Left err -> fail $ T.unpack err
+    Right HomeR -> do
+      _ <- followRedirect
+      statusIs 200
+    Right _ -> fail "Redirect after submitting an exercise ends up in the wrong location"
+
+testDB :: DB.SqlPersistT IO a -> YesodClientM App a
+testDB func = do
+  pool <- asks $ appConnectionPool . yesodClientSite
+  liftIO $ runSqlPool func pool

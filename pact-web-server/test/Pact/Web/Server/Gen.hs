@@ -5,7 +5,9 @@
 module Pact.Web.Server.Gen where
 
 import Data.GenValidity
+import Data.GenValidity.ByteString ()
 import Data.GenValidity.Text ()
+import Data.GenValidity.UUID ()
 import qualified Data.Text as T
 import Pact.DB
 import Pact.Data
@@ -59,3 +61,7 @@ instance GenValid Textarea where
 instance GenValid AddExerciseForm where
   genValid = genValidStructurally `suchThat` isValid
   shrinkValid = filter isValid . shrinkValidStructurally
+
+instance GenValid Image where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally

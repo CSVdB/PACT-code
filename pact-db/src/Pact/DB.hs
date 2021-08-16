@@ -20,17 +20,13 @@ import Data.ByteString (ByteString)
 import Data.Password.Bcrypt
 import Data.Password.Instances ()
 import Data.Text (Text)
-import Data.UUID
 import Data.Validity
+import Data.Validity.ByteString ()
 import Data.Validity.Persist ()
 import Database.Persist.Sqlite
 import Database.Persist.TH
 import GHC.Generics (Generic)
 import Pact.Data
-
-type ExerciseUUID = UUID
-
-type ImageUUID = UUID
 
 share
   [mkPersist sqlSettings, mkMigrate "serverMigration"]
@@ -80,3 +76,5 @@ toProfile :: User -> Profile
 toProfile User {..} = Profile {profileName = userName}
 
 instance Validity Exercise -- Any value with well-formed Texts and such, is valid
+
+instance Validity Image

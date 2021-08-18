@@ -1,17 +1,23 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Pact.Web.Server.Handler.Exercise where
+module Pact.Web.Server.Handler.Exercise
+  ( getAddR,
+    postAddR,
+    getViewR,
+    AddExerciseForm (..),
+  )
+where
 
 import qualified Data.Text as T
 import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity
 import Database.Persist.Types
 import Pact.Web.Server.Handler.Import
-import Text.Read
 
 difficulties :: [Difficulty]
 difficulties = [minBound .. maxBound]
@@ -50,10 +56,7 @@ addExerciseForm =
     <*> ireq textareaField "formTips"
     <*> iopt textareaField "notes"
   where
-    parseDifficulty = mapLeft T.pack . readEither
-    toDifficulty :: Text -> Handler (Either FormMessage Difficulty)
-    toDifficulty = pure . mapLeft MsgInvalidEntry . parseDifficulty . T.unpack
-    difficultyField = checkMMap toDifficulty (T.pack . show) textField
+    difficultyField = radioField optionsEnumShow
 
 postAddR :: Handler Html
 postAddR = do

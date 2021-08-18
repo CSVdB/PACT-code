@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c9425448259156a00e3e30ed35057ee05584ad3df7f591c2439e0a2d1498c683
+-- hash: 787a6e5734a7b9d237bfcca61b8570a321085ecdaaeaea1b76219f3511c04868
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -36,6 +36,7 @@ library
       Pact.Web.Server.Static
       Pact.Web.Server.Static.TH
       Pact.Web.Server.Widget
+      Pact.Web.Server.Yesod
   other-modules:
       Paths_pact_web_server
   hs-source-dirs:

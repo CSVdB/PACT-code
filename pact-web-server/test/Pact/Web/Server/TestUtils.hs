@@ -173,6 +173,7 @@ addExerciseRequest AddExerciseForm {..} imageFile videoFile = request $ do
   addPostParam "difficulty" . T.pack $ show difficultyEF
   addPostParam "formTips" $ unTextarea formTipsEF
   addPostParam "notes" $ maybe "" unTextarea notesEF
+  forM_ musclesEF $ \muscle -> addPostParam "muscles" $ T.pack $ show muscle
   addTestFileWith "image" imageFile
   addTestFileWith "video" videoFile
 

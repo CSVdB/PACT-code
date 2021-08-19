@@ -12,10 +12,16 @@
     <source src=@{VideoR exerciseVideo} type="video/mp4">
 
   <p>
+    Muscles:
+    $forall muscle <- muscles
+      <button type="button"> #{show muscle} </button>
+
+  <p>
     Difficulty: <button type="button"> #{show exerciseDifficulty} </button>
 
-  <p> FormTips: <br>
+  <p> FormTips:
     #{Textarea exerciseFormTips}
 
-  <p> Notes: <br>
-    #{exerciseNotes}
+  $if not $ T.null exerciseNotes
+    <p> Notes:
+      #{exerciseNotes}

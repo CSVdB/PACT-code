@@ -33,3 +33,29 @@ instance PersistFieldSql Difficulty where
   sqlType _ = SqlString
 
 type FormTips = Text
+
+data Muscle
+  = Shoulders
+  | Abs
+  | Biceps
+  | Triceps
+  | Forearms
+  | Quads
+  | Calves
+  | Hamstrings
+  | UpperChest
+  | LowerChest
+  | UpperBack
+  | LowerBack
+  | HIIT
+  | Lungs -- "Muscle group" for cardio workouts
+  deriving (Show, Eq, Ord, Generic, Read, Enum, Bounded)
+
+instance Validity Muscle -- Any value is valid
+
+instance PersistField Muscle where
+  toPersistValue = toPersistValue . show
+  fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v
+
+instance PersistFieldSql Muscle where
+  sqlType _ = SqlString

@@ -16,11 +16,13 @@ where
 import qualified Data.Text as T
 import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity
-import Database.Persist.Types
 import Pact.Web.Server.Handler.Import
 
-difficulties :: [Difficulty]
-difficulties = [minBound .. maxBound]
+allDifficulties :: [Difficulty]
+allDifficulties = [minBound .. maxBound]
+
+allMuscles :: [Muscle]
+allMuscles = [minBound .. maxBound]
 
 getAddR :: Handler Html
 getAddR = defaultLayout $ do
@@ -33,7 +35,8 @@ data AddExerciseForm = AddExerciseForm
   { nameEF :: Text,
     difficultyEF :: Difficulty,
     formTipsEF :: Textarea,
-    notesEF :: Maybe Textarea
+    notesEF :: Maybe Textarea,
+    musclesEF :: [Muscle]
   }
   deriving (Show, Eq, Ord, Generic)
 
@@ -52,11 +55,10 @@ addExerciseForm :: FormInput Handler AddExerciseForm
 addExerciseForm =
   AddExerciseForm
     <$> ireq textField "exerciseName"
-    <*> ireq difficultyField "difficulty"
+    <*> ireq (radioField optionsEnumShow) "difficulty"
     <*> ireq textareaField "formTips"
     <*> iopt textareaField "notes"
-  where
-    difficultyField = radioField optionsEnumShow
+    <*> ireq (checkboxesField optionsEnumShow) "muscles"
 
 postAddR :: Handler Html
 postAddR = do
@@ -83,7 +85,7 @@ addExercise AddExerciseForm {..} ii vi = do
   exUuid <- liftIO nextRandomUUID
   imageUuid <- liftIO nextRandomUUID
   videoUuid <- liftIO nextRandomUUID
-  imageContents <- fileSourceByteString ii
+  imageContents <- fileSourceByteString ii -- Don't do this within runDB, throwing exceptions could cause serious problems
   videoContents <- fileSourceByteString vi
   runDB $ do
     insert_
@@ -108,14 +110,20 @@ addExercise AddExerciseForm {..} ii vi = do
           videoContents = videoContents,
           videoTyp = fileContentType vi
         }
+    forM_ musclesEF $ \muscle ->
+      insert_
+        MuscleFilter
+          { muscleFilterExerciseUuid = exUuid,
+            muscleFilterMuscle = muscle
+          }
   addMessage "is-success" "Successfully submitted an exercise!"
   redirect . ExerciseR $ ViewR exUuid
 
 getViewR :: ExerciseUUID -> Handler Html
 getViewR uuid = do
-  res <- runDB $ getBy $ UniqueExerciseUUID uuid
+  res <- runDB $ collectExercise uuid
   case res of
     Nothing -> notFound
-    Just (Entity _ Exercise {..}) -> defaultLayout $ do
+    Just (Exercise {..}, muscles) -> defaultLayout $ do
       setTitleI exerciseName
       $(widgetFile "exercise/view")

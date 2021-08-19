@@ -14,12 +14,20 @@
           type="text">
 
       <fieldset .form-group>
-        $forall diff <- difficulties
+        $forall diff <- allDifficulties
           <input
             name="difficulty"
             id="#{show diff}"
             value="#{show diff}"
             type="radio"> <label for="#{show diff}">#{show diff}</label>
+
+      <fieldset .form-group>
+        <select name="muscles" multiple>
+          $forall muscle <- allMuscles
+            <option
+              type="checkbox"
+              value="#{show muscle}"> #{show muscle}
+      Hold down ctrl to add multiple muscles.
 
       <fieldset .form-group>
         <input .form-control .form-control-lg

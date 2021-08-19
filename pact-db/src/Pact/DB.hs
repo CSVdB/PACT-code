@@ -27,6 +27,7 @@ import Database.Persist.Sqlite
 import Database.Persist.TH
 import GHC.Generics (Generic)
 import Pact.Data
+import Yesod
 
 share
   [mkPersist sqlSettings, mkMigrate "serverMigration"]
@@ -72,6 +73,12 @@ Video
   UniqueVideoUUID uuid
 
   deriving Show Eq Ord Generic
+
+MuscleFilter
+  exerciseUuid ExerciseUUID
+  muscle Muscle
+
+  deriving Show Eq Ord Generic
 |]
 
 instance Validity (Salt a) where
@@ -90,3 +97,13 @@ instance Validity Exercise -- Any value with well-formed Texts and such, is vali
 instance Validity Image
 
 instance Validity Video
+
+collectExercise :: MonadIO m => ExerciseUUID -> SqlPersistT m (Maybe (Exercise, [Muscle]))
+collectExercise uuid = do
+  res <- getBy $ UniqueExerciseUUID uuid
+  case res of
+    Nothing -> pure Nothing
+    Just (Entity _ ex@Exercise {..}) -> do
+      filters <- selectList [MuscleFilterExerciseUuid ==. exerciseUuid] []
+      let muscles = muscleFilterMuscle . entityVal <$> filters
+      pure $ Just (ex, muscles)

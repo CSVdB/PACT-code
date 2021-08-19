@@ -54,6 +54,10 @@ instance GenValid Difficulty where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
 
+instance GenValid Muscle where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
+
 instance GenValid Textarea where
   genValid = Textarea <$> genValid
   shrinkValid (Textarea t) = Textarea <$> shrinkValid t

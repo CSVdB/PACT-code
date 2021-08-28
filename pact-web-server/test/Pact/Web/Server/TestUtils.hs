@@ -195,9 +195,6 @@ testSubmitExercise :: AddExerciseForm -> YesodExample App ()
 testSubmitExercise form = do
   imageFile <- readTestFile "test-resources/exercise/image/pushup.jpg"
   videoFile <- readTestFile "test-resources/exercise/video/explosive-pushup.mp4"
-  -- testDB $
-  --   forM_ (materialsEF form) $ \material ->
-  --     DB.insert_ material
   submitExercise form imageFile videoFile
 
 testDB :: DB.SqlPersistT IO a -> YesodClientM App a

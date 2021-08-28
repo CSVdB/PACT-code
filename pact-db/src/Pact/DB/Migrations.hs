@@ -5,6 +5,7 @@ module Pact.DB.Migrations where
 import Control.Monad
 import Control.Monad.IO.Class
 import Control.Monad.Logger
+import Data.List ((\\))
 import Data.Text (Text)
 import Data.UUID.Typed (nextRandomUUID)
 import Database.Persist.Sql
@@ -35,7 +36,9 @@ exerciseMaterialNames =
 setInitialExerciseMaterials :: (MonadLogger m, MonadIO m) => SqlPersistT m ()
 setInitialExerciseMaterials = do
   logInfoN "Setting up initial exercise materials"
-  forM_ exerciseMaterialNames $ \name -> do
+  existingMaterialNames <- fmap exerciseMaterialName <$> collectAllMaterials
+  let newNames = exerciseMaterialNames \\ existingMaterialNames
+  forM_ newNames $ \name -> do
     uuid <- liftIO nextRandomUUID
     insert_
       ExerciseMaterial

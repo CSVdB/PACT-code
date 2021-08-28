@@ -26,11 +26,12 @@ allMuscles :: [Muscle]
 allMuscles = [minBound .. maxBound]
 
 getAddR :: Handler Html
-getAddR = defaultLayout $ do
-  messages <- getMessages
-  token <- genToken
-  setTitle "Add exercise"
-  $(widgetFile "exercise/add")
+getAddR =
+  runDB collectAllMaterials >>= \materials -> defaultLayout $ do
+    messages <- getMessages
+    token <- genToken
+    setTitle "Add exercise"
+    $(widgetFile "exercise/add")
 
 data AddExerciseForm = AddExerciseForm
   { nameEF :: Text,
@@ -83,17 +84,14 @@ postAddR = do
         <$> addExerciseForm allMaterials
         <*> ireq fileField "image"
         <*> ireq fileField "video"
-  token <- genToken
   case res of
     FormSuccess (form, imageInfo, videoInfo) -> addExercise form imageInfo videoInfo
     FormMissing -> do
       addMessage "is-danger" "No form was filled in"
-      messages <- getMessages
-      defaultLayout $(widgetFile "exercise/add")
+      getAddR
     FormFailure errors -> do
       forM_ errors $ addMessage "is-danger" . toHtml
-      messages <- getMessages
-      defaultLayout $(widgetFile "exercise/add")
+      getAddR
 
 addExercise :: AddExerciseForm -> FileInfo -> FileInfo -> Handler Html
 addExercise AddExerciseForm {..} ii vi = do
@@ -145,6 +143,7 @@ getViewR uuid = do
   res <- runDB $ collectExercise uuid
   case res of
     Nothing -> notFound
-    Just (Exercise {..}, muscles, _) -> defaultLayout $ do
+    Just (Exercise {..}, muscles, materials) -> defaultLayout $ do
       setTitleI exerciseName
+      let materialNames = exerciseMaterialName <$> materials
       $(widgetFile "exercise/view")

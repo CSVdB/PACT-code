@@ -8,7 +8,9 @@
   <video
     width="500"
     name="media"
-    controls autoplay>
+    controls
+    autoplay
+    loop>
     <source src=@{VideoR exerciseVideo} type="video/mp4">
 
   <p>
@@ -21,6 +23,12 @@
 
   <p> FormTips:
     #{Textarea exerciseFormTips}
+
+  $if not $ null materialNames
+    <p>
+      ExerciseMaterials:
+      $forall name <- materialNames
+        <button type="button"> #{name} </button>
 
   $if not $ T.null exerciseNotes
     <p> Notes:

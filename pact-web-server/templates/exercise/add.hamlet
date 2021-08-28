@@ -30,6 +30,14 @@
       Hold down ctrl to add multiple muscles.
 
       <fieldset .form-group>
+        <select name="materials" multiple>
+          $forall name <- exerciseMaterialName <$> materials
+            <option
+              type="checkbox"
+              value="#{name}"> #{name}
+      Hold down ctrl to add multiple exercise materials.
+
+      <fieldset .form-group>
         <input .form-control .form-control-lg
           name="formTips"
           placeholder="Form tips"

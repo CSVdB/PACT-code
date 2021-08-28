@@ -10,7 +10,8 @@
     name="media"
     controls
     autoplay
-    loop>
+    loop
+    muted>
     <source src=@{VideoR exerciseVideo} type="video/mp4">
 
   <p>

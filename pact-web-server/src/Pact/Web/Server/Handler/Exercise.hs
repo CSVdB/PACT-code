@@ -39,7 +39,8 @@ data AddExerciseForm = AddExerciseForm
     formTipsEF :: Textarea,
     notesEF :: Maybe Textarea,
     musclesEF :: [Muscle],
-    materialsEF :: [ExerciseMaterial]
+    materialsEF :: [ExerciseMaterial],
+    altNamesEF :: [AlternativeName]
   }
   deriving (Show, Eq, Ord, Generic)
 
@@ -63,6 +64,7 @@ addExerciseForm allMaterials =
     <*> iopt textareaField "notes"
     <*> ireq (checkboxesField optionsEnumShow) "muscles"
     <*> materialsInput
+    <*> altNamesInput
   where
     materialsInput = fromMaybe [] <$> iopt materialsField "materials"
     matToOption mat@ExerciseMaterial {..} =
@@ -74,6 +76,7 @@ addExerciseForm allMaterials =
     materialsField =
       checkboxesField . pure $
         mkOptionList $ matToOption <$> allMaterials
+    altNamesInput = altNames . fromMaybe "" <$> iopt textField "alternativeNames"
 
 postAddR :: Handler Html
 postAddR = do
@@ -135,6 +138,12 @@ addExercise AddExerciseForm {..} ii vi = do
           { materialFilterExercise = exUuid,
             materialFilterMaterial = exerciseMaterialUuid
           }
+    forM_ altNamesEF $ \name ->
+      insert_
+        ExerciseAlternativeName
+          { exerciseAlternativeNameUuid = exUuid,
+            exerciseAlternativeNameName = unAlternative name
+          }
   addMessage "is-success" "Successfully submitted an exercise!"
   redirect . ExerciseR $ ViewR exUuid
 
@@ -143,7 +152,7 @@ getViewR uuid = do
   res <- runDB $ collectExercise uuid
   case res of
     Nothing -> notFound
-    Just (Exercise {..}, muscles, materials) -> defaultLayout $ do
+    Just CompleteExercise {..} -> defaultLayout $ do
+      let Exercise {..} = exerciseCE
       setTitleI exerciseName
-      let materialNames = exerciseMaterialName <$> materials
       $(widgetFile "exercise/view")

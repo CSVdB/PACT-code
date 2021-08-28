@@ -10,6 +10,7 @@ import Control.Monad.Logger
 import Control.Monad.Reader
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
+import Data.List (sort)
 import qualified Data.Text as T
 import qualified Database.Persist.Sql as DB
 import Database.Persist.Sqlite (fkEnabled, mkSqliteConnectionInfo, runSqlPool, walEnabled, withSqlitePoolInfo)
@@ -174,10 +175,12 @@ addExerciseRequest AddExerciseForm {..} imageFile videoFile = request $ do
   addPostParam "formTips" $ unTextarea formTipsEF
   addPostParam "notes" $ maybe "" unTextarea notesEF
   forM_ musclesEF $ \muscle -> addPostParam "muscles" $ T.pack $ show muscle
-  -- forM_ materialsEF $ \material -> addPostParam "materials" $ T.pack $ show material
   addTestFileWith "image" imageFile
   addTestFileWith "video" videoFile
   forM_ materialsEF $ addPostParam "materials" . exerciseMaterialName
+  case alternativeNamesText altNamesEF of
+    "" -> pure ()
+    txt -> addPostParam "alternativeNames" txt
 
 submitExercise :: AddExerciseForm -> TestFile -> TestFile -> YesodExample App ()
 submitExercise form imageFile videoFile = do
@@ -201,3 +204,6 @@ testDB :: DB.SqlPersistT IO a -> YesodClientM App a
 testDB func = do
   pool <- asks $ appConnectionPool . yesodClientSite
   liftIO $ runSqlPool func pool
+
+shouldBeSort :: (Ord a, Show a) => [a] -> [a] -> IO ()
+xs `shouldBeSort` ys = sort xs `shouldBe` sort ys

@@ -51,6 +51,14 @@
           optional
           type="textarea">
 
+      List alternative names, separated by ", "
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="alternativeNames"
+          placeholder="Alternative names"
+          optional
+          type="text">
+
       <fieldset .form-group>
         <label> Image (max 20MB in total)
         <input .form-control .form-control-lg

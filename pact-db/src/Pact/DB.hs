@@ -97,6 +97,12 @@ MaterialFilter
   material ExerciseMaterialUUID
 
   deriving Show Eq Ord Generic
+
+ExerciseAlternativeName
+  uuid ExerciseUUID
+  name Text
+
+  deriving Show Eq Ord Generic
 |]
 
 instance Validity (Salt a) where
@@ -127,7 +133,38 @@ instance Validity ExerciseMaterial where
 
 instance Validity MaterialFilter
 
-collectExercise :: MonadIO m => ExerciseUUID -> SqlPersistT m (Maybe (Exercise, [Muscle], [ExerciseMaterial]))
+instance Validity ExerciseAlternativeName where
+  validate name@ExerciseAlternativeName {..} =
+    mconcat
+      [ genericValidate name,
+        declare "Name is not empty" $ not $ T.null exerciseAlternativeNameName
+      ]
+
+newtype Material = Material {unMaterial :: Text}
+  deriving (Show, Eq, Ord, Generic)
+
+newtype AlternativeName = AlternativeName {unAlternative :: Text}
+  deriving (Show, Eq, Ord, Generic)
+
+instance Validity AlternativeName where
+  validate name =
+    mconcat
+      [ genericValidate name,
+        declare "Name is not empty" . not . T.null $ unAlternative name
+      ]
+
+data CompleteExercise = CompleteExercise
+  { exerciseCE :: Exercise,
+    musclesCE :: [Muscle],
+    materialsCE :: [Material],
+    altNamesCE :: [AlternativeName]
+  }
+  deriving (Show, Eq, Ord, Generic)
+
+collectExercise ::
+  MonadIO m =>
+  ExerciseUUID ->
+  SqlPersistT m (Maybe CompleteExercise)
 collectExercise uuid = do
   res <- getBy $ UniqueExerciseUUID uuid
   case res of
@@ -136,9 +173,16 @@ collectExercise uuid = do
       muscleFilters <- selectList [MuscleFilterExercise ==. exerciseUuid] []
       let muscles = muscleFilterMuscle . entityVal <$> muscleFilters
       materials <- collectMaterials uuid
-      pure $ Just (ex, muscles, materials)
+      names <- collectAltNames uuid
+      pure . Just $
+        CompleteExercise
+          { exerciseCE = ex,
+            musclesCE = muscles,
+            materialsCE = materials,
+            altNamesCE = names
+          }
 
-collectMaterials :: MonadIO m => ExerciseUUID -> SqlPersistT m [ExerciseMaterial]
+collectMaterials :: MonadIO m => ExerciseUUID -> SqlPersistT m [Material]
 collectMaterials uuid = do
   materialFilters <- selectList [MaterialFilterExercise ==. uuid] []
   let materialUuids = materialFilterMaterial . entityVal <$> materialFilters
@@ -147,7 +191,19 @@ collectMaterials uuid = do
     pure $ case res of
       Nothing -> Nothing
       Just (Entity _ material) -> Just material
-  pure $ catMaybes materials
+  pure $ Material . exerciseMaterialName <$> catMaybes materials
+
+collectAltNames :: MonadIO m => ExerciseUUID -> SqlPersistT m [AlternativeName]
+collectAltNames uuid =
+  fmap toAltName <$> selectList [ExerciseAlternativeNameUuid ==. uuid] []
+  where
+    toAltName = AlternativeName . exerciseAlternativeNameName . entityVal
 
 collectAllMaterials :: MonadIO m => SqlPersistT m [ExerciseMaterial]
 collectAllMaterials = fmap entityVal <$> selectList [] []
+
+alternativeNamesText :: [AlternativeName] -> Text
+alternativeNamesText = T.intercalate ", " . fmap unAlternative
+
+altNames :: Text -> [AlternativeName]
+altNames t = AlternativeName <$> T.splitOn ", " t

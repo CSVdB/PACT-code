@@ -68,6 +68,10 @@ instance GenValid Textarea where
   genValid = Textarea <$> genValid
   shrinkValid (Textarea t) = Textarea <$> shrinkValid t
 
+instance GenValid AlternativeName where
+  genValid = genValidStructurally `suchThat` isValid
+  shrinkValid = filter isValid . shrinkValidStructurally
+
 instance GenValid AddExerciseForm where
   genValid = genValidStructurally `suchThat` isValid
   shrinkValid = filter isValid . shrinkValidStructurally

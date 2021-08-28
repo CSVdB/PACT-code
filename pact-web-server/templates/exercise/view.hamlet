@@ -15,7 +15,7 @@
 
   <p>
     Muscles:
-    $forall muscle <- muscles
+    $forall muscle <- musclesCE
       <button type="button"> #{show muscle} </button>
 
   <p>
@@ -24,11 +24,11 @@
   <p> FormTips:
     #{Textarea exerciseFormTips}
 
-  $if not $ null materialNames
+  $if not $ null materialsCE
     <p>
       ExerciseMaterials:
-      $forall name <- materialNames
-        <button type="button"> #{name} </button>
+      $forall name <- materialsCE
+        <button type="button"> #{show name} </button>
 
   $if not $ T.null exerciseNotes
     <p> Notes:

@@ -16,6 +16,7 @@ library:
     - bytestring
     - either
     - jose
+    - monad-logger
     - password
     - password-instances
     - persistent

@@ -11,7 +11,7 @@ import Database.Persist.Sqlite
 import Network.HTTP.Client.TLS as HTTP
 import qualified Network.Wai.Handler.Warp as Warp
 import Network.Wai.Middleware.RequestLogger
-import Pact.DB
+import Pact.DB.Migrations
 import Pact.Web.Server.Application ()
 import Pact.Web.Server.Constants
 import Pact.Web.Server.Foundation
@@ -32,9 +32,7 @@ runPactWebServer :: Settings -> IO ()
 runPactWebServer Settings {..} = runStderrLoggingT $
   filterLogger (\_ ll -> ll >= settingLogLevel) $
     withSqlitePoolInfo info 1 $ \pool -> do
-      -- TODO: Auto-run all necessary dB migrations
-      -- runSqlPool (completeServerMigration False) pool
-      runSqlPool (runMigration serverMigration) pool
+      runSqlPool allServerMigrations pool
       sessionKeyFile <- resolveFile' "client_session_key.aes"
       man <- HTTP.newTlsManager
       let app =

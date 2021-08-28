@@ -10,6 +10,7 @@ import Data.GenValidity.Text ()
 import Data.GenValidity.UUID.Typed ()
 import qualified Data.Text as T
 import Pact.DB
+import Pact.DB.Migrations (exerciseMaterialNames)
 import Pact.Data
 import Pact.Web.Server.Handler
 import Test.QuickCheck
@@ -57,6 +58,11 @@ instance GenValid Difficulty where
 instance GenValid Muscle where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
+
+instance GenValid ExerciseMaterial where
+  -- ExerciseMaterials are only valid once they're inserted into the dB
+  genValid = ExerciseMaterial <$> genValid <*> elements exerciseMaterialNames
+  shrinkValid = const []
 
 instance GenValid Textarea where
   genValid = Textarea <$> genValid

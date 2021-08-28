@@ -12,10 +12,10 @@ import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
 import qualified Data.Text as T
 import qualified Database.Persist.Sql as DB
-import Database.Persist.Sqlite (fkEnabled, mkSqliteConnectionInfo, runMigration, runSqlPool, walEnabled, withSqlitePoolInfo)
+import Database.Persist.Sqlite (fkEnabled, mkSqliteConnectionInfo, runSqlPool, walEnabled, withSqlitePoolInfo)
 import GHC.Generics
 import Network.HTTP.Client as HTTP
-import Pact.DB
+import Pact.DB.Migrations (allServerMigrations)
 import Pact.Data
 import Pact.Web.Server.Application ()
 import Pact.Web.Server.Foundation
@@ -52,7 +52,7 @@ serverSetup man = do
 pactConnectionPoolSetupFunc :: SetupFunc DB.ConnectionPool
 pactConnectionPoolSetupFunc = SetupFunc $ \func ->
   runNoLoggingT . withSqlitePoolInfo info 1 $ \pool -> do
-    runSqlPool (runMigration serverMigration) pool
+    runSqlPool allServerMigrations pool
     liftIO $ func pool
   where
     info = mkSqliteConnectionInfo ":memory:" & walEnabled .~ False & fkEnabled .~ False
@@ -174,8 +174,10 @@ addExerciseRequest AddExerciseForm {..} imageFile videoFile = request $ do
   addPostParam "formTips" $ unTextarea formTipsEF
   addPostParam "notes" $ maybe "" unTextarea notesEF
   forM_ musclesEF $ \muscle -> addPostParam "muscles" $ T.pack $ show muscle
+  -- forM_ materialsEF $ \material -> addPostParam "materials" $ T.pack $ show material
   addTestFileWith "image" imageFile
   addTestFileWith "video" videoFile
+  forM_ materialsEF $ addPostParam "materials" . exerciseMaterialName
 
 submitExercise :: AddExerciseForm -> TestFile -> TestFile -> YesodExample App ()
 submitExercise form imageFile videoFile = do
@@ -193,6 +195,9 @@ testSubmitExercise :: AddExerciseForm -> YesodExample App ()
 testSubmitExercise form = do
   imageFile <- readTestFile "test-resources/exercise/image/pushup.jpg"
   videoFile <- readTestFile "test-resources/exercise/video/explosive-pushup.mp4"
+  -- testDB $
+  --   forM_ (materialsEF form) $ \material ->
+  --     DB.insert_ material
   submitExercise form imageFile videoFile
 
 testDB :: DB.SqlPersistT IO a -> YesodClientM App a

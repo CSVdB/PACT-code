@@ -13,6 +13,7 @@ module Pact.Web.Server.Handler.Exercise
   )
 where
 
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity
@@ -36,7 +37,8 @@ data AddExerciseForm = AddExerciseForm
     difficultyEF :: Difficulty,
     formTipsEF :: Textarea,
     notesEF :: Maybe Textarea,
-    musclesEF :: [Muscle]
+    musclesEF :: [Muscle],
+    materialsEF :: [ExerciseMaterial]
   }
   deriving (Show, Eq, Ord, Generic)
 
@@ -51,21 +53,34 @@ instance Validity AddExerciseForm where
         declare "formTipsEF isn't empty" . not . T.null $ unTextarea formTipsEF
       ]
 
-addExerciseForm :: FormInput Handler AddExerciseForm
-addExerciseForm =
+addExerciseForm :: [ExerciseMaterial] -> FormInput Handler AddExerciseForm
+addExerciseForm allMaterials =
   AddExerciseForm
     <$> ireq textField "exerciseName"
     <*> ireq (radioField optionsEnumShow) "difficulty"
     <*> ireq textareaField "formTips"
     <*> iopt textareaField "notes"
     <*> ireq (checkboxesField optionsEnumShow) "muscles"
+    <*> materialsInput
+  where
+    materialsInput = fromMaybe [] <$> iopt materialsField "materials"
+    matToOption mat@ExerciseMaterial {..} =
+      Option
+        { optionDisplay = exerciseMaterialName,
+          optionInternalValue = mat,
+          optionExternalValue = exerciseMaterialName
+        }
+    materialsField =
+      checkboxesField . pure $
+        mkOptionList $ matToOption <$> allMaterials
 
 postAddR :: Handler Html
 postAddR = do
+  allMaterials <- runDB collectAllMaterials
   res <-
     runInputPostResult $
       (,,)
-        <$> addExerciseForm
+        <$> addExerciseForm allMaterials
         <*> ireq fileField "image"
         <*> ireq fileField "video"
   token <- genToken
@@ -113,8 +128,14 @@ addExercise AddExerciseForm {..} ii vi = do
     forM_ musclesEF $ \muscle ->
       insert_
         MuscleFilter
-          { muscleFilterExerciseUuid = exUuid,
+          { muscleFilterExercise = exUuid,
             muscleFilterMuscle = muscle
+          }
+    forM_ materialsEF $ \ExerciseMaterial {..} ->
+      insert_
+        MaterialFilter
+          { materialFilterExercise = exUuid,
+            materialFilterMaterial = exerciseMaterialUuid
           }
   addMessage "is-success" "Successfully submitted an exercise!"
   redirect . ExerciseR $ ViewR exUuid
@@ -124,6 +145,6 @@ getViewR uuid = do
   res <- runDB $ collectExercise uuid
   case res of
     Nothing -> notFound
-    Just (Exercise {..}, muscles) -> defaultLayout $ do
+    Just (Exercise {..}, muscles, _) -> defaultLayout $ do
       setTitleI exerciseName
       $(widgetFile "exercise/view")

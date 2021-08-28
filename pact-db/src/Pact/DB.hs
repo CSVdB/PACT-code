@@ -16,10 +16,13 @@
 
 module Pact.DB where
 
+import Control.Monad
 import Data.ByteString (ByteString)
+import Data.Maybe
 import Data.Password.Bcrypt
 import Data.Password.Instances ()
 import Data.Text (Text)
+import qualified Data.Text as T
 import Data.Validity
 import Data.Validity.ByteString ()
 import Data.Validity.Persist ()
@@ -75,8 +78,23 @@ Video
   deriving Show Eq Ord Generic
 
 MuscleFilter
-  exerciseUuid ExerciseUUID
+  exercise ExerciseUUID
   muscle Muscle
+
+  deriving Show Eq Ord Generic
+
+ExerciseMaterial
+  uuid ExerciseMaterialUUID
+  name Text
+
+  UniqueMaterialUUID uuid
+  UniqueMaterialName name
+
+  deriving Show Eq Ord Generic
+
+MaterialFilter
+  exercise ExerciseUUID
+  material ExerciseMaterialUUID
 
   deriving Show Eq Ord Generic
 |]
@@ -98,12 +116,38 @@ instance Validity Image
 
 instance Validity Video
 
-collectExercise :: MonadIO m => ExerciseUUID -> SqlPersistT m (Maybe (Exercise, [Muscle]))
+instance Validity MuscleFilter
+
+instance Validity ExerciseMaterial where
+  validate material@ExerciseMaterial {..} =
+    mconcat
+      [ genericValidate material, -- Actually only valid if present in the dB
+        declare "Name is not empty" $ not $ T.null exerciseMaterialName
+      ]
+
+instance Validity MaterialFilter
+
+collectExercise :: MonadIO m => ExerciseUUID -> SqlPersistT m (Maybe (Exercise, [Muscle], [ExerciseMaterial]))
 collectExercise uuid = do
   res <- getBy $ UniqueExerciseUUID uuid
   case res of
     Nothing -> pure Nothing
     Just (Entity _ ex@Exercise {..}) -> do
-      filters <- selectList [MuscleFilterExerciseUuid ==. exerciseUuid] []
-      let muscles = muscleFilterMuscle . entityVal <$> filters
-      pure $ Just (ex, muscles)
+      muscleFilters <- selectList [MuscleFilterExercise ==. exerciseUuid] []
+      let muscles = muscleFilterMuscle . entityVal <$> muscleFilters
+      materials <- collectMaterials uuid
+      pure $ Just (ex, muscles, materials)
+
+collectMaterials :: MonadIO m => ExerciseUUID -> SqlPersistT m [ExerciseMaterial]
+collectMaterials uuid = do
+  materialFilters <- selectList [MaterialFilterExercise ==. uuid] []
+  let materialUuids = materialFilterMaterial . entityVal <$> materialFilters
+  materials <- forM materialUuids $ \mUuid -> do
+    res <- getBy $ UniqueMaterialUUID mUuid
+    pure $ case res of
+      Nothing -> Nothing
+      Just (Entity _ material) -> Just material
+  pure $ catMaybes materials
+
+collectAllMaterials :: MonadIO m => SqlPersistT m [ExerciseMaterial]
+collectAllMaterials = fmap entityVal <$> selectList [] []

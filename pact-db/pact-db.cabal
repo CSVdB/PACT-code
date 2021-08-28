@@ -3,8 +3,6 @@ cabal-version: 1.12
 -- This file has been generated from package.yaml by hpack version 0.34.2.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: 4df682fdf159c417a7613aa7f398ba9967a77e1224d32402695f0a59b404113b
 
 name:           pact-db
 version:        0.0.0.0
@@ -27,6 +25,7 @@ library
       Pact.Data.User
       Pact.Data.UUID
       Pact.DB
+      Pact.DB.Migrations
   other-modules:
       Paths_pact_db
   hs-source-dirs:
@@ -37,6 +36,7 @@ library
     , bytestring
     , either
     , jose
+    , monad-logger
     , password
     , password-instances
     , persistent

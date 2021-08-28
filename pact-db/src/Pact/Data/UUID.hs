@@ -17,11 +17,15 @@ data I -- Phantom type representing images
 
 data V -- Phantom type representing videos
 
+data M -- Phantom type representing exercise materials
+
 type ExerciseUUID = UUID E
 
 type ImageUUID = UUID I
 
 type VideoUUID = UUID V
+
+type ExerciseMaterialUUID = UUID M
 
 instance PersistField (UUID a) where
   toPersistValue (UUID uuid) = PersistByteString $ LB.toStrict $ UUID.toByteString uuid

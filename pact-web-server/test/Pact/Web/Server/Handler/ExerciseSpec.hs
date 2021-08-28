@@ -34,7 +34,7 @@ spec = pactWebServerSpec . describe "Exercise" $ do
       forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
         testRegisterUser testUser
         testSubmitExercise form
-    it "POST an exercise actually adds the right number of muscle filters" $ \yc ->
+    it "POST an exercise adds the right number of muscle filters" $ \yc ->
       forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
         testRegisterUser testUser
         testSubmitExercise form
@@ -53,9 +53,10 @@ spec = pactWebServerSpec . describe "Exercise" $ do
             res <- testDB . collectExercise $ exerciseUuid ex
             case res of
               Nothing -> fail "No exercise was found with this UUID"
-              Just (Exercise {..}, muscles) -> liftIO $ do
+              Just (Exercise {..}, muscles, materials) -> liftIO $ do
                 sort muscles `shouldBe` sort (musclesEF form)
                 exerciseName `shouldBe` nameEF form
+                sort (exerciseMaterialName <$> materials) `shouldBe` sort (exerciseMaterialName <$> materialsEF form)
   describe "ViewR" $ do
     it "GETs 200 if logged in" $ \yc -> do
       forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do

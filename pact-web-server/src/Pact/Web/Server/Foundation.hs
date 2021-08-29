@@ -140,6 +140,7 @@ navbarRoutesNotLoggedIn =
 navbarRoutesLoggedIn :: [(Route App, String)]
 navbarRoutesLoggedIn =
   [ (ExerciseR AddR, "Add exercise"),
+    (ExerciseR ViewAllR, "Exercises"),
     (AuthR LogoutR, "Logout")
   ]
 

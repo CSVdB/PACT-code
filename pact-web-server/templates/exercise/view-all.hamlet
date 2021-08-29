@@ -1,0 +1,6 @@
+<h1 .text-xs-center> Exercises
+
+<div>
+  $forall exercise <- exercises
+    <a href=@{ExerciseR $ ViewR $ exerciseUuid exercise}>
+      #{exerciseName exercise}

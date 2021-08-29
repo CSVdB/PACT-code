@@ -7,6 +7,7 @@
 /exercise ExerciseR:
   /add AddR GET POST
   /view/#ExerciseUUID ViewR GET
+  /view-all ViewAllR GET
 
 /image/#ImageUUID ImageR GET
 /video/#VideoUUID VideoR GET

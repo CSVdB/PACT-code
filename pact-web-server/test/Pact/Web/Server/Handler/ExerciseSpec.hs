@@ -73,3 +73,28 @@ spec = pactWebServerSpec . describe "Exercise" $ do
         case exercises of
           Nothing -> fail "No exercise present in the dB after submitting one"
           Just (P.Entity _ exercise) -> testCanReach . ExerciseR . ViewR $ exerciseUuid exercise
+
+    it "GETs 401 if not logged in" $ \yc -> do
+      forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
+        testRegisterUser testUser
+        testSubmitExercise form
+        exercises <- testDB $ P.selectFirst [] []
+        case exercises of
+          Nothing -> fail "No exercise present in the dB after submitting one"
+          Just (P.Entity _ exercise) -> do
+            testLogout
+            testCannotReach . ExerciseR . ViewR $ exerciseUuid exercise
+
+  describe "ViewAllR" $ do
+    it "GETs 200 if logged in" $ \yc -> do
+      forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
+        testRegisterUser testUser
+        testSubmitExercise form
+        testCanReach $ ExerciseR ViewAllR
+
+    it "GETs 401 if not logged in" $ \yc -> do
+      forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
+        testRegisterUser testUser
+        testSubmitExercise form
+        testLogout
+        testCannotReach $ ExerciseR ViewAllR

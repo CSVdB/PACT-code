@@ -11,6 +11,7 @@ module Pact.Web.Server.Handler.Exercise
   )
 where
 
+import Data.Maybe (catMaybes)
 import qualified Data.Text as T
 import Pact.Web.Server.Handler.Exercise.Add
 import Pact.Web.Server.Handler.Import
@@ -28,6 +29,7 @@ getViewR uuid = do
 getViewAllR :: Handler Html
 getViewAllR = do
   exercises <- fmap (fmap entityVal) . runDB $ selectList [] []
+  completeExercises <- fmap catMaybes $ runDB $ forM exercises $ collectExercise . exerciseUuid
   defaultLayout $ do
     setTitleI ("Exercises" :: Text)
     $(widgetFile "exercise/view-all")

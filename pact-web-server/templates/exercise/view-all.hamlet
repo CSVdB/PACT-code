@@ -1,6 +1,13 @@
 <h1 .text-xs-center> Exercises
 
 <div>
-  $forall exercise <- exercises
-    <a href=@{ExerciseR $ ViewR $ exerciseUuid exercise}>
-      #{exerciseName exercise}
+  $forall ce <- completeExercises
+    <a href=@{ExerciseR $ ViewR $ exerciseUuid $ exerciseCE ce}>
+      <img
+        src=@{ImageR $ exerciseImage $ exerciseCE ce}
+        width="50">
+      #{exerciseName $ exerciseCE ce}
+
+      <div .pull-xs-right>
+        $forall muscle <- musclesCE ce
+          <button type="button"> #{show muscle}

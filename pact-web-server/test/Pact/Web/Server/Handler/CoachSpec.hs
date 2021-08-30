@@ -59,3 +59,25 @@ spec = pactWebServerSpec . describe "Coach" $ do
       forAllValid $ \testUser -> runYesodClientM yc $ do
         testRegisterUser testUser
         testCanReach $ CoachR ListR
+
+  describe "ConnectR" $ do
+    it "POST creates a connection request" $ \yc -> do
+      forAllValid $ \user -> forAllValid $ \form ->
+        forAllValid $ \user2 -> runYesodClientM yc $ do
+          testRegisterUser user
+          testProfileUpsert form
+          coach <- fmap (P.entityVal . head) $ testDB $ P.selectList [] []
+          testLogout
+          testRegisterUser user2
+          get $ CoachR ListR
+          post $ CoachR $ ConnectR $ coachUuid coach
+          statusIs 303
+          locationShouldBe $ CoachR ListR
+          _ <- followRedirect
+          statusIs 200
+          customerCoachProposals <- fmap (fmap P.entityVal) $ testDB $ P.selectList [] []
+          liftIO $ do
+            length (customerCoachProposals :: [CustomerCoachProposal])
+              `shouldBe` 1
+            customerCoachProposalCoach (head customerCoachProposals)
+              `shouldBe` coachUuid coach

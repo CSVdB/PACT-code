@@ -7,6 +7,7 @@
 /coach CoachR:
   /list ListR GET
   /profile ProfileR GET POST
+  /connect/#CoachUUID ConnectR POST
 
 /exercise ExerciseR:
   /add AddR GET POST

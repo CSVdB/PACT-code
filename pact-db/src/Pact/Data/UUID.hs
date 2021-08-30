@@ -11,6 +11,8 @@ import Database.Persist
 import Database.Persist.Sql
 import Yesod
 
+data U -- Phantom type representing users
+
 data E -- Phantom type representing exercises
 
 data I -- Phantom type representing images
@@ -26,6 +28,8 @@ type ImageUUID = UUID I
 type VideoUUID = UUID V
 
 type ExerciseMaterialUUID = UUID M
+
+type UserUUID = UUID U
 
 instance PersistField (UUID a) where
   toPersistValue (UUID uuid) = PersistByteString $ LB.toStrict $ UUID.toByteString uuid

@@ -76,6 +76,10 @@ instance GenValid AddExerciseForm where
   genValid = genValidStructurally `suchThat` isValid
   shrinkValid = filter isValid . shrinkValidStructurally
 
+instance GenValid ProfileForm where
+  genValid = genValidStructurally `suchThat` isValid
+  shrinkValid = filter isValid . shrinkValidStructurally
+
 instance GenValid Image where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally

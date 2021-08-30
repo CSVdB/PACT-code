@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -15,7 +16,9 @@ module Pact.Web.Server.Foundation where
 import Data.FileEmbed (makeRelativeToProject)
 import Data.Functor
 import Data.Text (Text)
+import Data.UUID.Typed (nextRandomUUID)
 import Database.Persist.Sql
+import GHC.Generics (Generic)
 import Network.HTTP.Client as HTTP
 import Pact.DB
 import Pact.Data
@@ -69,15 +72,18 @@ instance Yesod App where
 
   -- Split off AccountR, CoachR and AdminR.
   -- List each route explicitly to avoid mistakes.
-  isAuthorized route _ = case route of
-    ExerciseR _ -> requiresUser
-    _ -> pure Authorized
+  isAuthorized route _ = do
+    userType <- getUserType
+    case route of
+      ExerciseR _ -> requiresUser userType
+      CoachR _ -> requiresUser userType
+      _ -> pure Authorized
     where
-      requiresUser =
+      requiresUser userType =
         -- Must be logged in as some type of user
-        maybeAuthId >>= \case
-          Nothing -> pure AuthenticationRequired
-          Just _ -> pure Authorized
+        if userType >= LoggedInUser
+          then pure Authorized
+          else pure AuthenticationRequired
 
 instance RenderMessage App FormMessage where
   renderMessage _ _ = defaultFormMessage
@@ -122,25 +128,52 @@ genToken = do
 getFaviconR :: Handler TypedContent
 getFaviconR = redirect $ StaticR logo_jpg
 
--- TODO: Once admin and coach users are created, add those options here
+data UserType
+  = Nobody
+  | LoggedInUser
+  | LoggedInCoach
+  -- TODO: Add LoggedInAdmin
+  deriving (Show, Eq, Ord, Generic)
+
+getUserType :: Handler UserType
+getUserType = do
+  mAuth <- maybeAuth
+  case mAuth of
+    Nothing -> pure Nobody
+    Just (Entity _ User {..}) -> do
+      mCoach <- runDB $ getBy $ UniqueCoach userUuid
+      case mCoach of
+        Nothing -> pure LoggedInUser
+        Just _ -> pure LoggedInCoach
+
+-- TODO: Once admin user is created, add that options here
 navbarRoutesH :: Handler [(Route App, String)]
 navbarRoutesH =
-  maybeAuth <&> \mAuth -> (HomeR, "Home") : specificNavbarRoutes mAuth
+  getUserType <&> \userType -> (HomeR, "Home") : specificNavbarRoutes userType
   where
     specificNavbarRoutes = \case
-      Nothing -> navbarRoutesNotLoggedIn
-      Just _ -> navbarRoutesLoggedIn
+      Nobody -> navbarRoutesNobody
+      LoggedInUser -> navbarRoutesUser
+      LoggedInCoach -> navbarRoutesCoach
 
-navbarRoutesNotLoggedIn :: [(Route App, String)]
-navbarRoutesNotLoggedIn =
+navbarRoutesNobody :: [(Route App, String)]
+navbarRoutesNobody =
   [ (AuthR LoginR, "Log in"),
     (AuthR registerR, "Sign up")
   ]
 
-navbarRoutesLoggedIn :: [(Route App, String)]
-navbarRoutesLoggedIn =
+navbarRoutesUser :: [(Route App, String)]
+navbarRoutesUser =
+  [ (ExerciseR ViewAllR, "Exercises"),
+    (CoachR ProfileR, "Become coach"),
+    (AuthR LogoutR, "Logout")
+  ]
+
+navbarRoutesCoach :: [(Route App, String)]
+navbarRoutesCoach =
   [ (ExerciseR AddR, "Add exercise"),
     (ExerciseR ViewAllR, "Exercises"),
+    (CoachR ProfileR, "Profile"),
     (AuthR LogoutR, "Logout")
   ]
 
@@ -207,9 +240,11 @@ postRegisterR = liftHandler $ do
           redirect $ AuthR registerR
         else do
           passphraseHash <- liftIO $ hashPassword registerFormPassword
+          uuid <- nextRandomUUID
           runDB . insert_ $
             User
-              { userName = registerFormUsername,
+              { userUuid = uuid,
+                userName = registerFormUsername,
                 userPassword = passphraseHash
               }
           setCredsRedirect

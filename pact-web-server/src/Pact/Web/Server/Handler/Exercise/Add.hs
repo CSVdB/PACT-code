@@ -10,7 +10,6 @@ module Pact.Web.Server.Handler.Exercise.Add where
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Data.UUID.Typed (nextRandomUUID)
-import Data.Validity
 import Pact.Web.Server.Handler.Import
 
 allDifficulties :: [Difficulty]
@@ -39,9 +38,6 @@ data AddExerciseForm = AddExerciseForm
     altNamesEF :: [AlternativeName]
   }
   deriving (Show, Eq, Ord, Generic)
-
-instance Validity Textarea where
-  validate (Textarea t) = delve "Textarea" t
 
 instance Validity AddExerciseForm where
   validate form@AddExerciseForm {..} =
@@ -97,7 +93,9 @@ addExercise AddExerciseForm {..} ii vi = do
   exUuid <- liftIO nextRandomUUID
   imageUuid <- liftIO nextRandomUUID
   videoUuid <- liftIO nextRandomUUID
-  imageContents <- fileSourceByteString ii -- Don't do this within runDB, throwing exceptions could cause serious problems
+  -- Don't collect the contents within runDB, throwing exceptions could cause
+  -- serious problems
+  imageContents <- fileSourceByteString ii
   videoContents <- fileSourceByteString vi
   runDB $ do
     insert_

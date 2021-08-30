@@ -38,18 +38,16 @@
       Hold down ctrl to add multiple exercise materials.
 
       <fieldset .form-group>
-        <input .form-control .form-control-lg
+        <textarea .form-control .form-control-lg
           name="formTips"
           placeholder="Form tips"
-          required
-          type="textarea">
+          required>
 
       <fieldset .form-group>
-        <input .form-control .form-control-lg
+        <textarea .form-control .form-control-lg
           name="notes"
           placeholder="Notes"
-          optional
-          type="textarea">
+          optional>
 
       List alternative names, separated by ", "
       <fieldset .form-group>

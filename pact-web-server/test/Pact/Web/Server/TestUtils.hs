@@ -24,6 +24,7 @@ import Pact.Web.Server.Gen
 import Pact.Web.Server.Handler hiding (get)
 import Path.IO
 import System.FilePath (takeExtension)
+import System.Random (randomRIO)
 import Test.Syd
 import Test.Syd.Path
 import Test.Syd.Wai (managerSpec)
@@ -199,6 +200,32 @@ testSubmitExercise form = do
   imageFile <- readTestFile "test-resources/exercise/image/pushup.jpg"
   videoFile <- readTestFile "test-resources/exercise/video/explosive-pushup.mp4"
   submitExercise form imageFile videoFile
+
+profileUpsertRequest :: ProfileForm -> Maybe TestFile -> YesodExample App ()
+profileUpsertRequest ProfileForm {..} mImageFile = request $ do
+  setMethod methodPost
+  setUrl $ CoachR ProfileR
+  addToken
+  addPostParam "about-me" $ unTextarea aboutMePF
+  forM_ mImageFile $ addTestFileWith "image"
+
+submitProfile :: ProfileForm -> Maybe TestFile -> YesodExample App ()
+submitProfile form mImageFile = do
+  testCanReach $ CoachR ProfileR
+  profileUpsertRequest form mImageFile
+  statusIs 303
+  locationShouldBe $ CoachR ProfileR
+  _ <- followRedirect
+  statusIs 200
+
+testProfileUpsert :: ProfileForm -> YesodExample App ()
+testProfileUpsert form = do
+  number <- liftIO $ randomRIO (0 :: Double, 1)
+  mImageFile <-
+    if number > 0.5
+      then Just <$> readTestFile "test-resources/coach/paul.jpg"
+      else pure Nothing
+  submitProfile form mImageFile
 
 testDB :: DB.SqlPersistT IO a -> YesodClientM App a
 testDB func = do

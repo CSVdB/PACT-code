@@ -81,10 +81,3 @@ parseUsername = mapLeft T.pack . prettyValidate . Username
 
 parseUsernameOrErr :: Text -> Either String Username
 parseUsernameOrErr = prettyValidate . Username
-
-newtype Profile = Profile
-  { profileName :: Username
-  }
-  deriving (Show, Eq, Ord, Generic)
-
-instance Validity Profile

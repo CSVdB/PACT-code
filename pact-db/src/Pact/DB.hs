@@ -37,10 +37,20 @@ share
   [persistLowerCase|
 
 User
+  uuid UserUUID
   name Username
   password (PasswordHash Bcrypt)
 
   UniqueUsername name
+
+  deriving Show Eq Ord Generic
+
+Coach -- A coach is an extended version of a user
+  uuid UserUUID
+  pic ImageUUID Maybe
+  aboutMe Textarea
+
+  UniqueCoach uuid
 
   deriving Show Eq Ord Generic
 
@@ -112,9 +122,6 @@ instance Validity (PasswordHash a) where
   validate = trivialValidation
 
 instance Validity User
-
-toProfile :: User -> Profile
-toProfile User {..} = Profile {profileName = userName}
 
 instance Validity Exercise -- Any value with well-formed Texts and such, is valid
 

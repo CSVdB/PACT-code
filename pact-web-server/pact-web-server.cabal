@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 43845d105122f996582d2278d4ec887ebb45bb2e740397fdd0b765abbdf1589a
+-- hash: 4e9168e10ea7403a724537362c187779401025daf86bcb17b77a964d7bb911f9
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -27,6 +27,7 @@ library
       Pact.Web.Server.Constants
       Pact.Web.Server.Foundation
       Pact.Web.Server.Handler
+      Pact.Web.Server.Handler.Coach
       Pact.Web.Server.Handler.Exercise
       Pact.Web.Server.Handler.Exercise.Add
       Pact.Web.Server.Handler.Home
@@ -93,6 +94,7 @@ test-suite pact-web-server-test
   other-modules:
       Pact.Web.Server.Gen
       Pact.Web.Server.Handler.AuthSpec
+      Pact.Web.Server.Handler.CoachSpec
       Pact.Web.Server.Handler.ExerciseSpec
       Pact.Web.Server.Handler.HomeSpec
       Pact.Web.Server.Handler.ImageSpec
@@ -127,6 +129,7 @@ test-suite pact-web-server-test
     , path-io
     , persistent
     , persistent-sqlite
+    , random
     , sydtest
     , sydtest-wai
     , sydtest-yesod

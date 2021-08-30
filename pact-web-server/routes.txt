@@ -4,6 +4,9 @@
 /favicon.ico FaviconR GET
 /reload ReloadR GET
 
+/coach CoachR:
+  /profile ProfileR GET POST
+
 /exercise ExerciseR:
   /add AddR GET POST
   /view/#ExerciseUUID ViewR GET

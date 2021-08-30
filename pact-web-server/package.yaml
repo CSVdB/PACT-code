@@ -84,6 +84,7 @@ tests:
     - persistent
     - persistent-sqlite
     - QuickCheck
+    - random
     - sydtest
     - sydtest-wai
     - sydtest-yesod

@@ -1,0 +1,41 @@
+$if isCoach == IsCoach
+  <h1 .text-xs-center> Coach #{usernameText profileName}
+$else
+  <h1 .text-xs-center> Want to become a coach?
+
+<div .text-xs-center>
+  <form
+    enctype="multipart/form-data"
+    method="post"
+    action=@{CoachR ProfileR}>
+    <div>
+      <fieldset .form-group>
+        <div>
+          About me:
+          <textarea .form-control .form-control-lg
+            name="about-me"
+            required>
+            #{profileAboutMe}
+
+      <fieldset .form-group>
+        <div>
+          Profile picture:
+          $maybe pic <- profilePic
+            <img
+              src=@{ImageR pic}
+              width="300">
+          <input .form-control .form-control-lg
+            name="image"
+            optional
+            type="file">
+
+      ^{token}
+
+      $if isCoach == IsCoach
+        <input .btn .btn-lg .btn-primary .pull-xs-right
+          type="submit"
+          value="Update profile">
+      $else
+        <input .btn .btn-lg .btn-primary .pull-xs-right
+          type="submit"
+          value="Become a coach now!">

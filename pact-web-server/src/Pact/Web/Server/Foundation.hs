@@ -141,7 +141,7 @@ getUserType = do
   case mAuth of
     Nothing -> pure Nobody
     Just (Entity _ User {..}) -> do
-      mCoach <- runDB $ getBy $ UniqueCoach userUuid
+      mCoach <- runDB $ getBy $ UniqueCoachUser userUuid
       case mCoach of
         Nothing -> pure LoggedInUser
         Just _ -> pure LoggedInCoach
@@ -165,6 +165,7 @@ navbarRoutesNobody =
 navbarRoutesUser :: [(Route App, String)]
 navbarRoutesUser =
   [ (ExerciseR ViewAllR, "Exercises"),
+    (CoachR ListR, "Coaches"),
     (CoachR ProfileR, "Become coach"),
     (AuthR LogoutR, "Logout")
   ]
@@ -173,6 +174,7 @@ navbarRoutesCoach :: [(Route App, String)]
 navbarRoutesCoach =
   [ (ExerciseR AddR, "Add exercise"),
     (ExerciseR ViewAllR, "Exercises"),
+    (CoachR ListR, "Coaches"),
     (CoachR ProfileR, "Profile"),
     (AuthR LogoutR, "Logout")
   ]

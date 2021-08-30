@@ -53,3 +53,9 @@ spec = pactWebServerSpec . describe "Coach" $ do
           liftIO $ length coaches `shouldBe` 1 -- Still only one coach exists
           -- Second form is the end result
           liftIO $ aboutMePF form2 `shouldBe` coachAboutMe (head coaches)
+
+  describe "ListR" $ do
+    it "GETs 200 if logged in" $ \yc -> do
+      forAllValid $ \testUser -> runYesodClientM yc $ do
+        testRegisterUser testUser
+        testCanReach $ CoachR ListR

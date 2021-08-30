@@ -5,6 +5,7 @@
 /reload ReloadR GET
 
 /coach CoachR:
+  /list ListR GET
   /profile ProfileR GET POST
 
 /exercise ExerciseR:

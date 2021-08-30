@@ -41,16 +41,19 @@ User
   name Username
   password (PasswordHash Bcrypt)
 
+  UniqueUserUUID uuid
   UniqueUsername name
 
   deriving Show Eq Ord Generic
 
 Coach -- A coach is an extended version of a user
-  uuid UserUUID
+  user UserUUID
+  uuid CoachUUID
   pic ImageUUID Maybe
   aboutMe Textarea
 
   UniqueCoach uuid
+  UniqueCoachUser user
 
   deriving Show Eq Ord Generic
 
@@ -111,6 +114,18 @@ MaterialFilter
 ExerciseAlternativeName
   uuid ExerciseUUID
   name Text
+
+  deriving Show Eq Ord Generic
+
+CustomerCoachProposal
+  customer UserUUID
+  coach CoachUUID
+
+  deriving Show Eq Ord Generic
+
+CustomerCoachRelation
+  customer UserUUID
+  coach CoachUUID
 
   deriving Show Eq Ord Generic
 |]

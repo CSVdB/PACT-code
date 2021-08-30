@@ -13,6 +13,8 @@ import Yesod
 
 data U -- Phantom type representing users
 
+data C -- Phantom type representing coaches
+
 data E -- Phantom type representing exercises
 
 data I -- Phantom type representing images
@@ -21,6 +23,10 @@ data V -- Phantom type representing videos
 
 data M -- Phantom type representing exercise materials
 
+type UserUUID = UUID U
+
+type CoachUUID = UUID C
+
 type ExerciseUUID = UUID E
 
 type ImageUUID = UUID I
@@ -28,8 +34,6 @@ type ImageUUID = UUID I
 type VideoUUID = UUID V
 
 type ExerciseMaterialUUID = UUID M
-
-type UserUUID = UUID U
 
 instance PersistField (UUID a) where
   toPersistValue (UUID uuid) = PersistByteString $ LB.toStrict $ UUID.toByteString uuid

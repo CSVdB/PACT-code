@@ -1,0 +1,13 @@
+<h1 .text-xs-center> Coaches
+
+<div .text-xs-center>
+  $forall (user, coach) <- coachInfos
+    <div>
+      $maybe pic <- coachPic coach
+        <img
+          src=@{ImageR pic}
+          width="100">
+      #{usernameText $ userName user}
+      <textarea>
+        #{coachAboutMe coach}
+    <br>

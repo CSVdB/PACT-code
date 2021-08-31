@@ -22,15 +22,16 @@
   <p>
     Difficulty: <button type="button"> #{show exerciseDifficulty} </button>
 
-  <p> FormTips:
-    #{Textarea exerciseFormTips}
-
   $if not $ null materialsCE
     <p>
       ExerciseMaterials:
       $forall name <- materialsCE
         <button type="button"> #{show name} </button>
 
+  $if not $ T.null exerciseFormTips
+    <p> FormTips: <br>
+      #{Textarea exerciseFormTips}
+
   $if not $ T.null exerciseNotes
-    <p> Notes:
-      #{exerciseNotes}
+    <p> Notes: <br>
+      #{Textarea exerciseNotes}

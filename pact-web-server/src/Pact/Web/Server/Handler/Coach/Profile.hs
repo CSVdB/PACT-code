@@ -121,7 +121,7 @@ upsertProfile ProfileForm {..} mImageInfo = do
     upsertBy
       (UniqueCoachUser userUuid)
       coach
-      [CoachPic =. mImageUuid, CoachAboutMe =. aboutMePF]
+      [CoachPic =. imageUuid, CoachAboutMe =. aboutMePF]
   case isCoach of
     IsCoach -> addMessage "is-success" "Successfully updated your profile!"
     NoCoachYet -> addMessage "is-success" "You're a coach now!"

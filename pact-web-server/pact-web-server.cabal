@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d11ec2ce0490e29d8f566911bfc09f24916379fb1da100348666bb5894d4b8d1
+-- hash: 1472aca10aaf2f8aed222ac0846e088cd96ec836ae1b045da1b8c2e29abc9a52
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -33,7 +33,7 @@ library
       Pact.Web.Server.Handler.Exercise.Add
       Pact.Web.Server.Handler.Home
       Pact.Web.Server.Handler.Image
-      Pact.Web.Server.Handler.Import
+      Pact.Web.Server.Handler.Prelude
       Pact.Web.Server.Handler.Video
       Pact.Web.Server.OptParse
       Pact.Web.Server.Static
@@ -99,8 +99,10 @@ test-suite pact-web-server-test
       Pact.Web.Server.Handler.ExerciseSpec
       Pact.Web.Server.Handler.HomeSpec
       Pact.Web.Server.Handler.ImageSpec
+      Pact.Web.Server.Handler.InstanceSpec
       Pact.Web.Server.Handler.TestImport
       Pact.Web.Server.Handler.VideoSpec
+      Pact.Web.Server.PathPiece
       Pact.Web.Server.TestUtils
       Paths_pact_web_server
   hs-source-dirs:
@@ -115,7 +117,9 @@ test-suite pact-web-server-test
     , filepath
     , genvalidity
     , genvalidity-bytestring
-    , genvalidity-hspec
+    , genvalidity-sydtest
+    , genvalidity-sydtest-aeson
+    , genvalidity-sydtest-persistent
     , genvalidity-text
     , genvalidity-typed-uuid
     , genvalidity-uuid

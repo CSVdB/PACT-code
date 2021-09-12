@@ -1,6 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Pact.Web.Server.Handler.Import (module X, Generic) where
+module Pact.Web.Server.Handler.Prelude
+  ( module X,
+    Generic,
+  )
+where
 
 import Control.Monad as X
 import Data.Text as X (Text)

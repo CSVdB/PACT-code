@@ -8,6 +8,7 @@
   /list ListR GET
   /profile ProfileR GET POST
   /connect/#CoachUUID ConnectR POST
+  /connect-response/#UserUUID/#ProposalResponse ConnectResponseR POST
 
 /exercise ExerciseR:
   /add AddR GET POST

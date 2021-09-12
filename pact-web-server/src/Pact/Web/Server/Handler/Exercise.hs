@@ -14,7 +14,7 @@ where
 import Data.Maybe (catMaybes)
 import qualified Data.Text as T
 import Pact.Web.Server.Handler.Exercise.Add
-import Pact.Web.Server.Handler.Import
+import Pact.Web.Server.Handler.Prelude
 
 getViewR :: ExerciseUUID -> Handler Html
 getViewR uuid = do

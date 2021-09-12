@@ -21,6 +21,7 @@ source-repository head
 library
   exposed-modules:
       Pact.Data
+      Pact.Data.Coach
       Pact.Data.Exercise
       Pact.Data.User
       Pact.Data.UUID
@@ -33,6 +34,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , blaze-markup
     , bytestring
     , either
     , jose

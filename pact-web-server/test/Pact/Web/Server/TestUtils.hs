@@ -234,3 +234,29 @@ testDB func = do
 
 shouldBeSort :: (Ord a, Show a) => [a] -> [a] -> IO ()
 xs `shouldBeSort` ys = sort xs `shouldBe` sort ys
+
+testSendConnectionProposal :: Coach -> YesodExample App ()
+testSendConnectionProposal coach = do
+  get $ CoachR ListR
+  post . CoachR . ConnectR $ coachUuid coach
+  statusIs 303
+  locationShouldBe $ CoachR ListR
+  _ <- followRedirect
+  statusIs 200
+
+respondToProposalRequest :: UserUUID -> ProposalResponse -> YesodExample App ()
+respondToProposalRequest user response = request $ do
+  setMethod methodPost
+  setUrl $ CoachR $ ConnectResponseR user response
+  addToken
+
+testRespondToProposal :: UserUUID -> ProposalResponse -> YesodExample App ()
+testRespondToProposal user response = do
+  get HomeR
+  respondToProposalRequest user response
+  liftIO $ putStrLn "Reached here"
+  statusIs 303
+  liftIO $ putStrLn "Failed now"
+  locationShouldBe HomeR
+  _ <- followRedirect
+  statusIs 200

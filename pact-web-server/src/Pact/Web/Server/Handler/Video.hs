@@ -4,7 +4,7 @@
 module Pact.Web.Server.Handler.Video where
 
 import qualified Data.Text.Encoding as TE
-import Pact.Web.Server.Handler.Import
+import Pact.Web.Server.Handler.Prelude
 
 getVideoR :: VideoUUID -> Handler TypedContent
 getVideoR uuid = do

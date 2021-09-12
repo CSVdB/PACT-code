@@ -17,6 +17,7 @@ import Data.Validity.Text ()
 import Database.Persist
 import Database.Persist.Sql
 import Servant.API.Generic
+import Text.Blaze
 import YamlParse.Applicative
 
 data RegisterForm = RegisterForm
@@ -51,6 +52,9 @@ newtype Username = Username
   { usernameText :: Text
   }
   deriving (Show, Eq, Ord, Generic)
+
+instance ToMarkup Username where
+  toMarkup = toMarkup . usernameText
 
 instance Validity Username where
   validate (Username t) =

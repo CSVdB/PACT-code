@@ -79,11 +79,11 @@ instance Yesod App where
       CoachR _ -> requiresUser userType
       _ -> pure Authorized
     where
-      requiresUser userType =
-        -- Must be logged in as some type of user
-        if userType >= LoggedInUser
-          then pure Authorized
-          else pure AuthenticationRequired
+      -- Must be logged in as some type of user
+      requiresUser = \case
+        Nobody -> pure AuthenticationRequired
+        LoggedInUser _ -> pure Authorized
+        LoggedInCoach _ _ -> pure Authorized
 
 instance RenderMessage App FormMessage where
   renderMessage _ _ = defaultFormMessage
@@ -130,8 +130,8 @@ getFaviconR = redirect $ StaticR logo_jpg
 
 data UserType
   = Nobody
-  | LoggedInUser
-  | LoggedInCoach
+  | LoggedInUser User
+  | LoggedInCoach User Coach
   -- TODO: Add LoggedInAdmin
   deriving (Show, Eq, Ord, Generic)
 
@@ -140,44 +140,40 @@ getUserType = do
   mAuth <- maybeAuth
   case mAuth of
     Nothing -> pure Nobody
-    Just (Entity _ User {..}) -> do
-      mCoach <- runDB $ getBy $ UniqueCoachUser userUuid
+    Just (Entity _ user) -> do
+      mCoach <- runDB . getBy . UniqueCoachUser $ userUuid user
       case mCoach of
-        Nothing -> pure LoggedInUser
-        Just _ -> pure LoggedInCoach
+        Nothing -> pure $ LoggedInUser user
+        Just (Entity _ coach) -> pure $ LoggedInCoach user coach
 
 -- TODO: Once admin user is created, add that options here
 navbarRoutesH :: Handler [(Route App, String)]
 navbarRoutesH =
-  getUserType <&> \userType -> (HomeR, "Home") : specificNavbarRoutes userType
+  getUserType <&> \userType -> specificNavbarRoutes userType
   where
     specificNavbarRoutes = \case
       Nobody -> navbarRoutesNobody
-      LoggedInUser -> navbarRoutesUser
-      LoggedInCoach -> navbarRoutesCoach
+      LoggedInUser _ -> navbarRoutesUser
+      LoggedInCoach _ _ -> navbarRoutesCoach
 
 navbarRoutesNobody :: [(Route App, String)]
 navbarRoutesNobody =
-  [ (AuthR LoginR, "Log in"),
+  [ (HomeR, "Home"),
+    (AuthR LoginR, "Log in"),
     (AuthR registerR, "Sign up")
   ]
 
 navbarRoutesUser :: [(Route App, String)]
 navbarRoutesUser =
-  [ (ExerciseR ViewAllR, "Exercises"),
+  [ (HomeR, "Newsfeed"),
+    -- (ExerciseR ViewAllR, "Exercises"),
     (CoachR ListR, "Coaches"),
     (CoachR ProfileR, "Become coach"),
     (AuthR LogoutR, "Logout")
   ]
 
 navbarRoutesCoach :: [(Route App, String)]
-navbarRoutesCoach =
-  [ (ExerciseR AddR, "Add exercise"),
-    (ExerciseR ViewAllR, "Exercises"),
-    (CoachR ListR, "Coaches"),
-    (CoachR ProfileR, "Profile"),
-    (AuthR LogoutR, "Logout")
-  ]
+navbarRoutesCoach = navbarRoutesUser
 
 getReloadR :: Handler ()
 getReloadR = getAutoReloadR

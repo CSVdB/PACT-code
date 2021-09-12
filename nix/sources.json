@@ -89,10 +89,10 @@
         "homepage": "https://www.youtube.com/watch?v=eIs9qNh17SM",
         "owner": "NorfairKing",
         "repo": "validity",
-        "rev": "2ef8be2fba631460d770d8cbc7dd67709400fe3d",
-        "sha256": "15cn4p2irb5pff977587lp2967gmb84dq9y9lkgvfkkjjad6fd9m",
+        "rev": "f5e5d69b3502cdd9243b412c31ba9619b9e89462",
+        "sha256": "sha256:1ak07mxyv43c5a988s47b8h4jhqzp3lsmnlhjj3jdi0fil4jdjz2",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/validity/archive/2ef8be2fba631460d770d8cbc7dd67709400fe3d.tar.gz",
+        "url": "https://github.com/NorfairKing/validity/archive/f5e5d69b3502cdd9243b412c31ba9619b9e89462.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "yamlparse-applicative": {

@@ -10,7 +10,7 @@ module Pact.Web.Server.Handler.Exercise.Add where
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Data.UUID.Typed (nextRandomUUID)
-import Pact.Web.Server.Handler.Import
+import Pact.Web.Server.Handler.Prelude
 
 allDifficulties :: [Difficulty]
 allDifficulties = [minBound .. maxBound]

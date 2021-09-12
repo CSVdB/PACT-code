@@ -68,9 +68,11 @@ tests:
     - filepath
     - genvalidity
     - genvalidity-bytestring
-    - genvalidity-hspec
     - genvalidity-text
     - genvalidity-typed-uuid
+    - genvalidity-sydtest
+    - genvalidity-sydtest-aeson
+    - genvalidity-sydtest-persistent
     - genvalidity-uuid
     - hspec
     - http-client

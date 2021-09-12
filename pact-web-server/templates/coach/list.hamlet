@@ -5,17 +5,25 @@
 
   $forall (coachUser, coach) <- coachInfos
     $if coachUser /= user
-      <form method="post" action=@{CoachR $ ConnectR $ coachUuid coach}>
-        <button type="submit">
-          <a>
-            $maybe pic <- coachPic coach
-              <img
-                src=@{ImageR pic}
-                width="100">
-            #{usernameText $ userName coachUser}
-            <textarea>
-              #{coachAboutMe coach}
-            $if elem (coachUuid coach) proposedCoaches
-              <br>
-              (proposed)
-        <br>
+      $maybe relationText <- getRelationTextIfExists user coach relations
+        <a>
+          $maybe pic <- coachPic coach
+            <img
+              src=@{ImageR pic}
+              width="100">
+          #{userName coachUser}
+          <textarea>
+            #{coachAboutMe coach}
+          <br> (#{relationText})
+      $nothing
+        <form method="post" action=@{CoachR $ ConnectR $ coachUuid coach}>
+          <button type="submit">
+            <a>
+              $maybe pic <- coachPic coach
+                <img
+                  src=@{ImageR pic}
+                  width="100">
+              #{userName coachUser}
+              <textarea>
+                #{coachAboutMe coach}
+      <br>

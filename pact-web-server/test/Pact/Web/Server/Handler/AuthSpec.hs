@@ -61,7 +61,8 @@ spec = pactWebServerSpec $ do
           testRegisterUser testUser
           testLogout
           testLoginFailed username $ testUserPassword testUser
-
--- Note: Once there's a path that requires authorization, test that it's
--- accessible after registerR or LoginR passed, not if it failed, and not after
--- LogoutR.
+    it "Home page GETs a 200 as a user" $ \yc -> do
+      forAllValid $ \testUser ->
+        runYesodClientM yc $ do
+          testRegisterUser testUser
+          testCanReach HomeR

@@ -51,13 +51,13 @@ instance GenValid TestUser where
   genValid = TestUser <$> genValid <*> genValidPassword
   shrinkValid _ = []
 
-instance GenValid Difficulty where
-  genValid = genValidStructurally
-  shrinkValid = shrinkValidStructurally
+instance GenUnchecked Difficulty
 
-instance GenValid Muscle where
-  genValid = genValidStructurally
-  shrinkValid = shrinkValidStructurally
+instance GenValid Difficulty
+
+instance GenUnchecked Muscle
+
+instance GenValid Muscle
 
 instance GenValid ExerciseMaterial where
   -- ExerciseMaterials are only valid once they're inserted into the dB
@@ -87,3 +87,7 @@ instance GenValid Image where
 instance GenValid Video where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
+
+instance GenUnchecked ProposalResponse
+
+instance GenValid ProposalResponse

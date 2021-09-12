@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TemplateHaskell #-}
@@ -9,20 +10,33 @@ module Pact.Web.Server.Handler.Coach
     getListR,
     postConnectR,
     ProfileForm (..),
+    postConnectResponseR,
   )
 where
 
 import Data.Maybe (catMaybes)
 import Pact.Web.Server.Handler.Coach.Profile
-import Pact.Web.Server.Handler.Import
+import Pact.Web.Server.Handler.Prelude
+
+getRelationTextIfExists :: User -> Coach -> [CustomerCoachRelation] -> Maybe Text
+getRelationTextIfExists User {..} Coach {..} relations =
+  case filter myFilter relations of
+    [relation] -> case customerCoachRelationResponse relation of
+      Nothing -> Just "Proposed"
+      Just AcceptProposal -> Just "Accepted"
+      Just DenyProposal -> Just "Denied"
+    _ -> Nothing
+  where
+    myFilter CustomerCoachRelation {..} = customerCoachRelationCoach == coachUuid && customerCoachRelationCustomer == userUuid
 
 getListR :: Handler Html
 getListR = do
   token <- genToken
   user <- getUser
   coaches <- fmap (fmap entityVal) $ runDB $ selectList [] []
-  proposals <- runDB $ selectList [CustomerCoachProposalCustomer ==. userUuid user] []
-  let proposedCoaches = customerCoachProposalCoach . entityVal <$> proposals
+  relations <-
+    fmap (fmap entityVal) . runDB $
+      selectList [CustomerCoachRelationCustomer ==. userUuid user] []
   coachInfos <- fmap catMaybes $
     forM coaches $ \coach -> do
       mUser <- fmap (fmap entityVal) . runDB . getBy . UniqueUserUUID $ coachUser coach
@@ -38,11 +52,26 @@ postConnectR uuid = do
   mAuth <- maybeAuth
   case mAuth of
     Nothing -> notFound -- This will never happen because of yesod authorization
-    Just (Entity _ User {..}) -> do
-      runDB $
-        insert_
-          CustomerCoachProposal
-            { customerCoachProposalCustomer = userUuid,
-              customerCoachProposalCoach = uuid
-            }
-      redirect $ CoachR ListR
+    Just (Entity _ User {..}) ->
+      runDB (getBy $ UniqueRelation userUuid uuid)
+        >>= \case
+          Just _ -> notFound -- Can't propose again to the same coach
+          Nothing -> do
+            runDB $
+              insert_
+                CustomerCoachRelation
+                  { customerCoachRelationCustomer = userUuid,
+                    customerCoachRelationCoach = uuid,
+                    customerCoachRelationResponse = Nothing
+                  }
+            redirect $ CoachR ListR
+
+postConnectResponseR :: UserUUID -> ProposalResponse -> Handler Html
+postConnectResponseR uuid response =
+  getUserType >>= \case
+    LoggedInCoach _ Coach {..} ->
+      runDB (respondToProposal uuid coachUuid response) >>= \case
+        SqlSuccess -> redirect HomeR
+        SqlNotFound -> liftIO (putStrLn "Not found") *> notFound
+        SqlAlreadyUpdated -> liftIO (putStrLn "AlreadyUpdated") *> notFound
+    _ -> notFound -- This will never happen because of yesod authorization

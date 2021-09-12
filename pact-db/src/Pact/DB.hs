@@ -4,6 +4,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
@@ -117,15 +118,12 @@ ExerciseAlternativeName
 
   deriving Show Eq Ord Generic
 
-CustomerCoachProposal
-  customer UserUUID
-  coach CoachUUID
-
-  deriving Show Eq Ord Generic
-
 CustomerCoachRelation
   customer UserUUID
   coach CoachUUID
+  response ProposalResponse Maybe
+
+  UniqueRelation customer coach
 
   deriving Show Eq Ord Generic
 |]
@@ -229,3 +227,32 @@ alternativeNamesText = T.intercalate ", " . fmap unAlternative
 
 altNames :: Text -> [AlternativeName]
 altNames t = AlternativeName <$> T.splitOn ", " t
+
+collectCustomerCoachProposals :: MonadIO m => Coach -> SqlPersistT m [User]
+collectCustomerCoachProposals Coach {..} = do
+  entities <- selectList [CustomerCoachRelationCoach ==. coachUuid, CustomerCoachRelationResponse ==. Nothing] []
+  let userIds = customerCoachRelationCustomer . entityVal <$> entities
+  fmap catMaybes $ forM userIds $ fmap (fmap entityVal) . getBy . UniqueUserUUID
+
+data SqlUpdateResult
+  = SqlSuccess
+  | SqlNotFound
+  | SqlAlreadyUpdated
+  deriving (Show, Eq, Ord, Generic)
+
+-- Respond to a customer coach proposal.
+respondToProposal ::
+  MonadIO m =>
+  UserUUID ->
+  CoachUUID ->
+  ProposalResponse ->
+  SqlPersistT m SqlUpdateResult
+respondToProposal user coach response =
+  getBy (UniqueRelation user coach) >>= \case
+    Nothing -> pure SqlNotFound
+    Just (Entity key val) -> do
+      case customerCoachRelationResponse val of
+        Nothing -> do
+          update key [CustomerCoachRelationResponse =. Just response]
+          pure SqlSuccess
+        Just _ -> pure SqlAlreadyUpdated

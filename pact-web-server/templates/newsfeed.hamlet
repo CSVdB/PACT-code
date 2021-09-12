@@ -1,0 +1,30 @@
+<h1 .text-xs-center>
+  Newsfeed
+<br>
+<br>
+
+<div .text-xs-center>
+  ^{token}
+
+  $forall user <- customerCoachProposals
+    <div>
+      Name: #{userName user}
+      <form method="post" action=@{CoachR $ ConnectResponseR (userUuid user) AcceptProposal}>
+        <div>
+          <input
+            type="submit"
+            value="Accept">
+
+      <form method="post" action=@{CoachR $ ConnectResponseR (userUuid user) DenyProposal}>
+        <div>
+          <button type="submit">
+            Deny
+  <p>
+    Messages will come here to confirm friend requests  and confirm you did a
+    planned workout.
+  <br>
+  <p>
+    List recent workouts (anti-chronologically) done by you or your friends.
+    To what extend do we want to favor showing you your workouts or those of
+    your closest friends over others? If so, how do we determine how "close" you
+    are to a person?

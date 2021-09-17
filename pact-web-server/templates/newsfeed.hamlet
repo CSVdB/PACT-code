@@ -10,15 +10,14 @@
     <div>
       Name: #{userName user}
       <form method="post" action=@{CoachR $ ConnectResponseR (userUuid user) AcceptProposal}>
-        <div>
-          <input
-            type="submit"
-            value="Accept">
+        <input
+          type="submit"
+          value="Accept">
 
       <form method="post" action=@{CoachR $ ConnectResponseR (userUuid user) DenyProposal}>
-        <div>
-          <button type="submit">
-            Deny
+        <input
+          type="submit"
+          value="Deny">
   <p>
     Messages will come here to confirm friend requests  and confirm you did a
     planned workout.

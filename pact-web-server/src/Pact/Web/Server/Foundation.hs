@@ -167,6 +167,7 @@ navbarRoutesUser :: [(Route App, String)]
 navbarRoutesUser =
   [ (HomeR, "Newsfeed"),
     -- (ExerciseR ViewAllR, "Exercises"),
+    -- (ExerciseR AddR, "Add exercise"),
     (CoachR ListR, "Coaches"),
     (CoachR ProfileR, "Become coach"),
     (AuthR LogoutR, "Logout")

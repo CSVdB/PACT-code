@@ -8,11 +8,13 @@ module Pact.Web.Server.Handler.Prelude
     getCoachM,
     getCoach,
     workoutTypes,
+    nextRandomUUID,
   )
 where
 
 import Control.Monad as X
 import Data.Text as X (Text)
+import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity as X
 import GHC.Generics (Generic)
 import Pact.DB as X

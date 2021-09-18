@@ -43,7 +43,7 @@ User
   name Username
   password (PasswordHash Bcrypt)
 
-  UniqueUserUUID uuid
+  UniqueUser uuid
   UniqueUsername name
 
   deriving Show Eq Ord Generic
@@ -137,6 +137,7 @@ UserWorkout
   deriving Show Eq Ord Generic
 
 CoachWorkout
+  uuid CoachWorkoutUUID
   coach CoachUUID
   type WorkoutType
   day Day
@@ -250,7 +251,7 @@ collectCustomerCoachProposals :: MonadIO m => Coach -> SqlPersistT m [User]
 collectCustomerCoachProposals Coach {..} = do
   entities <- selectList [CustomerCoachRelationCoach ==. coachUuid, CustomerCoachRelationResponse ==. Nothing] []
   let userIds = customerCoachRelationCustomer . entityVal <$> entities
-  fmap catMaybes $ forM userIds $ fmap (fmap entityVal) . getBy . UniqueUserUUID
+  fmap catMaybes $ forM userIds $ fmap (fmap entityVal) . getBy . UniqueUser
 
 data SqlUpdateResult
   = SqlSuccess
@@ -287,3 +288,23 @@ getLastWeeksWorkouts user@User {..} =
 getCoachWorkouts :: MonadIO m => Coach -> SqlPersistT m [CoachWorkout]
 getCoachWorkouts Coach {..} =
   fmap entityVal <$> selectList [CoachWorkoutCoach ==. coachUuid] []
+
+collectCoaches :: MonadIO m => User -> SqlPersistT m [Coach]
+collectCoaches User {..} = do
+  relations <- fmap entityVal <$> selectList conditions []
+  fmap catMaybes $
+    forM relations $ \CustomerCoachRelation {..} ->
+      fmap entityVal <$> getBy (UniqueCoach customerCoachRelationCoach)
+  where
+    conditions =
+      [ CustomerCoachRelationCustomer ==. userUuid,
+        CustomerCoachRelationResponse ==. Just AcceptProposal
+      ]
+
+getMyCoachesWorkouts :: MonadIO m => User -> SqlPersistT m [(Username, CoachWorkout)]
+getMyCoachesWorkouts user = do
+  coaches <- collectCoaches user
+  fmap join $
+    forM coaches $ \coach -> do
+      User {..} <- entityVal . fromJust <$> getBy (UniqueUser $ coachUser coach)
+      fmap (tuple userName) <$> getCoachWorkouts coach

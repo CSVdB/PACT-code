@@ -12,7 +12,9 @@ module Pact.Web.Server.Handler.Workout
   )
 where
 
+import Data.List (sortOn)
 import Data.Maybe (fromMaybe, isJust)
+import Data.Ord (Down (..))
 import Data.Time.Calendar
 import Data.Time.Clock
 import Data.Validity.Time ()
@@ -20,8 +22,10 @@ import Pact.Web.Server.Handler.Prelude
 
 getActivitiesR :: Handler Html
 getActivitiesR = do
+  user <- getUser
   mCoach <- getCoachM
   coachWorkouts <- fromMaybe [] <$> forM mCoach (runDB . getCoachWorkouts . snd)
+  myCoachesWorkouts <- fmap (sortOn $ Down . coachWorkoutDay . snd) $ runDB $ getMyCoachesWorkouts user
   defaultLayout $ do
     messages <- getMessages
     token <- genToken

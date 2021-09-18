@@ -58,10 +58,12 @@ postAddActivityR workoutType =
 addCoachWorkout :: AddCoachWorkoutForm -> WorkoutType -> Handler Html
 addCoachWorkout AddCoachWorkoutForm {..} workoutType = do
   (_, Coach {..}) <- getCoach
+  uuid <- nextRandomUUID
   runDB $
     insert_
       CoachWorkout
-        { coachWorkoutCoach = coachUuid,
+        { coachWorkoutUuid = uuid,
+          coachWorkoutCoach = coachUuid,
           coachWorkoutType = workoutType,
           coachWorkoutDay = dayACWF,
           coachWorkoutAmount = amount,

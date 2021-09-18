@@ -15,7 +15,7 @@ $maybe (User{..}, Coach {..}) <- mCoach
   <h2 .text-xs-center>My organized events
 
   $forall CoachWorkout {..} <- coachWorkouts
-    <button .Gutton .text-xs-left .no-click width="100" height="100">
+    <button .Gutton .text-xs-left .no-click>
       Coach: #{userName}
       <br>
       Activity: #{show coachWorkoutType}
@@ -26,6 +26,17 @@ $maybe (User{..}, Coach {..}) <- mCoach
       <br>
       Notes: <textarea>#{coachWorkoutNotes}
 
+$forall (coachName, CoachWorkout {..}) <- myCoachesWorkouts
+  <button .Gutton .text-xs-left .no-click>
+    Coach: #{coachName}
+    <br>
+    Activity: #{show coachWorkoutType}
+    <br>
+    Amount: #{showWorkoutAmount coachWorkoutType coachWorkoutAmount}
+    <br>
+    Day: #{show coachWorkoutDay}
+    <br>
+    Notes: <textarea>#{coachWorkoutNotes}
 
 $if not (null messages)
   <div .field>

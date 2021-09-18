@@ -6,7 +6,6 @@
 module Pact.Web.Server.Handler.Coach.Profile where
 
 import qualified Data.Text as T
-import Data.UUID.Typed (nextRandomUUID)
 import Pact.Web.Server.Handler.Prelude
 
 data Profile = Profile

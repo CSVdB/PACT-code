@@ -40,7 +40,7 @@ getListR = do
       selectList [CustomerCoachRelationCustomer ==. userUuid user] []
   coachInfos <- fmap catMaybes $
     forM coaches $ \coach -> do
-      mUser <- fmap (fmap entityVal) . runDB . getBy . UniqueUserUUID $ coachUser coach
+      mUser <- fmap (fmap entityVal) . runDB . getBy . UniqueUser $ coachUser coach
       case mUser of
         Just coachUser -> pure $ Just (coachUser, coach)
         Nothing -> pure Nothing

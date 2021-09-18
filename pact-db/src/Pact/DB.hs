@@ -145,6 +145,13 @@ CoachWorkout
   notes Textarea
 
   deriving Show Eq Ord Generic
+
+WorkoutJoin
+  customer UserUUID
+  workout CoachWorkoutUUID
+  cancelled Cancelled
+
+  deriving Show Eq Ord Generic
 |]
 
 instance Validity (Salt a) where
@@ -281,9 +288,17 @@ tuple a b = (a, b)
 
 -- TODO: Once the concept of friends is introduced, this should list all
 -- workouts done in the last week by a friend of the given user.
-getLastWeeksWorkouts :: MonadIO m => User -> SqlPersistT m [(User, UserWorkout)]
-getLastWeeksWorkouts user@User {..} =
-  fmap (tuple user . entityVal) <$> selectList [UserWorkoutUser ==. userUuid] []
+getLastWeeksWorkouts ::
+  MonadIO m => Day -> User -> SqlPersistT m [(User, UserWorkout)]
+getLastWeeksWorkouts today user@User {..} =
+  fmap (tuple user . entityVal) <$> selectList conditions []
+  where
+    lastWeek = addDays (-7) today
+    conditions =
+      [ UserWorkoutUser ==. userUuid,
+        UserWorkoutDay <=. today,
+        UserWorkoutDay >=. lastWeek
+      ]
 
 getCoachWorkouts :: MonadIO m => Coach -> SqlPersistT m [CoachWorkout]
 getCoachWorkouts Coach {..} =

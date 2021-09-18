@@ -9,12 +9,12 @@ module Pact.Web.Server.Handler.Workout
     getUserR,
     postUserR,
     AddUserWorkoutForm (..),
+    postJoinActivityR,
   )
 where
 
 import Data.List (sortOn)
-import Data.Maybe (fromMaybe, isJust)
-import Data.Ord (Down (..))
+import Data.Maybe (fromMaybe)
 import Data.Time.Calendar
 import Data.Time.Clock
 import Data.Validity.Time ()
@@ -24,13 +24,20 @@ getActivitiesR :: Handler Html
 getActivitiesR = do
   user <- getUser
   mCoach <- getCoachM
-  coachWorkouts <- fromMaybe [] <$> forM mCoach (runDB . getCoachWorkouts . snd)
-  myCoachesWorkouts <- fmap (sortOn $ Down . coachWorkoutDay . snd) $ runDB $ getMyCoachesWorkouts user
+  today <- liftIO $ utctDay <$> getCurrentTime
+  coachWorkouts <-
+    sortOn coachWorkoutDay . filter (filterCondition today) . fromMaybe []
+      <$> forM mCoach (runDB . getCoachWorkouts . snd)
+  myCoachesWorkouts <-
+    sortOn (coachWorkoutDay . snd) . filter (filterCondition today . snd)
+      <$> runDB (getMyCoachesWorkouts user)
   defaultLayout $ do
     messages <- getMessages
     token <- genToken
     setTitleI ("Activities" :: Text)
     $(widgetFile "workout/activities")
+  where
+    filterCondition today CoachWorkout {..} = today <= coachWorkoutDay
 
 getUserR :: WorkoutType -> Handler Html
 getUserR wType = defaultLayout $ do
@@ -83,3 +90,16 @@ addWorkout AddUserWorkoutForm {..} workoutType = do
 
 -- TODO: Think whether this should fail if `amountAWF` isn't almost exactly
 -- equal to a positive integer multiple of the stepsize.
+
+postJoinActivityR :: CoachWorkoutUUID -> Handler Html
+postJoinActivityR workoutUUID = do
+  User {..} <- getUser
+  runDB $
+    insert_
+      WorkoutJoin
+        { workoutJoinCustomer = userUuid,
+          workoutJoinWorkout = workoutUUID,
+          workoutJoinCancelled = NotCancelled
+        }
+  addMessage "is-success" "You joined a workout, this will be great fun!"
+  redirect $ WorkoutR ActivitiesR

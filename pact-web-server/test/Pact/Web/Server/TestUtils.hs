@@ -297,6 +297,21 @@ submitCoachWorkout form workoutType = do
   _ <- followRedirect
   statusIs 200
 
+joinWorkoutRequest :: CoachWorkoutUUID -> YesodExample App ()
+joinWorkoutRequest uuid = request $ do
+  setMethod methodPost
+  setUrl . WorkoutR $ JoinActivityR uuid
+  addToken
+
+joinWorkout :: CoachWorkoutUUID -> YesodExample App ()
+joinWorkout uuid = do
+  testCanReach $ WorkoutR ActivitiesR
+  joinWorkoutRequest uuid
+  statusIs 303
+  locationShouldBe $ WorkoutR ActivitiesR
+  _ <- followRedirect
+  statusIs 200
+
 getSingleUser :: YesodExample App User
 getSingleUser =
   testDB (selectList [] []) >>= \case

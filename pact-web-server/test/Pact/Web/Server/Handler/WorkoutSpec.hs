@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -55,3 +56,37 @@ spec = pactWebServerSpec . describe "Workout" $ do
 
   describe "ActivitiesR" $ do
     testRequiresLogin (WorkoutR ActivitiesR) "WorkoutR ActivitiesR"
+
+  describe "JoinR" $ do
+    it "can POST when logged in" $ \yc ->
+      forAllValid $ \testUser -> forAllValid $ \acwf ->
+        forAllValid $ \testCoach -> forAllValid $ \form ->
+          forAllValid $ \workoutType -> runYesodClientM yc $ do
+            testRegisterUser testCoach
+            testProfileUpsert form
+            submitCoachWorkout acwf workoutType
+            testLogout
+            testRegisterUser testUser
+            workoutUuid <-
+              testDB (P.selectList [] []) >>= \case
+                [P.Entity _ CoachWorkout {..}] -> pure coachWorkoutUuid
+                xs -> fail $ "Found " <> show (length xs) <> " workouts instead of 1"
+            joinWorkout workoutUuid
+
+    it "POST adds the right workout to the dB" $ \yc ->
+      forAllValid $ \testUser -> forAllValid $ \acwf ->
+        forAllValid $ \testCoach -> forAllValid $ \form ->
+          forAllValid $ \workoutType -> runYesodClientM yc $ do
+            testRegisterUser testCoach
+            testProfileUpsert form
+            submitCoachWorkout acwf workoutType
+            testLogout
+            testRegisterUser testUser
+            workoutUuid <-
+              testDB (P.selectList [] []) >>= \case
+                [P.Entity _ CoachWorkout {..}] -> pure coachWorkoutUuid
+                xs -> fail $ "Found " <> show (length xs) <> " workouts instead of 1"
+            joinWorkout workoutUuid
+            testDB (P.selectList [] []) >>= \case
+              [P.Entity _ WorkoutJoin {..}] -> pure ()
+              xs -> fail $ "Found " <> show (length xs) <> " workout joins instead of 1"

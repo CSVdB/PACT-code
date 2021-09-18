@@ -2,7 +2,7 @@
 
 ^{token}
 
-$maybe (User{..}, Coach {..}) <- mCoach
+$maybe (user, _) <- mCoach
   <div .dropdown>
     <button .dropdown-button>Organize workout</button>
     <div .dropdown-list>
@@ -14,29 +14,43 @@ $maybe (User{..}, Coach {..}) <- mCoach
 
   <h2 .text-xs-center>My organized events
 
-  $forall CoachWorkout {..} <- coachWorkouts
+  $forall workout <- coachWorkouts
     <button .Gutton .text-xs-left .no-click>
-      Coach: #{userName}
+      Coach: #{userName user}
       <br>
-      Activity: #{show coachWorkoutType}
+      Activity: #{show $ coachWorkoutType workout}
       <br>
-      Amount: #{showWorkoutAmount coachWorkoutType coachWorkoutAmount}
+      Amount: #{showWorkoutAmount (coachWorkoutType workout) $ coachWorkoutAmount workout}
       <br>
-      Day: #{show coachWorkoutDay}
+      Day: #{show $ coachWorkoutDay workout}
       <br>
-      Notes: <textarea>#{coachWorkoutNotes}
+      Notes:
+      <textarea>#{coachWorkoutNotes workout}
+      <br>
+      <br>
 
-$forall (coachName, CoachWorkout {..}) <- myCoachesWorkouts
-  <button .Gutton .text-xs-left .no-click>
-    Coach: #{coachName}
+<h2 .text-xs-center>Organized events
+$forall (coachName, workout) <- myCoachesWorkouts
+  <form
+    enctype="multipart/form-data"
+    method="post"
+    action=@{WorkoutR $ JoinActivityR $ coachWorkoutUuid workout}>
+    <button .Gutton .text-xs-left .no-click>
+      Coach: #{coachName}
+      <br>
+      Activity: #{show $ coachWorkoutType workout}
+      <br>
+      Amount: #{showWorkoutAmount (coachWorkoutType workout) $ coachWorkoutAmount workout}
+      <br>
+      Day: #{show $ coachWorkoutDay workout}
+      <br>
+      Notes:
+      <textarea>#{coachWorkoutNotes workout}
+      <br>
+      <input .btn .btn-lg .btn-primary .pull-xs-right .click
+        type="submit"
+        value="Join">
     <br>
-    Activity: #{show coachWorkoutType}
-    <br>
-    Amount: #{showWorkoutAmount coachWorkoutType coachWorkoutAmount}
-    <br>
-    Day: #{show coachWorkoutDay}
-    <br>
-    Notes: <textarea>#{coachWorkoutNotes}
 
 $if not (null messages)
   <div .field>

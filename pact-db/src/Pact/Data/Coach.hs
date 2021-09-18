@@ -40,3 +40,17 @@ instance PersistFieldSql ProposalResponse where
 instance PathPiece ProposalResponse where
   fromPathPiece = readMaybe . T.unpack
   toPathPiece = T.pack . show
+
+data Cancelled
+  = Cancelled
+  | NotCancelled
+  deriving (Show, Read, Eq, Ord, Generic)
+
+instance Validity Cancelled
+
+instance PersistField Cancelled where
+  toPersistValue = toPersistValue . show
+  fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v
+
+instance PersistFieldSql Cancelled where
+  sqlType _ = SqlString

@@ -4,6 +4,9 @@
 
 module Pact.Web.Server.Handler.Home where
 
+import Data.List (sortOn)
+import Data.Ord (Down (..))
+import Data.Time.Clock
 import Pact.Web.Server.Handler.Prelude
 
 getHomeR :: Handler Html
@@ -24,7 +27,10 @@ newsfeedR _ mCoach = do
     Nothing -> pure []
     Just coach -> runDB $ collectCustomerCoachProposals coach
   token <- genToken
-  userWorkouts <- runDB . getLastWeeksWorkouts =<< getUser
+  today <- liftIO $ utctDay <$> getCurrentTime
+  userWorkouts <-
+    sortOn (Down . userWorkoutDay . snd)
+      <$> (runDB . getLastWeeksWorkouts today =<< getUser)
   defaultLayout $ do
     setTitle "PACT"
     $(widgetFile "newsfeed")

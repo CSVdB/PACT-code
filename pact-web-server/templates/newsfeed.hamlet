@@ -6,15 +6,6 @@
   <div .dropdown-list>
     $forall workoutType <- workoutTypes
       <a href=@{WorkoutR $ UserR workoutType}>#{show workoutType}
-  <script>
-    function myFunction() {
-      var x = document.getElementById("myTopnav");
-      if (x.className === "topnav") {
-        x.className += " responsive";
-      } else {
-        x.className = "topnav";
-      }
-    }
 <br>
 <br>
 

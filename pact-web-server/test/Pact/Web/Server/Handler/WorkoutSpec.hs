@@ -52,3 +52,6 @@ spec = pactWebServerSpec . describe "Workout" $ do
               userWorkoutAmount
                 `shouldBe` WorkoutAmount (round $ amountAWF form / stepSize workoutType)
             xs -> fail $ "Found " ++ show (length xs) ++ " workouts in the dB instead of 1"
+
+  describe "ActivitiesR" $ do
+    testRequiresLogin (WorkoutR ActivitiesR) "WorkoutR ActivitiesR"

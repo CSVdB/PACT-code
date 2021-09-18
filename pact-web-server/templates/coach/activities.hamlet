@@ -1,0 +1,36 @@
+<h1 .text-xs-center>Plan a #{show workoutType} workout
+<div .text-xs-center>
+  <form
+    enctype="multipart/form-data"
+    method="post"
+    action=@{CoachR $ AddActivityR workoutType}>
+    <div>
+      This is the workout type.
+      <br>
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="amount"
+          placeholder="0"
+          required
+          autofocus
+          type="number"
+          step=#{show $ stepSize workoutType}>#{amountMessage workoutType}
+
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="day"
+          placeholder=""
+          required
+          type="date">
+
+      ^{token}
+
+      $if not (null messages)
+        <div .field>
+          $forall (_, message) <- messages
+            <p .help .is-danger>
+              #{message}
+
+      <input .btn .btn-lg .btn-primary .pull-xs-right
+        type="submit"
+        value="Add workout">

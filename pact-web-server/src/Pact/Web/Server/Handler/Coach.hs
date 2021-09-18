@@ -5,16 +5,17 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Pact.Web.Server.Handler.Coach
-  ( getProfileR,
-    postProfileR,
-    getListR,
+  ( getListR,
     postConnectR,
     ProfileForm (..),
     postConnectResponseR,
+    module Pact.Web.Server.Handler.Coach.Activities,
+    module Pact.Web.Server.Handler.Coach.Profile,
   )
 where
 
 import Data.Maybe (catMaybes)
+import Pact.Web.Server.Handler.Coach.Activities
 import Pact.Web.Server.Handler.Coach.Profile
 import Pact.Web.Server.Handler.Prelude
 

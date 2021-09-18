@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 992a0ae7320cc0cb082db66ec885aa6a90efe86742cf9f34fc89eb020bf78ce3
+-- hash: 38091fb6d73f1c5d1580a8b50842b81b1c9c90d628724b27c4af330ea35d6fe2
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -28,6 +28,7 @@ library
       Pact.Web.Server.Foundation
       Pact.Web.Server.Handler
       Pact.Web.Server.Handler.Coach
+      Pact.Web.Server.Handler.Coach.Activities
       Pact.Web.Server.Handler.Coach.Profile
       Pact.Web.Server.Handler.Exercise
       Pact.Web.Server.Handler.Exercise.Add

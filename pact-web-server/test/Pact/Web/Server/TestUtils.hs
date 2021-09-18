@@ -27,6 +27,7 @@ import System.FilePath (takeExtension)
 import System.Random (randomRIO)
 import Test.Syd
 import Test.Syd.Path
+import Test.Syd.Validity as X
 import Test.Syd.Wai (managerSpec)
 import Test.Syd.Yesod
 
@@ -289,3 +290,55 @@ getSingleCoach =
   testDB (selectList [] []) >>= \case
     [Entity _ coach] -> pure coach
     xs -> fail $ "Found " <> show (length xs) <> " coachs instead of 1"
+
+testRequiresLogin :: Route App -> String -> PactWebServerSpec
+testRequiresLogin route routeString = do
+  it "GETs 200 if logged in" $ \yc -> do
+    forAllValid $ \testUser -> runYesodClientM yc $ do
+      testRegisterUser testUser
+      testCanReach route
+
+  it "GETs 303 redirect to Login if not logged in" $ \yc ->
+    runYesodClientM yc $ testCannotReach route
+
+  it ("GET without logged in, then follow the redirect, ends up at " <> routeString) $
+    \yc -> forAllValid $ \testUser -> runYesodClientM yc $ do
+      testRegisterUser testUser
+      testLogout
+      testCannotReach route
+      _ <- followRedirect
+      loginRequest (testUsername testUser) $ testUserPassword testUser
+      statusIs 303
+      locationShouldBe route
+      _ <- followRedirect
+      statusIs 200
+
+testRequiresCoach :: Route App -> String -> PactWebServerSpec
+testRequiresCoach route routeString = do
+  it "GETs 403 if logged in as non-coach user" $ \yc -> do
+    forAllValid $ \testUser -> runYesodClientM yc $ do
+      testRegisterUser testUser
+      get route
+      statusIs 403
+
+  it "GETs 200 if logged in coach" $ \yc -> do
+    forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
+      testRegisterUser testUser
+      testProfileUpsert form
+      testCanReach route
+
+  it "GETs 303 redirect to Login if not logged in" $ \yc ->
+    runYesodClientM yc $ testCannotReach route
+
+  it ("GET without logged in, then follow the redirect, ends up at " <> routeString) $
+    \yc -> forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
+      testRegisterUser testUser
+      testProfileUpsert form
+      testLogout
+      testCannotReach route
+      _ <- followRedirect
+      loginRequest (testUsername testUser) $ testUserPassword testUser
+      statusIs 303
+      locationShouldBe route
+      _ <- followRedirect
+      statusIs 200

@@ -10,25 +10,7 @@ import Pact.Web.Server.Handler.TestImport
 spec :: Spec
 spec = pactWebServerSpec . describe "Coach" $ do
   describe "Profile" $ do
-    it "GETs 200 if logged in" $ \yc -> do
-      forAllValid $ \testUser -> runYesodClientM yc $ do
-        testRegisterUser testUser
-        testCanReach $ CoachR ProfileR
-
-    it "GETs 303 redirect to Login if not logged in" $ \yc ->
-      runYesodClientM yc $ testCannotReach $ CoachR ProfileR
-
-    it "GET without logged in, then follow the redirect, ends up at AddR" $
-      \yc -> forAllValid $ \testUser -> runYesodClientM yc $ do
-        testRegisterUser testUser
-        testLogout
-        testCannotReach $ CoachR ProfileR
-        _ <- followRedirect
-        loginRequest (testUsername testUser) $ testUserPassword testUser
-        statusIs 303
-        locationShouldBe $ CoachR ProfileR
-        _ <- followRedirect
-        statusIs 200
+    testRequiresLogin (CoachR ProfileR) "CoachR ProfileR"
 
     it "can POST when logged in" $ \yc ->
       forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
@@ -146,4 +128,36 @@ spec = pactWebServerSpec . describe "Coach" $ do
             testRespondToProposal (userUuid user) response
 
             respondToProposalRequest (userUuid user) response' -- Respond to the same request again
-            statusIs 404 -- notFound
+            statusIs 404
+
+  describe "AddActivityR" $ do
+    it "GETs 403 if logged in as non-coach user" $ \yc -> do
+      forAllValid $ \testUser -> forAllValid $ \workoutType ->
+        runYesodClientM yc $ do
+          testRegisterUser testUser
+          get . CoachR $ AddActivityR workoutType
+          statusIs 403
+
+    it "GETs 200 if logged in as coach" $ \yc -> do
+      forAllValid $ \testUser -> forAllValid $ \form ->
+        forAllValid $ \workoutType -> runYesodClientM yc $ do
+          testRegisterUser testUser
+          testProfileUpsert form
+          testCanReach . CoachR $ AddActivityR workoutType
+
+    it "GETs 303 redirect to Login if not logged in" $ \yc ->
+      forAllValid $ runYesodClientM yc . testCannotReach . CoachR . AddActivityR
+
+    it "GET without logged in redirects, eventually to (CoachR $ AddActivityR workoutType)" $
+      \yc -> forAllValid $ \testUser -> forAllValid $ \workoutType ->
+        forAllValid $ \form -> runYesodClientM yc $ do
+          testRegisterUser testUser
+          testProfileUpsert form
+          testLogout
+          testCannotReach . CoachR $ AddActivityR workoutType
+          _ <- followRedirect
+          loginRequest (testUsername testUser) $ testUserPassword testUser
+          statusIs 303
+          locationShouldBe . CoachR $ AddActivityR workoutType
+          _ <- followRedirect
+          statusIs 200

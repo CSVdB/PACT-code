@@ -28,5 +28,3 @@ newsfeedR _ mCoach = do
   defaultLayout $ do
     setTitle "PACT"
     $(widgetFile "newsfeed")
-  where
-    workoutTypes = [minBound .. maxBound :: WorkoutType]

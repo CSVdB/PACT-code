@@ -5,16 +5,27 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Pact.Web.Server.Handler.Workout
-  ( getUserR,
+  ( getActivitiesR,
+    getUserR,
     postUserR,
     AddUserWorkoutForm (..),
   )
 where
 
+import Data.Maybe (isJust)
 import Data.Time.Calendar
 import Data.Time.Clock
 import Data.Validity.Time ()
 import Pact.Web.Server.Handler.Prelude
+
+getActivitiesR :: Handler Html
+getActivitiesR = do
+  isCoach <- isJust <$> getCoachM
+  defaultLayout $ do
+    messages <- getMessages
+    token <- genToken
+    setTitleI ("Activities" :: Text)
+    $(widgetFile "workout/activities")
 
 getUserR :: WorkoutType -> Handler Html
 getUserR wType = defaultLayout $ do

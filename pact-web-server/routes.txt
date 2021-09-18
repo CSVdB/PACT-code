@@ -9,6 +9,7 @@
   /profile ProfileR GET POST
   /connect/#CoachUUID ConnectR POST
   /connect-response/#UserUUID/#ProposalResponse ConnectResponseR POST
+  /activity/#WorkoutType AddActivityR GET POST
 
 /exercise ExerciseR:
   /add AddR GET POST
@@ -16,6 +17,7 @@
   /view-all ViewAllR GET
 
 /workout WorkoutR:
+  / ActivitiesR GET
   /user/#WorkoutType UserR GET POST
 
 /image/#ImageUUID ImageR GET

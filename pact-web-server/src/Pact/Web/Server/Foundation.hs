@@ -75,15 +75,21 @@ instance Yesod App where
   isAuthorized route _ = do
     userType <- getUserType
     case route of
-      ExerciseR _ -> requiresUser userType
-      CoachR _ -> requiresUser userType
-      WorkoutR _ -> requiresUser userType
+      ExerciseR AddR -> requireCoach userType
+      ExerciseR _ -> requireUser userType
+      CoachR (AddActivityR _) -> requireCoach userType
+      CoachR _ -> requireUser userType
+      WorkoutR _ -> requireUser userType
       _ -> pure Authorized
     where
       -- Must be logged in as some type of user
-      requiresUser = \case
+      requireUser = \case
         Nobody -> pure AuthenticationRequired
         LoggedInUser _ -> pure Authorized
+        LoggedInCoach _ _ -> pure Authorized
+      requireCoach = \case
+        Nobody -> pure AuthenticationRequired
+        LoggedInUser _ -> pure $ Unauthorized "You must be a coach to access this page."
         LoggedInCoach _ _ -> pure Authorized
 
 instance RenderMessage App FormMessage where
@@ -167,6 +173,7 @@ navbarRoutesNobody =
 navbarRoutesUser :: [(Route App, String)]
 navbarRoutesUser =
   [ (HomeR, "Newsfeed"),
+    (WorkoutR ActivitiesR, "Activities"),
     -- (ExerciseR ViewAllR, "Exercises"),
     -- (ExerciseR AddR, "Add exercise"),
     (CoachR ListR, "Coaches"),

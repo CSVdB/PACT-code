@@ -1,9 +1,12 @@
+{-# LANGUAGE LambdaCase #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Pact.Web.Server.Handler.Prelude
   ( module X,
     Generic,
     getUser,
+    getCoachM,
+    workoutTypes,
   )
 where
 
@@ -29,3 +32,12 @@ getUser = do
   case mAuth of
     Nothing -> notFound -- This isn't really possible, it's already stopped by Yesod authorization
     Just (Entity _ user) -> pure user
+
+getCoachM :: Handler (Maybe Coach)
+getCoachM =
+  getUserType >>= \case
+    LoggedInCoach _ coach -> pure $ Just coach
+    _ -> pure Nothing
+
+workoutTypes :: [WorkoutType]
+workoutTypes = [minBound .. maxBound]

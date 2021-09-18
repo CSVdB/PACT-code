@@ -99,7 +99,7 @@ amountMessage HIIT = "minutes"
 
 stepSize :: WorkoutType -> Double
 stepSize Jog = 0.1
-stepSize Swim = 10
+stepSize Swim = 1
 stepSize Calisthenics = 1
 stepSize HIIT = 1
 

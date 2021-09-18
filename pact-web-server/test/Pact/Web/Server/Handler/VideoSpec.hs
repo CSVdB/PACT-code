@@ -12,11 +12,13 @@ spec :: Spec
 spec = pactWebServerSpec . describe "Video" $ do
   describe "VideoR" $ do
     it "POST an exercise actually adds an video" $ \yc ->
-      forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
-        testRegisterUser testUser
-        testSubmitExercise form
-        videos <- testDB $ P.selectList [] [] -- Collect all videos
-        liftIO $ (videos :: [P.Entity Video]) `shouldNotBe` []
+      forAllValid $ \testUser -> forAllValid $ \profileForm ->
+        forAllValid $ \exerciseForm -> runYesodClientM yc $ do
+          testRegisterUser testUser
+          testProfileUpsert profileForm
+          testSubmitExercise exerciseForm
+          videos <- testDB $ P.selectList [] [] -- Collect all videos
+          liftIO $ (videos :: [P.Entity Video]) `shouldNotBe` []
     it "Can GET an existent video" $ \yc ->
       forAllValid $ \video ->
         runYesodClientM yc $ do

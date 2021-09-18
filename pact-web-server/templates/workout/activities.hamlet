@@ -1,0 +1,16 @@
+<h1 .text-xs-center>Planned activities
+<div .text-xs-center>
+  ^{token}
+
+  $if isCoach
+    <div .dropdown>
+      <button .dropdown-button>Organize workout</button>
+      <div .dropdown-list>
+        $forall workoutType <- workoutTypes
+          <a href=@{CoachR $ AddActivityR workoutType}>#{show workoutType}
+
+  $if not (null messages)
+    <div .field>
+      $forall (_, message) <- messages
+        <p .help .is-danger>
+          #{message}

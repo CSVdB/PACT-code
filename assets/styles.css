@@ -7371,7 +7371,7 @@ footer .attribution {
 /* Change color of dropdown links on hover */
 
 .dropdown-list a:hover {
-    background-color: black;
+    background-color: grey;
 }
 
 /* Show the dropdown list on hover */

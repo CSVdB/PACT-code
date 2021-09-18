@@ -2,12 +2,12 @@
 
 module Pact.Web.Server where
 
-import Control.Lens ((.~))
 import Control.Monad
 import Control.Monad.Logger
 import Data.Function ((&))
 import qualified Data.Text as T
 import Database.Persist.Sqlite
+import Lens.Micro ((.~))
 import Network.HTTP.Client.TLS as HTTP
 import qualified Network.Wai.Handler.Warp as Warp
 import Network.Wai.Middleware.RequestLogger

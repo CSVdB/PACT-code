@@ -24,6 +24,7 @@ import Data.Password.Bcrypt
 import Data.Password.Instances ()
 import Data.Text (Text)
 import qualified Data.Text as T
+import Data.Time.Calendar
 import Data.Validity
 import Data.Validity.ByteString ()
 import Data.Validity.Persist ()
@@ -124,6 +125,14 @@ CustomerCoachRelation
   response ProposalResponse Maybe
 
   UniqueRelation customer coach
+
+  deriving Show Eq Ord Generic
+
+UserWorkout
+  user UserUUID
+  type WorkoutType
+  day Day
+  amount WorkoutAmount
 
   deriving Show Eq Ord Generic
 |]
@@ -256,3 +265,12 @@ respondToProposal user coach response =
           update key [CustomerCoachRelationResponse =. Just response]
           pure SqlSuccess
         Just _ -> pure SqlAlreadyUpdated
+
+tuple :: a -> b -> (a, b)
+tuple a b = (a, b)
+
+-- TODO: Once the concept of friends is introduced, this should list all
+-- workouts done in the last week by a friend of the given user.
+getLastWeeksWorkouts :: MonadIO m => User -> SqlPersistT m [(User, UserWorkout)]
+getLastWeeksWorkouts user@User {..} =
+  fmap (tuple user . entityVal) <$> selectList [UserWorkoutUser ==. userUuid] []

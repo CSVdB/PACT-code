@@ -7331,3 +7331,61 @@ footer .attribution {
     margin-right: 5px;
     cursor: pointer
 }
+
+/* Dropdown Button */
+
+.dropdown-button {
+    background-color: black;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+
+.dropdown-list {
+    display: none;
+    position: absolute;
+    background-color: black;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+
+.dropdown-list a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-family: verdana;
+}
+
+/* Change color of dropdown links on hover */
+
+.dropdown-list a:hover {
+    background-color: black;
+}
+
+/* Show the dropdown list on hover */
+
+.dropdown:hover .dropdown-list {
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown list is shown */
+
+.dropdown:hover .dropdown-button {
+    background-color: grey;
+}
+
+.no-click {
+    pointer-events: none;
+}

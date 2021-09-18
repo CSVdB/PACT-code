@@ -2,7 +2,6 @@
 
 module Pact.Web.Server.Handler.CoachSpec (spec) where
 
-import Data.Maybe (fromJust)
 import qualified Database.Persist.Class as P
 import qualified Database.Persist.Types as P
 import Pact.Web.Server.Handler.Coach
@@ -96,7 +95,7 @@ spec = pactWebServerSpec . describe "Coach" $ do
       forAllValid $ \testUser -> forAllValid $ \testCoach ->
         forAllValid $ \form -> forAllValid $ \response -> runYesodClientM yc $ do
           testRegisterUser testUser
-          user <- fmap (P.entityVal . fromJust) $ testDB $ P.selectFirst [] []
+          user <- getSingleUser
           testLogout
           testRegisterUser testCoach
           testProfileUpsert form
@@ -107,12 +106,12 @@ spec = pactWebServerSpec . describe "Coach" $ do
       forAllValid $ \testUser -> forAllValid $ \testCoach ->
         forAllValid $ \form -> forAllValid $ \response -> runYesodClientM yc $ do
           testRegisterUser testUser
-          user <- fmap (P.entityVal . fromJust) $ testDB $ P.selectFirst [] []
+          user <- getSingleUser
           testLogout
 
           testRegisterUser testCoach
           testProfileUpsert form
-          coach <- fmap (P.entityVal . fromJust) $ testDB $ P.selectFirst [] []
+          coach <- getSingleCoach
           testLogout
 
           testLoginUser testUser
@@ -131,12 +130,12 @@ spec = pactWebServerSpec . describe "Coach" $ do
         forAllValid $ \form -> forAllValid $ \response ->
           forAllValid $ \response' -> runYesodClientM yc $ do
             testRegisterUser testUser
-            user <- fmap (P.entityVal . fromJust) $ testDB $ P.selectFirst [] []
+            user <- getSingleUser
             testLogout
 
             testRegisterUser testCoach
             testProfileUpsert form
-            coach <- fmap (P.entityVal . fromJust) $ testDB $ P.selectFirst [] []
+            coach <- getSingleCoach
             testLogout
 
             testLoginUser testUser

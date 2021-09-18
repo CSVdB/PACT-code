@@ -1,5 +1,20 @@
 <h1 .text-xs-center>
   Newsfeed
+
+<div .dropdown>
+  <button .dropdown-button>I did a workout!</button>
+  <div .dropdown-list>
+    $forall workoutType <- workoutTypes
+      <a href=@{WorkoutR $ UserR workoutType}>#{show workoutType}
+  <script>
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "topnav") {
+        x.className += " responsive";
+      } else {
+        x.className = "topnav";
+      }
+    }
 <br>
 <br>
 
@@ -21,9 +36,15 @@
   <p>
     Messages will come here to confirm friend requests  and confirm you did a
     planned workout.
-  <br>
-  <p>
-    List recent workouts (anti-chronologically) done by you or your friends.
-    To what extend do we want to favor showing you your workouts or those of
-    your closest friends over others? If so, how do we determine how "close" you
-    are to a person?
+
+<br>
+
+$forall (user, userWorkout) <- userWorkouts
+  <button .Gutton .no-click>
+    User: #{userName user}
+    <br>
+    Activity: #{show $ userWorkoutType userWorkout}
+    <br>
+    Amount: #{showWorkoutAmount (userWorkoutType userWorkout) $ userWorkoutAmount userWorkout}
+    <br>
+    Day: #{show $ userWorkoutDay userWorkout}

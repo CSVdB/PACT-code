@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1472aca10aaf2f8aed222ac0846e088cd96ec836ae1b045da1b8c2e29abc9a52
+-- hash: 992a0ae7320cc0cb082db66ec885aa6a90efe86742cf9f34fc89eb020bf78ce3
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -35,6 +35,7 @@ library
       Pact.Web.Server.Handler.Image
       Pact.Web.Server.Handler.Prelude
       Pact.Web.Server.Handler.Video
+      Pact.Web.Server.Handler.Workout
       Pact.Web.Server.OptParse
       Pact.Web.Server.Static
       Pact.Web.Server.Static.TH
@@ -52,7 +53,7 @@ library
     , file-embed
     , http-client
     , http-client-tls
-    , lens
+    , microlens
     , monad-logger
     , optparse-applicative
     , pact-db
@@ -64,9 +65,11 @@ library
     , shakespeare
     , template-haskell
     , text
+    , time
     , typed-uuid
     , uuid
     , validity
+    , validity-time
     , wai-extra
     , warp
     , yaml
@@ -102,6 +105,7 @@ test-suite pact-web-server-test
       Pact.Web.Server.Handler.InstanceSpec
       Pact.Web.Server.Handler.TestImport
       Pact.Web.Server.Handler.VideoSpec
+      Pact.Web.Server.Handler.WorkoutSpec
       Pact.Web.Server.PathPiece
       Pact.Web.Server.TestUtils
       Paths_pact_web_server
@@ -121,11 +125,12 @@ test-suite pact-web-server-test
     , genvalidity-sydtest-aeson
     , genvalidity-sydtest-persistent
     , genvalidity-text
+    , genvalidity-time
     , genvalidity-typed-uuid
     , genvalidity-uuid
     , hspec
     , http-client
-    , lens
+    , microlens
     , monad-logger
     , mtl
     , pact-db
@@ -139,6 +144,7 @@ test-suite pact-web-server-test
     , sydtest-wai
     , sydtest-yesod
     , text
+    , time
     , typed-uuid
     , uuid
     , yesod

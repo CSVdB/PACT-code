@@ -19,13 +19,6 @@ data Profile = Profile
 data IsCoach = IsCoach | NoCoachYet
   deriving (Show, Eq, Ord, Generic)
 
-getUser :: Handler User
-getUser = do
-  mAuth <- maybeAuth
-  case mAuth of
-    Nothing -> notFound -- This isn't really possible, it's already stopped by Yesod authorization
-    Just (Entity _ user) -> pure user
-
 getProfileFromUser :: User -> Handler (Profile, IsCoach)
 getProfileFromUser User {..} = do
   mCoach <- runDB $ getBy $ UniqueCoachUser userUuid
@@ -48,9 +41,7 @@ getProfileFromUser User {..} = do
        in (profile, IsCoach)
 
 getProfile :: Handler (Profile, IsCoach)
-getProfile = do
-  user <- getUser
-  getProfileFromUser user
+getProfile = getUser >>= getProfileFromUser
 
 getProfileR :: Handler Html
 getProfileR = do

@@ -37,6 +37,7 @@ library
     , blaze-markup
     , bytestring
     , either
+    , format-numbers
     , jose
     , monad-logger
     , password
@@ -49,6 +50,7 @@ library
     , servant-auth-server
     , servant-client-core
     , text
+    , time
     , typed-uuid
     , uuid
     , validity

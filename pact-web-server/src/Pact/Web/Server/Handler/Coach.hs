@@ -72,6 +72,6 @@ postConnectResponseR uuid response =
     LoggedInCoach _ Coach {..} ->
       runDB (respondToProposal uuid coachUuid response) >>= \case
         SqlSuccess -> redirect HomeR
-        SqlNotFound -> liftIO (putStrLn "Not found") *> notFound
-        SqlAlreadyUpdated -> liftIO (putStrLn "AlreadyUpdated") *> notFound
+        SqlNotFound -> notFound
+        SqlAlreadyUpdated -> notFound
     _ -> notFound -- This will never happen because of yesod authorization

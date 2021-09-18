@@ -17,16 +17,16 @@
   <p>
     Muscles:
     $forall muscle <- musclesCE
-      <button type="button"> #{show muscle} </button>
+      <button .no-click type="button"> #{show muscle} </button>
 
   <p>
-    Difficulty: <button type="button"> #{show exerciseDifficulty} </button>
+    Difficulty: <button .no-click type="button"> #{show exerciseDifficulty} </button>
 
   $if not $ null materialsCE
     <p>
       ExerciseMaterials:
       $forall name <- materialsCE
-        <button type="button"> #{show name} </button>
+        <button .no-click type="button"> #{show name} </button>
 
   $if not $ T.null exerciseFormTips
     <p> FormTips: <br>

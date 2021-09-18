@@ -24,6 +24,9 @@ newsfeedR _ mCoach = do
     Nothing -> pure []
     Just coach -> runDB $ collectCustomerCoachProposals coach
   token <- genToken
+  userWorkouts <- runDB . getLastWeeksWorkouts =<< getUser
   defaultLayout $ do
     setTitle "PACT"
     $(widgetFile "newsfeed")
+  where
+    workoutTypes = [minBound .. maxBound :: WorkoutType]

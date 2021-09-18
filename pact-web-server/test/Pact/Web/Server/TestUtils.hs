@@ -5,7 +5,6 @@
 
 module Pact.Web.Server.TestUtils where
 
-import Control.Lens ((&), (.~))
 import Control.Monad.Logger
 import Control.Monad.Reader
 import Data.ByteString (ByteString)
@@ -15,6 +14,7 @@ import qualified Data.Text as T
 import qualified Database.Persist.Sql as DB
 import Database.Persist.Sqlite (fkEnabled, mkSqliteConnectionInfo, runSqlPool, walEnabled, withSqlitePoolInfo)
 import GHC.Generics
+import Lens.Micro ((&), (.~))
 import Network.HTTP.Client as HTTP
 import Pact.DB.Migrations (allServerMigrations)
 import Pact.Data
@@ -33,7 +33,7 @@ import Test.Syd.Yesod
 type PactWebServerSpec = YesodSpec App
 
 pactWebServerSpec :: PactWebServerSpec -> Spec
-pactWebServerSpec = modifyMaxSuccess (`div` 20) . managerSpec . yesodSpecWithSiteSetupFunc serverSetup
+pactWebServerSpec = modifyMaxSuccess (const 5) . managerSpec . yesodSpecWithSiteSetupFunc serverSetup
 
 serverSetup :: HTTP.Manager -> SetupFunc App
 serverSetup man = do
@@ -260,3 +260,32 @@ testRespondToProposal user response = do
   locationShouldBe HomeR
   _ <- followRedirect
   statusIs 200
+
+addUserWorkoutRequest :: AddUserWorkoutForm -> WorkoutType -> YesodExample App ()
+addUserWorkoutRequest AddUserWorkoutForm {..} workoutType = request $ do
+  setMethod methodPost
+  setUrl . WorkoutR $ UserR workoutType
+  addToken
+  addPostParam "amount" . T.pack . show $ (round $ amountAWF / stepSize workoutType :: Int)
+  addPostParam "day" . T.pack $ show dayAWF
+
+submitUserWorkout :: AddUserWorkoutForm -> WorkoutType -> YesodExample App ()
+submitUserWorkout form workoutType = do
+  testCanReach . WorkoutR $ UserR workoutType
+  addUserWorkoutRequest form workoutType
+  statusIs 303
+  locationShouldBe HomeR
+  _ <- followRedirect
+  statusIs 200
+
+getSingleUser :: YesodExample App User
+getSingleUser =
+  testDB (selectList [] []) >>= \case
+    [Entity _ user] -> pure user
+    xs -> fail $ "Found " <> show (length xs) <> " users instead of 1"
+
+getSingleCoach :: YesodExample App Coach
+getSingleCoach =
+  testDB (selectList [] []) >>= \case
+    [Entity _ coach] -> pure coach
+    xs -> fail $ "Found " <> show (length xs) <> " coachs instead of 1"

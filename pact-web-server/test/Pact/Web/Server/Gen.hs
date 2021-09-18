@@ -7,6 +7,7 @@ module Pact.Web.Server.Gen where
 import Data.GenValidity
 import Data.GenValidity.ByteString ()
 import Data.GenValidity.Text ()
+import Data.GenValidity.Time ()
 import Data.GenValidity.UUID.Typed ()
 import qualified Data.Text as T
 import Pact.DB
@@ -91,3 +92,11 @@ instance GenValid Video where
 instance GenUnchecked ProposalResponse
 
 instance GenValid ProposalResponse
+
+instance GenValid AddUserWorkoutForm where
+  genValid = genValidStructurally `suchThat` isValid
+  shrinkValid = filter isValid . shrinkValidStructurally
+
+instance GenUnchecked WorkoutType
+
+instance GenValid WorkoutType

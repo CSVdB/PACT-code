@@ -15,5 +15,8 @@
   /view/#ExerciseUUID ViewR GET
   /view-all ViewAllR GET
 
+/workout WorkoutR:
+  /user/#WorkoutType UserR GET POST
+
 /image/#ImageUUID ImageR GET
 /video/#VideoUUID VideoR GET

@@ -3,6 +3,7 @@
 module Pact.Web.Server.Handler.Prelude
   ( module X,
     Generic,
+    getUser,
   )
 where
 
@@ -21,3 +22,10 @@ import Yesod.Auth as X
 
 instance X.Validity Textarea where
   validate (Textarea t) = delve "Textarea" t
+
+getUser :: Handler User
+getUser = do
+  mAuth <- maybeAuth
+  case mAuth of
+    Nothing -> notFound -- This isn't really possible, it's already stopped by Yesod authorization
+    Just (Entity _ user) -> pure user

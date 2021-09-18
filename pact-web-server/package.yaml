@@ -18,7 +18,7 @@ library:
   - file-embed
   - http-client
   - http-client-tls
-  - lens
+  - microlens
   - monad-logger
   - optparse-applicative
   - pact-db
@@ -30,9 +30,11 @@ library:
   - shakespeare
   - template-haskell
   - text
+  - time
   - typed-uuid
   - uuid
   - validity
+  - validity-time
   - wai-extra
   - warp
   - yaml
@@ -69,6 +71,7 @@ tests:
     - genvalidity
     - genvalidity-bytestring
     - genvalidity-text
+    - genvalidity-time
     - genvalidity-typed-uuid
     - genvalidity-sydtest
     - genvalidity-sydtest-aeson
@@ -78,7 +81,7 @@ tests:
     - http-client
     - monad-logger
     - mtl
-    - lens
+    - microlens
     - pact-db
     - pact-web-server
     - password
@@ -91,6 +94,7 @@ tests:
     - sydtest-wai
     - sydtest-yesod
     - text
+    - time
     - typed-uuid
     - uuid
     - yesod

@@ -77,6 +77,7 @@ instance Yesod App where
     case route of
       ExerciseR _ -> requiresUser userType
       CoachR _ -> requiresUser userType
+      WorkoutR _ -> requiresUser userType
       _ -> pure Authorized
     where
       -- Must be logged in as some type of user

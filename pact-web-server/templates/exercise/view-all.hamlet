@@ -10,4 +10,4 @@
 
       <div .pull-xs-right>
         $forall muscle <- musclesCE ce
-          <button type="button"> #{show muscle}
+          <button .no-click type="button"> #{show muscle}

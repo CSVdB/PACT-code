@@ -12,7 +12,7 @@ module Pact.Web.Server.Handler.Workout
   )
 where
 
-import Data.Maybe (isJust)
+import Data.Maybe (fromMaybe, isJust)
 import Data.Time.Calendar
 import Data.Time.Clock
 import Data.Validity.Time ()
@@ -20,7 +20,8 @@ import Pact.Web.Server.Handler.Prelude
 
 getActivitiesR :: Handler Html
 getActivitiesR = do
-  isCoach <- isJust <$> getCoachM
+  mCoach <- getCoachM
+  coachWorkouts <- fromMaybe [] <$> forM mCoach (runDB . getCoachWorkouts . snd)
   defaultLayout $ do
     messages <- getMessages
     token <- genToken

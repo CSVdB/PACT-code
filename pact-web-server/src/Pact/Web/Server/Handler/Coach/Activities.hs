@@ -57,7 +57,7 @@ postAddActivityR workoutType =
 
 addCoachWorkout :: AddCoachWorkoutForm -> WorkoutType -> Handler Html
 addCoachWorkout AddCoachWorkoutForm {..} workoutType = do
-  Coach {..} <- getCoach
+  (_, Coach {..}) <- getCoach
   runDB $
     insert_
       CoachWorkout

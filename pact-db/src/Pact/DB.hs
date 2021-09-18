@@ -283,3 +283,7 @@ tuple a b = (a, b)
 getLastWeeksWorkouts :: MonadIO m => User -> SqlPersistT m [(User, UserWorkout)]
 getLastWeeksWorkouts user@User {..} =
   fmap (tuple user . entityVal) <$> selectList [UserWorkoutUser ==. userUuid] []
+
+getCoachWorkouts :: MonadIO m => Coach -> SqlPersistT m [CoachWorkout]
+getCoachWorkouts Coach {..} =
+  fmap entityVal <$> selectList [CoachWorkoutCoach ==. coachUuid] []

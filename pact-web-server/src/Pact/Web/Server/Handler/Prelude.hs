@@ -34,17 +34,17 @@ getUser = do
     Nothing -> notFound -- This should have been stopped by Yesod authorization anyway.
     Just (Entity _ user) -> pure user
 
-getCoachM :: Handler (Maybe Coach)
+getCoachM :: Handler (Maybe (User, Coach))
 getCoachM =
   getUserType >>= \case
-    LoggedInCoach _ coach -> pure $ Just coach
+    LoggedInCoach user coach -> pure $ Just (user, coach)
     _ -> pure Nothing
 
-getCoach :: Handler Coach
+getCoach :: Handler (User, Coach)
 getCoach =
-  getCoachM >>= \case
-    Nothing -> notFound -- This should have been stopped by Yesod authorization anyway.
-    Just coach -> pure coach
+  getUserType >>= \case
+    LoggedInCoach user coach -> pure (user, coach)
+    _ -> notFound -- This should have been stopped by Yesod authorization anyway.
 
 workoutTypes :: [WorkoutType]
 workoutTypes = [minBound .. maxBound]

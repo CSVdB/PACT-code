@@ -1,16 +1,34 @@
 <h1 .text-xs-center>Planned activities
-<div .text-xs-center>
-  ^{token}
 
-  $if isCoach
-    <div .dropdown>
-      <button .dropdown-button>Organize workout</button>
-      <div .dropdown-list>
-        $forall workoutType <- workoutTypes
-          <a href=@{CoachR $ AddActivityR workoutType}>#{show workoutType}
+^{token}
 
-  $if not (null messages)
-    <div .field>
-      $forall (_, message) <- messages
-        <p .help .is-danger>
-          #{message}
+$maybe (User{..}, Coach {..}) <- mCoach
+  <div .dropdown>
+    <button .dropdown-button>Organize workout</button>
+    <div .dropdown-list>
+      $forall workoutType <- workoutTypes
+        <a href=@{CoachR $ AddActivityR workoutType}>#{show workoutType}
+  <br>
+
+  Note to the designers: Resizing these events should happen in CSS, not HTML.
+
+  <h2 .text-xs-center>My organized events
+
+  $forall CoachWorkout {..} <- coachWorkouts
+    <button .Gutton .text-xs-left .no-click width="100" height="100">
+      Coach: #{userName}
+      <br>
+      Activity: #{show coachWorkoutType}
+      <br>
+      Amount: #{showWorkoutAmount coachWorkoutType coachWorkoutAmount}
+      <br>
+      Day: #{show coachWorkoutDay}
+      <br>
+      Notes: <textarea>#{coachWorkoutNotes}
+
+
+$if not (null messages)
+  <div .field>
+    $forall (_, message) <- messages
+      <p .help .is-danger>
+        #{message}

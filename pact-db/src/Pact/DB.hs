@@ -135,6 +135,15 @@ UserWorkout
   amount WorkoutAmount
 
   deriving Show Eq Ord Generic
+
+CoachWorkout
+  coach CoachUUID
+  type WorkoutType
+  day Day
+  amount WorkoutAmount
+  notes Textarea
+
+  deriving Show Eq Ord Generic
 |]
 
 instance Validity (Salt a) where

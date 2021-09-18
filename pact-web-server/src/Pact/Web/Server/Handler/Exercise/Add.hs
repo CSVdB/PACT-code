@@ -83,10 +83,10 @@ postAddR = do
     FormSuccess (form, imageInfo, videoInfo) -> addExercise form imageInfo videoInfo
     FormMissing -> do
       addMessage "is-danger" "No form was filled in"
-      getAddR
+      redirect $ ExerciseR AddR
     FormFailure errors -> do
       forM_ errors $ addMessage "is-danger" . toHtml
-      getAddR
+      redirect $ ExerciseR AddR
 
 addExercise :: AddExerciseForm -> FileInfo -> FileInfo -> Handler Html
 addExercise AddExerciseForm {..} ii vi = do

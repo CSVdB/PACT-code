@@ -279,6 +279,24 @@ submitUserWorkout form workoutType = do
   _ <- followRedirect
   statusIs 200
 
+addCoachWorkoutRequest :: AddCoachWorkoutForm -> WorkoutType -> YesodExample App ()
+addCoachWorkoutRequest AddCoachWorkoutForm {..} workoutType = request $ do
+  setMethod methodPost
+  setUrl . CoachR $ AddActivityR workoutType
+  addToken
+  addPostParam "amount" . T.pack . show $ (round $ amountACWF / stepSize workoutType :: Int)
+  addPostParam "day" . T.pack $ show dayACWF
+  addPostParam "notes" $ unTextarea notesACWF
+
+submitCoachWorkout :: AddCoachWorkoutForm -> WorkoutType -> YesodExample App ()
+submitCoachWorkout form workoutType = do
+  testCanReach . CoachR $ AddActivityR workoutType
+  addCoachWorkoutRequest form workoutType
+  statusIs 303
+  locationShouldBe $ WorkoutR ActivitiesR
+  _ <- followRedirect
+  statusIs 200
+
 getSingleUser :: YesodExample App User
 getSingleUser =
   testDB (selectList [] []) >>= \case
@@ -322,8 +340,8 @@ testRequiresCoach route routeString = do
       statusIs 403
 
   it "GETs 200 if logged in coach" $ \yc -> do
-    forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
-      testRegisterUser testUser
+    forAllValid $ \testCoach -> forAllValid $ \form -> runYesodClientM yc $ do
+      testRegisterUser testCoach
       testProfileUpsert form
       testCanReach route
 
@@ -331,13 +349,13 @@ testRequiresCoach route routeString = do
     runYesodClientM yc $ testCannotReach route
 
   it ("GET without logged in, then follow the redirect, ends up at " <> routeString) $
-    \yc -> forAllValid $ \testUser -> forAllValid $ \form -> runYesodClientM yc $ do
-      testRegisterUser testUser
+    \yc -> forAllValid $ \testCoach -> forAllValid $ \form -> runYesodClientM yc $ do
+      testRegisterUser testCoach
       testProfileUpsert form
       testLogout
       testCannotReach route
       _ <- followRedirect
-      loginRequest (testUsername testUser) $ testUserPassword testUser
+      loginRequest (testUsername testCoach) $ testUserPassword testCoach
       statusIs 303
       locationShouldBe route
       _ <- followRedirect

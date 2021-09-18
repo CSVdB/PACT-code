@@ -97,6 +97,10 @@ instance GenValid AddUserWorkoutForm where
   genValid = genValidStructurally `suchThat` isValid
   shrinkValid = filter isValid . shrinkValidStructurally
 
+instance GenValid AddCoachWorkoutForm where
+  genValid = genValidStructurally `suchThat` isValid
+  shrinkValid = filter isValid . shrinkValidStructurally
+
 instance GenUnchecked WorkoutType
 
 instance GenValid WorkoutType

@@ -23,6 +23,12 @@
           required
           type="date">
 
+      <fieldset .form-group>
+        <textarea .form-control .form-control-lg
+          name="notes"
+          placeholder="Notes"
+          required>
+
       ^{token}
 
       $if not (null messages)

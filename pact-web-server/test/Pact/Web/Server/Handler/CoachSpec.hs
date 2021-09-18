@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Pact.Web.Server.Handler.CoachSpec (spec) where
 
@@ -161,3 +162,26 @@ spec = pactWebServerSpec . describe "Coach" $ do
           locationShouldBe . CoachR $ AddActivityR workoutType
           _ <- followRedirect
           statusIs 200
+
+    it "can POST when logged in" $ \yc ->
+      forAllValid $ \testCoach -> forAllValid $ \form ->
+        forAllValid $ \coachWorkoutForm -> forAllValid $ \workoutType ->
+          runYesodClientM yc $ do
+            testRegisterUser testCoach
+            testProfileUpsert form
+            submitCoachWorkout coachWorkoutForm workoutType
+
+    it "POST adds the right coach workout to the dB" $ \yc ->
+      forAllValid $ \testCoach -> forAllValid $ \acwf@AddCoachWorkoutForm {..} ->
+        forAllValid $ \form -> forAllValid $ \workoutType ->
+          runYesodClientM yc $ do
+            testRegisterUser testCoach
+            testProfileUpsert form
+            submitCoachWorkout acwf workoutType
+            workoutsDB <- testDB $ P.selectList [] [] -- Collect coach workouts
+            case P.entityVal <$> workoutsDB of
+              [CoachWorkout {..}] -> liftIO $ do
+                coachWorkoutType `shouldBe` workoutType
+                coachWorkoutAmount
+                  `shouldBe` WorkoutAmount (round $ amountACWF / stepSize workoutType)
+              xs -> fail $ "Found " ++ show (length xs) ++ " workouts in the dB instead of 1"

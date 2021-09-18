@@ -55,10 +55,10 @@ postUserR workoutType =
     FormSuccess form -> addWorkout form workoutType
     FormMissing -> do
       addMessage "is-danger" "No form was filled in"
-      getUserR workoutType
+      redirect . WorkoutR $ UserR workoutType
     FormFailure errors -> do
       forM_ errors $ addMessage "is-danger" . toHtml
-      getUserR workoutType
+      redirect . WorkoutR $ UserR workoutType
 
 addWorkout :: AddUserWorkoutForm -> WorkoutType -> Handler Html
 addWorkout AddUserWorkoutForm {..} workoutType = do

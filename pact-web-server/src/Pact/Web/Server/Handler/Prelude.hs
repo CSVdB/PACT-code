@@ -6,6 +6,7 @@ module Pact.Web.Server.Handler.Prelude
     Generic,
     getUser,
     getCoachM,
+    getCoach,
     workoutTypes,
   )
 where
@@ -30,7 +31,7 @@ getUser :: Handler User
 getUser = do
   mAuth <- maybeAuth
   case mAuth of
-    Nothing -> notFound -- This isn't really possible, it's already stopped by Yesod authorization
+    Nothing -> notFound -- This should have been stopped by Yesod authorization anyway.
     Just (Entity _ user) -> pure user
 
 getCoachM :: Handler (Maybe Coach)
@@ -38,6 +39,12 @@ getCoachM =
   getUserType >>= \case
     LoggedInCoach _ coach -> pure $ Just coach
     _ -> pure Nothing
+
+getCoach :: Handler Coach
+getCoach =
+  getCoachM >>= \case
+    Nothing -> notFound -- This should have been stopped by Yesod authorization anyway.
+    Just coach -> pure coach
 
 workoutTypes :: [WorkoutType]
 workoutTypes = [minBound .. maxBound]

@@ -69,7 +69,7 @@ addCoachWorkout AddCoachWorkoutForm {..} workoutType = do
           coachWorkoutAmount = amount,
           coachWorkoutNotes = notesACWF
         }
-  addMessage "is-success" "Congratz, you did a workout!"
+  addMessage "is-success" "Great, you're organizing a workout!"
   redirect $ WorkoutR ActivitiesR
   where
     amount = WorkoutAmount . round $ amountACWF / stepSize workoutType

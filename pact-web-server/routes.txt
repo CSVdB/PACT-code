@@ -20,6 +20,7 @@
   / ActivitiesR GET
   /join/#CoachWorkoutUUID JoinActivityR POST
   /user/#WorkoutType UserR GET POST
+  /cancel/#CoachWorkoutUUID CancelActivityR POST
 
 /image/#ImageUUID ImageR GET
 /video/#VideoUUID VideoR GET

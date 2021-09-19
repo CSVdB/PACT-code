@@ -10,10 +10,11 @@ module Pact.Web.Server.Handler.Workout
     postUserR,
     AddUserWorkoutForm (..),
     postJoinActivityR,
+    postCancelActivityR,
   )
 where
 
-import Data.List (sortOn)
+import Data.List (sortOn, (\\))
 import Data.Maybe (fromMaybe)
 import Data.Time.Calendar
 import Data.Time.Clock
@@ -25,19 +26,22 @@ getActivitiesR = do
   user <- getUser
   mCoach <- getCoachM
   today <- liftIO $ utctDay <$> getCurrentTime
-  coachWorkouts <-
-    sortOn coachWorkoutDay . filter (filterCondition today) . fromMaybe []
-      <$> forM mCoach (runDB . getCoachWorkouts . snd)
-  myCoachesWorkouts <-
-    sortOn (coachWorkoutDay . snd) . filter (filterCondition today . snd)
-      <$> runDB (getMyCoachesWorkouts user)
+  coachWorkoutInfos <-
+    sortCWIs today . fromMaybe []
+      <$> forM mCoach (runDB . getCoachWorkoutInfos . snd)
+  myCoachesWorkoutInfosTot <- sortCWIs today <$> runDB (getMyCoachesWorkoutInfos user)
+  myPlannedWorkouts <-
+    sortOn (dayCWI . snd) . filter (filterCondition today . snd)
+      <$> runDB (userPlannedWorkouts user)
+  let myCoachesWorkoutInfos = myCoachesWorkoutInfosTot \\ (snd <$> myPlannedWorkouts)
   defaultLayout $ do
     messages <- getMessages
     token <- genToken
     setTitleI ("Activities" :: Text)
     $(widgetFile "workout/activities")
   where
-    filterCondition today CoachWorkout {..} = today <= coachWorkoutDay
+    sortCWIs today = sortOn dayCWI . filter (filterCondition today)
+    filterCondition today CoachWorkoutInfo {..} = today <= dayCWI
 
 getUserR :: WorkoutType -> Handler Html
 getUserR wType = defaultLayout $ do
@@ -103,3 +107,21 @@ postJoinActivityR workoutUUID = do
         }
   addMessage "is-success" "You joined a workout, this will be great fun!"
   redirect $ WorkoutR ActivitiesR
+
+postCancelActivityR :: CoachWorkoutUUID -> Handler Html
+postCancelActivityR workoutUUID = do
+  User {..} <- getUser
+  res <-
+    runDB $ do
+      workout <- fmap entityVal <$> getBy (UniqueCoachWorkout workoutUUID)
+      forM workout $ \CoachWorkout {..} ->
+        getBy (UniqueJoin userUuid coachWorkoutUuid) >>= \case
+          Nothing -> pure Nothing
+          Just (Entity key WorkoutJoin {..}) -> case workoutJoinCancelled of
+            Cancelled -> notFound
+            NotCancelled -> Just <$> update key [WorkoutJoinCancelled =. Cancelled]
+  case res of
+    Nothing -> notFound
+    Just _ -> do
+      addMessage "is-success" "You joined a workout, this will be great fun!"
+      redirect $ WorkoutR ActivitiesR

@@ -2,7 +2,7 @@
 
 ^{token}
 
-$maybe (user, _) <- mCoach
+$maybe (_, _) <- mCoach
   <div .dropdown>
     <button .dropdown-button>Organize workout</button>
     <div .dropdown-list>
@@ -14,43 +14,76 @@ $maybe (user, _) <- mCoach
 
   <h2 .text-xs-center>My organized events
 
-  $forall workout <- coachWorkouts
+  $forall info <- coachWorkoutInfos
     <button .Gutton .text-xs-left .no-click>
-      Coach: #{userName user}
+      Coach: #{coachName info}
       <br>
-      Activity: #{show $ coachWorkoutType workout}
+      Activity: #{show $ typeCWI info}
       <br>
-      Amount: #{showWorkoutAmount (coachWorkoutType workout) $ coachWorkoutAmount workout}
+      Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
       <br>
-      Day: #{show $ coachWorkoutDay workout}
+      Day: #{show $ dayCWI info}
       <br>
       Notes:
-      <textarea>#{coachWorkoutNotes workout}
+      <textarea>#{notesCWI info}
+      <br>
+      #Participants registered: #{show $ length $ participants info}
       <br>
       <br>
 
-<h2 .text-xs-center>Organized events
-$forall (coachName, workout) <- myCoachesWorkouts
+<h2 .text-xs-center>My coaches' events
+$forall info <- myCoachesWorkoutInfos
   <form
     enctype="multipart/form-data"
     method="post"
-    action=@{WorkoutR $ JoinActivityR $ coachWorkoutUuid workout}>
+    action=@{WorkoutR $ JoinActivityR $ uuidCWI info}>
     <button .Gutton .text-xs-left .no-click>
-      Coach: #{coachName}
+      Coach: #{coachName info}
       <br>
-      Activity: #{show $ coachWorkoutType workout}
+      Activity: #{show $ typeCWI info}
       <br>
-      Amount: #{showWorkoutAmount (coachWorkoutType workout) $ coachWorkoutAmount workout}
+      Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
       <br>
-      Day: #{show $ coachWorkoutDay workout}
+      Day: #{show $ dayCWI info}
       <br>
       Notes:
-      <textarea>#{coachWorkoutNotes workout}
+      <textarea>#{notesCWI info}
+      <br>
+      #Participants registered: #{show $ length $ participants info}
       <br>
       <input .btn .btn-lg .btn-primary .pull-xs-right .click
         type="submit"
         value="Join">
     <br>
+
+<h2 .text-xs-center>My events
+$forall (cancelled, info) <- myPlannedWorkouts
+  <form
+    enctype="multipart/form-data"
+    method="post"
+    action=@{WorkoutR $ CancelActivityR $ uuidCWI info}>
+    <button .Gutton .text-xs-left .no-click>
+      Coach: #{coachName info}
+      <br>
+      Activity: #{show $ typeCWI info}
+      <br>
+      Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
+      <br>
+      Day: #{show $ dayCWI info}
+      <br>
+      Notes:
+      <textarea>#{notesCWI info}
+      <br>
+      #Participants registered: #{show $ length $ participants info}
+      <br>
+      $if cancelled == NotCancelled
+        <input .btn .btn-lg .btn-primary .pull-xs-right .click
+          type="submit"
+          value="Cancel">
+      $else
+        (Cancelled)
+    <br>
+
 
 $if not (null messages)
   <div .field>

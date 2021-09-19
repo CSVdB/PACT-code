@@ -11,6 +11,7 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
@@ -19,6 +20,7 @@ module Pact.DB where
 
 import Control.Monad
 import Data.ByteString (ByteString)
+import Data.Functor ((<&>))
 import Data.Maybe
 import Data.Password.Bcrypt
 import Data.Password.Instances ()
@@ -144,12 +146,16 @@ CoachWorkout
   amount WorkoutAmount
   notes Textarea
 
+  UniqueCoachWorkout uuid
+
   deriving Show Eq Ord Generic
 
 WorkoutJoin
   customer UserUUID
   workout CoachWorkoutUUID
   cancelled Cancelled
+
+  UniqueJoin customer workout
 
   deriving Show Eq Ord Generic
 |]
@@ -304,6 +310,18 @@ getCoachWorkouts :: MonadIO m => Coach -> SqlPersistT m [CoachWorkout]
 getCoachWorkouts Coach {..} =
   fmap entityVal <$> selectList [CoachWorkoutCoach ==. coachUuid] []
 
+getParticipants :: MonadIO m => CoachWorkout -> SqlPersistT m [User]
+getParticipants CoachWorkout {..} = do
+  workoutJoins <- fmap entityVal <$> selectList conditions []
+  fmap catMaybes $
+    forM workoutJoins $ \WorkoutJoin {..} ->
+      fmap entityVal <$> getBy (UniqueUser workoutJoinCustomer)
+  where
+    conditions =
+      [ WorkoutJoinWorkout ==. coachWorkoutUuid,
+        WorkoutJoinCancelled ==. NotCancelled
+      ]
+
 collectCoaches :: MonadIO m => User -> SqlPersistT m [Coach]
 collectCoaches User {..} = do
   relations <- fmap entityVal <$> selectList conditions []
@@ -316,10 +334,46 @@ collectCoaches User {..} = do
         CustomerCoachRelationResponse ==. Just AcceptProposal
       ]
 
-getMyCoachesWorkouts :: MonadIO m => User -> SqlPersistT m [(Username, CoachWorkout)]
-getMyCoachesWorkouts user = do
+data CoachWorkoutInfo = CoachWorkoutInfo
+  { uuidCWI :: CoachWorkoutUUID,
+    coachName :: Username,
+    typeCWI :: WorkoutType,
+    dayCWI :: Day,
+    amountCWI :: WorkoutAmount,
+    notesCWI :: Textarea,
+    participants :: [User]
+  }
+  deriving (Show, Eq, Ord, Generic)
+
+getCoachWorkoutInfos :: MonadIO m => Coach -> SqlPersistT m [CoachWorkoutInfo]
+getCoachWorkoutInfos coach =
+  getCoachWorkouts coach >>= traverse workoutToInfo
+
+workoutToInfo :: MonadIO m => CoachWorkout -> SqlPersistT m CoachWorkoutInfo
+workoutToInfo cw@CoachWorkout {..} = do
+  Coach {..} <- entityVal . fromJust <$> getBy (UniqueCoach coachWorkoutCoach)
+  coachUser <- entityVal . fromJust <$> getBy (UniqueUser coachUser)
+  getParticipants cw <&> \participants ->
+    CoachWorkoutInfo
+      { uuidCWI = coachWorkoutUuid,
+        coachName = userName coachUser,
+        typeCWI = coachWorkoutType,
+        dayCWI = coachWorkoutDay,
+        amountCWI = coachWorkoutAmount,
+        notesCWI = coachWorkoutNotes,
+        participants = participants
+      }
+
+getMyCoachesWorkoutInfos :: MonadIO m => User -> SqlPersistT m [CoachWorkoutInfo]
+getMyCoachesWorkoutInfos user = do
   coaches <- collectCoaches user
-  fmap join $
-    forM coaches $ \coach -> do
-      User {..} <- entityVal . fromJust <$> getBy (UniqueUser $ coachUser coach)
-      fmap (tuple userName) <$> getCoachWorkouts coach
+  join <$> forM coaches getCoachWorkoutInfos
+
+userPlannedWorkouts :: MonadIO m => User -> SqlPersistT m [(Cancelled, CoachWorkoutInfo)]
+userPlannedWorkouts User {..} = do
+  workoutJoins <- fmap entityVal <$> selectList conditions []
+  forM workoutJoins $ \WorkoutJoin {..} -> do
+    workout <- entityVal . fromJust <$> getBy (UniqueCoachWorkout workoutJoinWorkout)
+    (workoutJoinCancelled,) <$> workoutToInfo workout
+  where
+    conditions = [WorkoutJoinCustomer ==. userUuid]

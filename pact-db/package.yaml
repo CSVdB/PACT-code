@@ -19,6 +19,7 @@ library:
     - format-numbers
     - jose
     - monad-logger
+    - mtl
     - password
     - password-instances
     - persistent

@@ -12,10 +12,10 @@ spec :: Spec
 spec = pactWebServerSpec . describe "Image" $ do
   describe "ImageR" $ do
     it "POST an exercise actually adds an image" $ \yc ->
-      forAllValid $ \testUser -> forAllValid $ \profileForm ->
-        forAllValid $ \exerciseForm -> runYesodClientM yc $ do
+      forAllValid $ \testUser -> forAllValid $ \exerciseForm ->
+        runYesodClientM yc $ do
           testRegisterUser testUser
-          testProfileUpsert profileForm
+          becomeCoach
           testSubmitExercise exerciseForm
           images <- testDB $ P.selectList [] [] -- Collect all images
           liftIO $ (images :: [P.Entity Image]) `shouldNotBe` []

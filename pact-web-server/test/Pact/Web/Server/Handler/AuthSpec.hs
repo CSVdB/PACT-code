@@ -10,18 +10,18 @@ spec = pactWebServerSpec $ do
     it "GETs a 200" $ do
       get $ AuthR registerR
       statusIs 200
+
     it "can POST" $ \yc ->
-      forAllValid $ \testUser ->
-        runYesodClientM yc $
-          testRegisterUser testUser
+      forAllValid $ \testUser -> runYesodClientM yc $ testRegisterUser testUser
+
     it "POST fails on mismatching passwords" $ \yc -> do
-      forAllValid $ \username ->
-        forAll genValidPassword $ \password ->
-          forAll genValidPassword $ \password2 ->
-            runYesodClientM yc $
-              if password == password2
-                then pure ()
-                else testRegisterFail username password password2
+      forAllValid $ \username -> forAll genValidPassword $ \password ->
+        forAll genValidPassword $ \password2 ->
+          runYesodClientM yc $
+            if password == password2
+              then pure ()
+              else testRegisterFail username password password2
+
     it "POST fails if username is already in use" $ \yc ->
       forAllValid $ \testUser ->
         forAll genValidPassword $ \password -> runYesodClientM yc $ do
@@ -34,6 +34,7 @@ spec = pactWebServerSpec $ do
       forAllValid $ \testUser -> runYesodClientM yc $ do
         testRegisterUser testUser
         testLogout
+
     it "doesn't crash" $ \yc ->
       forAllValid $ \testUser -> runYesodClientM yc $ do
         testRegisterUser testUser
@@ -44,25 +45,28 @@ spec = pactWebServerSpec $ do
     it "GETs a 200" $ do
       get $ AuthR LoginR
       statusIs 200
+
     it "can POST" $ \yc ->
       forAllValid $ \testUser -> runYesodClientM yc $ do
         testRegisterUser testUser
         testLogout
         testLoginUser testUser
+
     it "POST fails with wrong password" $ \yc ->
-      forAllValid $ \testUser ->
-        forAll genValidPassword $ \password -> runYesodClientM yc $ do
+      forAllValid $ \testUser -> forAll genValidPassword $ \password ->
+        runYesodClientM yc $ do
           testRegisterUser testUser
           testLogout
           testLoginFailed (testUsername testUser) password
+
     it "POST fails with wrong username" $ \yc ->
-      forAllValid $ \testUser ->
-        forAllValid $ \username -> runYesodClientM yc $ do
+      forAllValid $ \testUser -> forAllValid $ \username ->
+        runYesodClientM yc $ do
           testRegisterUser testUser
           testLogout
           testLoginFailed username $ testUserPassword testUser
+
     it "Home page GETs a 200 as a user" $ \yc -> do
-      forAllValid $ \testUser ->
-        runYesodClientM yc $ do
-          testRegisterUser testUser
-          testCanReach HomeR
+      forAllValid $ \testUser -> runYesodClientM yc $ do
+        testRegisterUser testUser
+        testCanReach HomeR

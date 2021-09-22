@@ -7,25 +7,17 @@
 
 module Pact.Web.Server.Handler.Exercise.Add where
 
-import Data.Maybe (fromMaybe)
+import qualified Data.Map as Map
 import qualified Data.Text as T
 import Pact.Web.Server.Handler.Prelude
 
-allDifficulties :: [Difficulty]
-allDifficulties = [minBound .. maxBound]
-
-allMuscles :: [Muscle]
-allMuscles = [minBound .. maxBound]
-
 getAddR :: Handler Html
 getAddR =
-  runDB collectAllMaterials >>= \materials ->
-    defaultLayout $
-      do
-        messages <- getMessages
-        token <- genToken
-        setTitle "Add exercise"
-        $(widgetFile "exercise/add")
+  runDB collectAllMaterials >>= \materials -> defaultLayout $ do
+    messages <- getMessages
+    token <- genToken
+    setTitle "Add exercise"
+    $(widgetFile "exercise/add")
 
 data AddExerciseForm = AddExerciseForm
   { nameEF :: Text,
@@ -33,7 +25,7 @@ data AddExerciseForm = AddExerciseForm
     formTipsEF :: Textarea,
     notesEF :: Maybe Textarea,
     musclesEF :: [Muscle],
-    materialsEF :: [ExerciseMaterial],
+    materialsEF :: [Text],
     altNamesEF :: [AlternativeName]
   }
   deriving (Show, Eq, Ord, Generic)
@@ -43,7 +35,10 @@ instance Validity AddExerciseForm where
     mconcat
       [ genericValidate form,
         declare "nameEF isn't empty" . not $ T.null nameEF,
-        declare "formTipsEF isn't empty" . not . T.null $ unTextarea formTipsEF
+        declare "formTipsEF isn't empty" . not . T.null $ unTextarea formTipsEF,
+        declare "All muscles are different" . not $ hasDuplicates musclesEF,
+        declare "All exercise materials are different" . not $ hasDuplicates materialsEF,
+        declare "All alternative names are different" . not $ hasDuplicates altNamesEF
       ]
 
 addExerciseForm :: [ExerciseMaterial] -> FormInput Handler AddExerciseForm
@@ -58,10 +53,10 @@ addExerciseForm allMaterials =
     <*> altNamesInput
   where
     materialsInput = fromMaybe [] <$> iopt materialsField "materials"
-    matToOption mat@ExerciseMaterial {..} =
+    matToOption ExerciseMaterial {..} =
       Option
         { optionDisplay = exerciseMaterialName,
-          optionInternalValue = mat,
+          optionInternalValue = exerciseMaterialName,
           optionExternalValue = exerciseMaterialName
         }
     materialsField =
@@ -79,7 +74,7 @@ postAddR = do
         <*> ireq fileField "image"
         <*> ireq fileField "video"
   case res of
-    FormSuccess (form, imageInfo, videoInfo) -> addExercise form imageInfo videoInfo
+    FormSuccess (form, imageInfo, videoInfo) -> addExercise form imageInfo videoInfo allMaterials
     FormMissing -> do
       addMessage "is-danger" "No form was filled in"
       redirect $ ExerciseR AddR
@@ -87,8 +82,18 @@ postAddR = do
       forM_ errors $ addMessage "is-danger" . toHtml
       redirect $ ExerciseR AddR
 
-addExercise :: AddExerciseForm -> FileInfo -> FileInfo -> Handler Html
-addExercise AddExerciseForm {..} ii vi = do
+addExercise ::
+  AddExerciseForm ->
+  FileInfo ->
+  FileInfo ->
+  [ExerciseMaterial] ->
+  Handler Html
+addExercise AddExerciseForm {..} ii vi materials = do
+  runDB (getBy $ UniqueExerciseName nameEF) >>= \mExercise ->
+    when (isJust mExercise) $ do
+      addMessage "is-danger" "An exercise with this name already exists!"
+      redirect $ ExerciseR AddR
+
   exUuid <- liftIO nextRandomUUID
   imageUuid <- liftIO nextRandomUUID
   videoUuid <- liftIO nextRandomUUID
@@ -96,6 +101,7 @@ addExercise AddExerciseForm {..} ii vi = do
   -- serious problems
   imageContents <- fileSourceByteString ii
   videoContents <- fileSourceByteString vi
+  materialUuids <- forM materialsEF $ \name -> maybe notFound pure $ materialMap Map.!? name
   runDB $ do
     insert_
       Exercise
@@ -125,11 +131,11 @@ addExercise AddExerciseForm {..} ii vi = do
           { muscleFilterExercise = exUuid,
             muscleFilterMuscle = muscle
           }
-    forM_ materialsEF $ \ExerciseMaterial {..} ->
+    forM_ materialUuids $ \uuid ->
       insert_
         MaterialFilter
           { materialFilterExercise = exUuid,
-            materialFilterMaterial = exerciseMaterialUuid
+            materialFilterMaterial = uuid
           }
     forM_ altNamesEF $ \name ->
       insert_
@@ -139,3 +145,9 @@ addExercise AddExerciseForm {..} ii vi = do
           }
   addMessage "is-success" "Successfully submitted an exercise!"
   redirect . ExerciseR $ ViewR exUuid
+  where
+    materialMap =
+      Map.fromList $
+        materials
+          <&> \ExerciseMaterial {..} ->
+            (exerciseMaterialName, exerciseMaterialUuid)

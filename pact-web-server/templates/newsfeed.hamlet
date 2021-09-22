@@ -5,7 +5,7 @@
   <button .dropdown-button>I did a workout!</button>
   <div .dropdown-list>
     $forall workoutType <- workoutTypes
-      <a href=@{WorkoutR $ UserR workoutType}>#{show workoutType}
+      <a href=@{NewsfeedR $ AddUserWorkoutR workoutType}>#{show workoutType}
 <br>
 <br>
 
@@ -15,12 +15,12 @@
   $forall user <- customerCoachProposals
     <div>
       Name: #{userName user}
-      <form method="post" action=@{CoachR $ ConnectResponseR (userUuid user) AcceptProposal}>
+      <form method="post" action=@{NewsfeedR $ ConnectCoachResponseR (userUuid user) AcceptProposal}>
         <input
           type="submit"
           value="Accept">
 
-      <form method="post" action=@{CoachR $ ConnectResponseR (userUuid user) DenyProposal}>
+      <form method="post" action=@{NewsfeedR $ ConnectCoachResponseR (userUuid user) DenyProposal}>
         <input
           type="submit"
           value="Deny">

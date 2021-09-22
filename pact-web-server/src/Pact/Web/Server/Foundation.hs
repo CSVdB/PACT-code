@@ -75,11 +75,13 @@ instance Yesod App where
   isAuthorized route _ = do
     userType <- getUserType
     case route of
+      NewsfeedR _ -> requireUser userType
+      ActivitiesR (AddCoachWorkoutR _) -> requireCoach userType
+      ActivitiesR _ -> requireUser userType
+      ProfileR UpdateCoachProfileR -> requireCoach userType
+      ProfileR _ -> requireUser userType
       ExerciseR AddR -> requireCoach userType
       ExerciseR _ -> requireUser userType
-      CoachR (AddActivityR _) -> requireCoach userType
-      CoachR _ -> requireUser userType
-      WorkoutR _ -> requireUser userType
       _ -> pure Authorized
     where
       -- Must be logged in as some type of user
@@ -173,12 +175,10 @@ navbarRoutesNobody =
 navbarRoutesUser :: [(Route App, String)]
 navbarRoutesUser =
   [ (HomeR, "Newsfeed"),
-    (WorkoutR ActivitiesR, "Activities"),
+    (ActivitiesR ActivitiesPageR, "Activities"),
+    (ProfileR ProfilePageR, "Profile")
     -- (ExerciseR ViewAllR, "Exercises"),
     -- (ExerciseR AddR, "Add exercise"),
-    (CoachR ListR, "Coaches"),
-    (CoachR ProfileR, "Become coach"),
-    (AuthR LogoutR, "Logout")
   ]
 
 navbarRoutesCoach :: [(Route App, String)]
@@ -240,7 +240,7 @@ postRegisterR = liftHandler $ do
     Just _ -> do
       setMessage "Account already exists!"
       redirect $ AuthR registerR
-    Nothing -> do
+    Nothing ->
       if not $ confirmPasswords rf
         then do
           addMessageI "is-danger" PassMismatch
@@ -252,7 +252,9 @@ postRegisterR = liftHandler $ do
             User
               { userUuid = uuid,
                 userName = registerFormUsername,
-                userPassword = passphraseHash
+                userPassword = passphraseHash,
+                userPic = Nothing,
+                userAboutMe = Textarea ""
               }
           setCredsRedirect
             Creds

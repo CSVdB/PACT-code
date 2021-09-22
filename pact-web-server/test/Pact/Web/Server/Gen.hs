@@ -4,6 +4,7 @@
 
 module Pact.Web.Server.Gen where
 
+import Data.Containers.ListUtils (nubOrd)
 import Data.GenValidity
 import Data.GenValidity.ByteString ()
 import Data.GenValidity.Text ()
@@ -60,9 +61,12 @@ instance GenUnchecked Muscle
 
 instance GenValid Muscle
 
+genExerciseMaterialName :: Gen Text
+genExerciseMaterialName = elements exerciseMaterialNames
+
 instance GenValid ExerciseMaterial where
   -- ExerciseMaterials are only valid once they're inserted into the dB
-  genValid = ExerciseMaterial <$> genValid <*> elements exerciseMaterialNames
+  genValid = ExerciseMaterial <$> genValid <*> genExerciseMaterialName
   shrinkValid = const []
 
 instance GenValid Textarea where
@@ -70,16 +74,31 @@ instance GenValid Textarea where
   shrinkValid (Textarea t) = Textarea <$> shrinkValid t
 
 instance GenValid AlternativeName where
-  genValid = genValidStructurally `suchThat` isValid
-  shrinkValid = filter isValid . shrinkValidStructurally
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
+
+genAddExerciseFormInitial :: Gen AddExerciseForm
+genAddExerciseFormInitial =
+  AddExerciseForm
+    <$> genValid <*> genValid <*> genValid <*> genValid <*> (nubOrd <$> genValid)
+      <*> (nubOrd <$> listOf genExerciseMaterialName)
+      <*> (nubOrd <$> genValid)
 
 instance GenValid AddExerciseForm where
-  genValid = genValidStructurally `suchThat` isValid
-  shrinkValid = filter isValid . shrinkValidStructurally
+  genValid = genAddExerciseFormInitial `suchThat` isValid
+  shrinkValid form =
+    shrinkValidStructurally form <&> \newForm ->
+      newForm
+        { materialsEF = materialsEF form -- TODO: Keep the material UUIDs valid!
+        }
 
-instance GenValid ProfileForm where
-  genValid = genValidStructurally `suchThat` isValid
-  shrinkValid = filter isValid . shrinkValidStructurally
+instance GenValid UserProfileForm where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
+
+instance GenValid CoachProfileForm where
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
 
 instance GenValid Image where
   genValid = genValidStructurally
@@ -94,12 +113,12 @@ instance GenUnchecked ProposalResponse
 instance GenValid ProposalResponse
 
 instance GenValid AddUserWorkoutForm where
-  genValid = genValidStructurally `suchThat` isValid
-  shrinkValid = filter isValid . shrinkValidStructurally
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
 
 instance GenValid AddCoachWorkoutForm where
-  genValid = genValidStructurally `suchThat` isValid
-  shrinkValid = filter isValid . shrinkValidStructurally
+  genValid = genValidStructurally
+  shrinkValid = shrinkValidStructurally
 
 instance GenUnchecked WorkoutType
 

@@ -1,9 +1,9 @@
-<h1 .text-xs-center>Plan a #{show workoutType} workout
+<h1 .text-xs-center> You just did a #{show wType} workout!
 <div .text-xs-center>
   <form
     enctype="multipart/form-data"
     method="post"
-    action=@{CoachR $ AddActivityR workoutType}>
+    action=@{NewsfeedR $ AddUserWorkoutR wType}>
     <div>
       This is the workout type.
       <br>
@@ -14,21 +14,14 @@
           required
           autofocus
           type="number"
-          step=#{show $ stepSize workoutType}>#{amountMessage workoutType}
+          step=#{show $ stepSize wType}>#{amountMessage wType}
 
       <fieldset .form-group>
         <input .form-control .form-control-lg
           name="day"
-          placeholder=""
+          placeholder=#{show today}
           required
           type="date">
-
-      <fieldset .form-group>
-        Workout description, level, address
-        <textarea .form-control .form-control-lg
-          name="notes"
-          placeholder="Notes"
-          required>
 
       ^{token}
 

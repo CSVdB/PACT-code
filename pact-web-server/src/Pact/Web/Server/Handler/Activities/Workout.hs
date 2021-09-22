@@ -1,27 +1,24 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Pact.Web.Server.Handler.Coach.Activities
-  ( getAddActivityR,
-    postAddActivityR,
-    AddCoachWorkoutForm (..),
-  )
-where
+module Pact.Web.Server.Handler.Activities.Workout where
 
 import qualified Data.Text as T
 import Data.Time.Calendar
-import Data.Validity.Time ()
+import Data.Time.Clock
 import Pact.Web.Server.Handler.Prelude
 
-getAddActivityR :: WorkoutType -> Handler Html
-getAddActivityR workoutType = defaultLayout $ do
+getAddCoachWorkoutR :: WorkoutType -> Handler Html
+getAddCoachWorkoutR workoutType = defaultLayout $ do
   messages <- getMessages
   token <- genToken
+  today <- utctDay <$> liftIO getCurrentTime
   setTitleI ("Activity" :: Text)
-  $(widgetFile "coach/activities")
+  $(widgetFile "activities/workout")
 
 data AddCoachWorkoutForm = AddCoachWorkoutForm
   { amountACWF :: Double,
@@ -44,16 +41,16 @@ addCoachWorkoutForm =
     <*> ireq dayField "day"
     <*> ireq textareaField "notes"
 
-postAddActivityR :: WorkoutType -> Handler Html
-postAddActivityR workoutType =
+postAddCoachWorkoutR :: WorkoutType -> Handler Html
+postAddCoachWorkoutR workoutType =
   runInputPostResult addCoachWorkoutForm >>= \case
     FormSuccess form -> addCoachWorkout form workoutType
     FormMissing -> do
       addMessage "is-danger" "No form was filled in"
-      redirect . CoachR $ AddActivityR workoutType
+      redirect . ActivitiesR $ AddCoachWorkoutR workoutType
     FormFailure errors -> do
       forM_ errors $ addMessage "is-danger" . toHtml
-      redirect . CoachR $ AddActivityR workoutType
+      redirect . ActivitiesR $ AddCoachWorkoutR workoutType
 
 addCoachWorkout :: AddCoachWorkoutForm -> WorkoutType -> Handler Html
 addCoachWorkout AddCoachWorkoutForm {..} workoutType = do
@@ -70,7 +67,7 @@ addCoachWorkout AddCoachWorkoutForm {..} workoutType = do
           coachWorkoutNotes = notesACWF
         }
   addMessage "is-success" "Great, you're organizing a workout!"
-  redirect $ WorkoutR ActivitiesR
+  redirect $ ActivitiesR ActivitiesPageR
   where
     amount = WorkoutAmount . round $ amountACWF / stepSize workoutType
 

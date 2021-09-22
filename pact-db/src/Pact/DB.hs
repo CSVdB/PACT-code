@@ -16,7 +16,11 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Pact.DB where
+module Pact.DB
+  ( module Pact.DB,
+    module Pact.DB.Persistent,
+  )
+where
 
 import Control.Monad
 import Data.ByteString (ByteString)
@@ -30,9 +34,11 @@ import Data.Time.Calendar
 import Data.Validity
 import Data.Validity.ByteString ()
 import Data.Validity.Persist ()
+import Data.Validity.Text ()
 import Database.Persist.Sqlite
 import Database.Persist.TH
 import GHC.Generics (Generic)
+import Pact.DB.Persistent
 import Pact.Data
 import Yesod
 
@@ -45,6 +51,9 @@ User
   name Username
   password (PasswordHash Bcrypt)
 
+  pic ImageUUID Maybe
+  aboutMe Textarea
+
   UniqueUser uuid
   UniqueUsername name
 
@@ -53,8 +62,7 @@ User
 Coach -- A coach is an extended version of a user
   user UserUUID
   uuid CoachUUID
-  pic ImageUUID Maybe
-  aboutMe Textarea
+  expertise Textarea
 
   UniqueCoach uuid
   UniqueCoachUser user
@@ -71,7 +79,8 @@ Exercise
   notes Text
 
   UniqueExerciseUUID uuid
-  UniqueExerciseImageUUID image
+  UniqueExerciseImage image
+  UniqueExerciseVideo video
   UniqueExerciseName name
 
   deriving Show Eq Ord Generic
@@ -98,6 +107,8 @@ MuscleFilter
   exercise ExerciseUUID
   muscle Muscle
 
+  UniqueMuscleFilter exercise muscle
+
   deriving Show Eq Ord Generic
 
 ExerciseMaterial
@@ -113,11 +124,15 @@ MaterialFilter
   exercise ExerciseUUID
   material ExerciseMaterialUUID
 
+  UniqueMaterialFilter exercise material
+
   deriving Show Eq Ord Generic
 
 ExerciseAlternativeName
   uuid ExerciseUUID
   name Text
+
+  UniqueExerciseAlternativeName uuid name
 
   deriving Show Eq Ord Generic
 
@@ -160,11 +175,23 @@ WorkoutJoin
   deriving Show Eq Ord Generic
 |]
 
+allDifficulties :: [Difficulty]
+allDifficulties = [minBound .. maxBound]
+
+allMuscles :: [Muscle]
+allMuscles = [minBound .. maxBound]
+
+workoutTypes :: [WorkoutType]
+workoutTypes = [minBound .. maxBound]
+
 instance Validity (Salt a) where
   validate = trivialValidation
 
 instance Validity (PasswordHash a) where
   validate = trivialValidation
+
+instance Validity Textarea where
+  validate (Textarea t) = delve "Textarea" t
 
 instance Validity User
 
@@ -222,8 +249,8 @@ collectExercise uuid = do
   case res of
     Nothing -> pure Nothing
     Just (Entity _ ex@Exercise {..}) -> do
-      muscleFilters <- selectList [MuscleFilterExercise ==. exerciseUuid] []
-      let muscles = muscleFilterMuscle . entityVal <$> muscleFilters
+      muscleFilters <- selectListVals [MuscleFilterExercise ==. exerciseUuid] []
+      let muscles = muscleFilterMuscle <$> muscleFilters
       materials <- collectMaterials uuid
       names <- collectAltNames uuid
       pure . Just $
@@ -236,8 +263,8 @@ collectExercise uuid = do
 
 collectMaterials :: MonadIO m => ExerciseUUID -> SqlPersistT m [Material]
 collectMaterials uuid = do
-  materialFilters <- selectList [MaterialFilterExercise ==. uuid] []
-  let materialUuids = materialFilterMaterial . entityVal <$> materialFilters
+  materialFilters <- selectListVals [MaterialFilterExercise ==. uuid] []
+  let materialUuids = materialFilterMaterial <$> materialFilters
   materials <- forM materialUuids $ \mUuid -> do
     res <- getBy $ UniqueMaterialUUID mUuid
     pure $ case res of
@@ -247,12 +274,12 @@ collectMaterials uuid = do
 
 collectAltNames :: MonadIO m => ExerciseUUID -> SqlPersistT m [AlternativeName]
 collectAltNames uuid =
-  fmap toAltName <$> selectList [ExerciseAlternativeNameUuid ==. uuid] []
+  fmap toAltName <$> selectListVals [ExerciseAlternativeNameUuid ==. uuid] []
   where
-    toAltName = AlternativeName . exerciseAlternativeNameName . entityVal
+    toAltName = AlternativeName . exerciseAlternativeNameName
 
 collectAllMaterials :: MonadIO m => SqlPersistT m [ExerciseMaterial]
-collectAllMaterials = fmap entityVal <$> selectList [] []
+collectAllMaterials = selectListVals [] []
 
 alternativeNamesText :: [AlternativeName] -> Text
 alternativeNamesText = T.intercalate ", " . fmap unAlternative
@@ -262,8 +289,8 @@ altNames t = AlternativeName <$> T.splitOn ", " t
 
 collectCustomerCoachProposals :: MonadIO m => Coach -> SqlPersistT m [User]
 collectCustomerCoachProposals Coach {..} = do
-  entities <- selectList [CustomerCoachRelationCoach ==. coachUuid, CustomerCoachRelationResponse ==. Nothing] []
-  let userIds = customerCoachRelationCustomer . entityVal <$> entities
+  entities <- selectListVals [CustomerCoachRelationCoach ==. coachUuid, CustomerCoachRelationResponse ==. Nothing] []
+  let userIds = customerCoachRelationCustomer <$> entities
   fmap catMaybes $ forM userIds $ fmap (fmap entityVal) . getBy . UniqueUser
 
 data SqlUpdateResult
@@ -297,7 +324,7 @@ tuple a b = (a, b)
 getLastWeeksWorkouts ::
   MonadIO m => Day -> User -> SqlPersistT m [(User, UserWorkout)]
 getLastWeeksWorkouts today user@User {..} =
-  fmap (tuple user . entityVal) <$> selectList conditions []
+  fmap (tuple user) <$> selectListVals conditions []
   where
     lastWeek = addDays (-7) today
     conditions =
@@ -307,12 +334,11 @@ getLastWeeksWorkouts today user@User {..} =
       ]
 
 getCoachWorkouts :: MonadIO m => Coach -> SqlPersistT m [CoachWorkout]
-getCoachWorkouts Coach {..} =
-  fmap entityVal <$> selectList [CoachWorkoutCoach ==. coachUuid] []
+getCoachWorkouts Coach {..} = selectListVals [CoachWorkoutCoach ==. coachUuid] []
 
 getParticipants :: MonadIO m => CoachWorkout -> SqlPersistT m [User]
 getParticipants CoachWorkout {..} = do
-  workoutJoins <- fmap entityVal <$> selectList conditions []
+  workoutJoins <- selectListVals conditions []
   fmap catMaybes $
     forM workoutJoins $ \WorkoutJoin {..} ->
       fmap entityVal <$> getBy (UniqueUser workoutJoinCustomer)
@@ -324,7 +350,7 @@ getParticipants CoachWorkout {..} = do
 
 collectCoaches :: MonadIO m => User -> SqlPersistT m [Coach]
 collectCoaches User {..} = do
-  relations <- fmap entityVal <$> selectList conditions []
+  relations <- selectListVals conditions []
   fmap catMaybes $
     forM relations $ \CustomerCoachRelation {..} ->
       fmap entityVal <$> getBy (UniqueCoach customerCoachRelationCoach)
@@ -371,7 +397,7 @@ getMyCoachesWorkoutInfos user = do
 
 userPlannedWorkouts :: MonadIO m => User -> SqlPersistT m [(Cancelled, CoachWorkoutInfo)]
 userPlannedWorkouts User {..} = do
-  workoutJoins <- fmap entityVal <$> selectList conditions []
+  workoutJoins <- selectListVals conditions []
   forM workoutJoins $ \WorkoutJoin {..} -> do
     workout <- entityVal . fromJust <$> getBy (UniqueCoachWorkout workoutJoinWorkout)
     (workoutJoinCancelled,) <$> workoutToInfo workout

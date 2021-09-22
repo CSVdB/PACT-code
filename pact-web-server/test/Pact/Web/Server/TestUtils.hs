@@ -179,7 +179,7 @@ addExerciseRequest AddExerciseForm {..} imageFile videoFile = request $ do
   forM_ musclesEF $ \muscle -> addPostParam "muscles" $ T.pack $ show muscle
   addTestFileWith "image" imageFile
   addTestFileWith "video" videoFile
-  forM_ materialsEF $ addPostParam "materials" . exerciseMaterialName
+  forM_ materialsEF $ addPostParam "materials"
   case alternativeNamesText altNamesEF of
     "" -> pure ()
     txt -> addPostParam "alternativeNames" txt
@@ -202,31 +202,71 @@ testSubmitExercise form = do
   videoFile <- readTestFile "test-resources/exercise/video/explosive-pushup.mp4"
   submitExercise form imageFile videoFile
 
-profileUpsertRequest :: ProfileForm -> Maybe TestFile -> YesodExample App ()
-profileUpsertRequest ProfileForm {..} mImageFile = request $ do
+becomeCoach :: YesodExample App ()
+becomeCoach = do
+  testCanReach $ ProfileR ProfilePageR
+  becomeCoachRequest
+  statusIs 303
+  locationShouldBe $ ProfileR ProfilePageR
+  _ <- followRedirect
+  statusIs 200
+  where
+    becomeCoachRequest = request $ do
+      setMethod methodPost
+      setUrl $ ProfileR BecomeCoachR
+      addToken
+
+updateUserProfileR :: UserProfileForm -> Maybe TestFile -> YesodExample App ()
+updateUserProfileR UserProfileForm {..} mImageFile = request $ do
   setMethod methodPost
-  setUrl $ CoachR ProfileR
+  setUrl $ ProfileR UpdateUserProfileR
   addToken
-  addPostParam "about-me" $ unTextarea aboutMePF
+  addPostParam "about-me" $ unTextarea aboutMeUPF
   forM_ mImageFile $ addTestFileWith "image"
 
-submitProfile :: ProfileForm -> Maybe TestFile -> YesodExample App ()
-submitProfile form mImageFile = do
-  testCanReach $ CoachR ProfileR
-  profileUpsertRequest form mImageFile
+updateUserProfile :: UserProfileForm -> Maybe TestFile -> YesodExample App ()
+updateUserProfile form mImageFile = do
+  testCanReach $ ProfileR UpdateUserProfileR
+  updateUserProfileR form mImageFile
   statusIs 303
-  locationShouldBe $ CoachR ProfileR
+  locationShouldBe $ ProfileR ProfilePageR
   _ <- followRedirect
   statusIs 200
 
-testProfileUpsert :: ProfileForm -> YesodExample App ()
-testProfileUpsert form = do
+testUpdateUserProfile :: UserProfileForm -> YesodExample App ()
+testUpdateUserProfile form = do
   number <- liftIO $ randomRIO (0 :: Double, 1)
   mImageFile <-
     if number > 0.5
       then Just <$> readTestFile "test-resources/coach/paul.jpg"
       else pure Nothing
-  submitProfile form mImageFile
+  updateUserProfile form mImageFile
+
+updateCoachProfileR :: CoachProfileForm -> Maybe TestFile -> YesodExample App ()
+updateCoachProfileR CoachProfileForm {..} mImageFile = request $ do
+  setMethod methodPost
+  setUrl $ ProfileR UpdateCoachProfileR
+  addToken
+  addPostParam "expertise" $ unTextarea expertiseCPF
+  forM_ mImageFile $ addTestFileWith "image"
+
+updateCoachProfile :: CoachProfileForm -> Maybe TestFile -> YesodExample App ()
+updateCoachProfile form mImageFile = do
+  testCanReach $ ProfileR ProfilePageR
+  updateCoachProfileR form mImageFile
+  statusIs 303
+  locationShouldBe $ ProfileR ProfilePageR
+  _ <- followRedirect
+  statusIs 200
+
+testUpdateCoachProfile :: CoachProfileForm -> YesodExample App ()
+testUpdateCoachProfile form = do
+  number <- liftIO $ randomRIO (0 :: Double, 1)
+  mImageFile <-
+    if number > 0.5
+      then Just <$> readTestFile "test-resources/coach/paul.jpg"
+      else pure Nothing
+  updateCoachProfile form mImageFile
 
 testDB :: DB.SqlPersistT IO a -> YesodClientM App a
 testDB func = do
@@ -238,26 +278,18 @@ xs `shouldBeSort` ys = sort xs `shouldBe` sort ys
 
 testSendConnectionProposal :: Coach -> YesodExample App ()
 testSendConnectionProposal coach = do
-  get $ CoachR ListR
-  post . CoachR . ConnectR $ coachUuid coach
+  get $ ProfileR ListCoachesR
+  post . ProfileR . ConnectCoachR $ coachUuid coach
   statusIs 303
-  locationShouldBe $ CoachR ListR
+  locationShouldBe $ ProfileR ListCoachesR
   _ <- followRedirect
   statusIs 200
-
-respondToProposalRequest :: UserUUID -> ProposalResponse -> YesodExample App ()
-respondToProposalRequest user response = request $ do
-  setMethod methodPost
-  setUrl $ CoachR $ ConnectResponseR user response
-  addToken
 
 testRespondToProposal :: UserUUID -> ProposalResponse -> YesodExample App ()
 testRespondToProposal user response = do
   get HomeR
-  respondToProposalRequest user response
-  liftIO $ putStrLn "Reached here"
+  post . NewsfeedR $ ConnectCoachResponseR user response
   statusIs 303
-  liftIO $ putStrLn "Failed now"
   locationShouldBe HomeR
   _ <- followRedirect
   statusIs 200
@@ -265,14 +297,14 @@ testRespondToProposal user response = do
 addUserWorkoutRequest :: AddUserWorkoutForm -> WorkoutType -> YesodExample App ()
 addUserWorkoutRequest AddUserWorkoutForm {..} workoutType = request $ do
   setMethod methodPost
-  setUrl . WorkoutR $ UserR workoutType
+  setUrl . NewsfeedR $ AddUserWorkoutR workoutType
   addToken
   addPostParam "amount" . T.pack . show $ (round $ amountAWF / stepSize workoutType :: Int)
   addPostParam "day" . T.pack $ show dayAWF
 
 submitUserWorkout :: AddUserWorkoutForm -> WorkoutType -> YesodExample App ()
 submitUserWorkout form workoutType = do
-  testCanReach . WorkoutR $ UserR workoutType
+  testCanReach . NewsfeedR $ AddUserWorkoutR workoutType
   addUserWorkoutRequest form workoutType
   statusIs 303
   locationShouldBe HomeR
@@ -282,7 +314,7 @@ submitUserWorkout form workoutType = do
 addCoachWorkoutRequest :: AddCoachWorkoutForm -> WorkoutType -> YesodExample App ()
 addCoachWorkoutRequest AddCoachWorkoutForm {..} workoutType = request $ do
   setMethod methodPost
-  setUrl . CoachR $ AddActivityR workoutType
+  setUrl . ActivitiesR $ AddCoachWorkoutR workoutType
   addToken
   addPostParam "amount" . T.pack . show $ (round $ amountACWF / stepSize workoutType :: Int)
   addPostParam "day" . T.pack $ show dayACWF
@@ -290,25 +322,28 @@ addCoachWorkoutRequest AddCoachWorkoutForm {..} workoutType = request $ do
 
 submitCoachWorkout :: AddCoachWorkoutForm -> WorkoutType -> YesodExample App ()
 submitCoachWorkout form workoutType = do
-  testCanReach . CoachR $ AddActivityR workoutType
+  testCanReach . ActivitiesR $ AddCoachWorkoutR workoutType
   addCoachWorkoutRequest form workoutType
   statusIs 303
-  locationShouldBe $ WorkoutR ActivitiesR
+  locationShouldBe $ ActivitiesR ActivitiesPageR
   _ <- followRedirect
   statusIs 200
 
-joinWorkoutRequest :: CoachWorkoutUUID -> YesodExample App ()
-joinWorkoutRequest uuid = request $ do
-  setMethod methodPost
-  setUrl . WorkoutR $ JoinActivityR uuid
-  addToken
-
 joinWorkout :: CoachWorkoutUUID -> YesodExample App ()
 joinWorkout uuid = do
-  testCanReach $ WorkoutR ActivitiesR
-  joinWorkoutRequest uuid
+  testCanReach $ ActivitiesR ActivitiesPageR
+  post . ActivitiesR $ JoinCoachWorkoutR uuid
   statusIs 303
-  locationShouldBe $ WorkoutR ActivitiesR
+  locationShouldBe $ ActivitiesR ActivitiesPageR
+  _ <- followRedirect
+  statusIs 200
+
+cancelWorkout :: CoachWorkoutUUID -> YesodExample App ()
+cancelWorkout uuid = do
+  testCanReach $ ActivitiesR ActivitiesPageR
+  post . ActivitiesR $ CancelCoachWorkoutJoinR uuid
+  statusIs 303
+  locationShouldBe $ ActivitiesR ActivitiesPageR
   _ <- followRedirect
   statusIs 200
 
@@ -324,8 +359,20 @@ getSingleCoach =
     [Entity _ coach] -> pure coach
     xs -> fail $ "Found " <> show (length xs) <> " coachs instead of 1"
 
-testRequiresLogin :: Route App -> String -> PactWebServerSpec
-testRequiresLogin route routeString = do
+getSingleCoachWorkout :: YesodExample App CoachWorkout
+getSingleCoachWorkout =
+  testDB (selectList [] []) >>= \case
+    [Entity _ workout] -> pure workout
+    xs -> fail $ "Found " <> show (length xs) <> " coach workouts instead of 1"
+
+getSingleWorkoutJoin :: YesodExample App WorkoutJoin
+getSingleWorkoutJoin =
+  testDB (selectList [] []) >>= \case
+    [Entity _ workoutJoin] -> pure workoutJoin
+    xs -> fail $ "Found " <> show (length xs) <> " workout joins instead of 1"
+
+testRequiresLogin :: String -> Route App -> PactWebServerSpec
+testRequiresLogin routeString route = do
   it "GETs 200 if logged in" $ \yc -> do
     forAllValid $ \testUser -> runYesodClientM yc $ do
       testRegisterUser testUser
@@ -346,8 +393,8 @@ testRequiresLogin route routeString = do
       _ <- followRedirect
       statusIs 200
 
-testRequiresCoach :: Route App -> String -> PactWebServerSpec
-testRequiresCoach route routeString = do
+testRequiresCoach :: String -> Route App -> PactWebServerSpec
+testRequiresCoach routeString route = do
   it "GETs 403 if logged in as non-coach user" $ \yc -> do
     forAllValid $ \testUser -> runYesodClientM yc $ do
       testRegisterUser testUser
@@ -355,18 +402,18 @@ testRequiresCoach route routeString = do
       statusIs 403
 
   it "GETs 200 if logged in coach" $ \yc -> do
-    forAllValid $ \testCoach -> forAllValid $ \form -> runYesodClientM yc $ do
+    forAllValid $ \testCoach -> runYesodClientM yc $ do
       testRegisterUser testCoach
-      testProfileUpsert form
+      becomeCoach
       testCanReach route
 
   it "GETs 303 redirect to Login if not logged in" $ \yc ->
     runYesodClientM yc $ testCannotReach route
 
   it ("GET without logged in, then follow the redirect, ends up at " <> routeString) $
-    \yc -> forAllValid $ \testCoach -> forAllValid $ \form -> runYesodClientM yc $ do
+    \yc -> forAllValid $ \testCoach -> runYesodClientM yc $ do
       testRegisterUser testCoach
-      testProfileUpsert form
+      becomeCoach
       testLogout
       testCannotReach route
       _ <- followRedirect

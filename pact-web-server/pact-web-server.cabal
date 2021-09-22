@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 38091fb6d73f1c5d1580a8b50842b81b1c9c90d628724b27c4af330ea35d6fe2
+-- hash: 9c762e8817fa63a3fa9faf7d4cd61590f15b63bf3cbcceca2c926e6b8e5bb5fd
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -27,16 +27,25 @@ library
       Pact.Web.Server.Constants
       Pact.Web.Server.Foundation
       Pact.Web.Server.Handler
-      Pact.Web.Server.Handler.Coach
-      Pact.Web.Server.Handler.Coach.Activities
-      Pact.Web.Server.Handler.Coach.Profile
+      Pact.Web.Server.Handler.Activities
+      Pact.Web.Server.Handler.Activities.CancelUser
+      Pact.Web.Server.Handler.Activities.Join
+      Pact.Web.Server.Handler.Activities.Workout
       Pact.Web.Server.Handler.Exercise
       Pact.Web.Server.Handler.Exercise.Add
       Pact.Web.Server.Handler.Home
       Pact.Web.Server.Handler.Image
+      Pact.Web.Server.Handler.Newsfeed
+      Pact.Web.Server.Handler.Newsfeed.CoachConnectResponse
+      Pact.Web.Server.Handler.Newsfeed.Workout
       Pact.Web.Server.Handler.Prelude
+      Pact.Web.Server.Handler.Profile
+      Pact.Web.Server.Handler.Profile.BecomeCoach
+      Pact.Web.Server.Handler.Profile.CoachConnect
+      Pact.Web.Server.Handler.Profile.CoachProfile
+      Pact.Web.Server.Handler.Profile.ListCoaches
+      Pact.Web.Server.Handler.Profile.UserProfile
       Pact.Web.Server.Handler.Video
-      Pact.Web.Server.Handler.Workout
       Pact.Web.Server.OptParse
       Pact.Web.Server.Static
       Pact.Web.Server.Static.TH
@@ -49,6 +58,7 @@ library
   build-depends:
       base >=4.7 && <5
     , bytestring
+    , containers
     , data-default
     , envparse
     , file-embed
@@ -98,15 +108,16 @@ test-suite pact-web-server-test
   main-is: Spec.hs
   other-modules:
       Pact.Web.Server.Gen
+      Pact.Web.Server.Handler.ActivitiesSpec
       Pact.Web.Server.Handler.AuthSpec
-      Pact.Web.Server.Handler.CoachSpec
       Pact.Web.Server.Handler.ExerciseSpec
       Pact.Web.Server.Handler.HomeSpec
       Pact.Web.Server.Handler.ImageSpec
       Pact.Web.Server.Handler.InstanceSpec
+      Pact.Web.Server.Handler.NewsfeedSpec
+      Pact.Web.Server.Handler.ProfileSpec
       Pact.Web.Server.Handler.TestImport
       Pact.Web.Server.Handler.VideoSpec
-      Pact.Web.Server.Handler.WorkoutSpec
       Pact.Web.Server.PathPiece
       Pact.Web.Server.TestUtils
       Paths_pact_web_server
@@ -119,6 +130,7 @@ test-suite pact-web-server-test
       QuickCheck
     , base >=4.7 && <5
     , bytestring
+    , containers
     , filepath
     , genvalidity
     , genvalidity-bytestring

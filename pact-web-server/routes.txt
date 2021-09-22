@@ -4,23 +4,28 @@
 /favicon.ico FaviconR GET
 /reload ReloadR GET
 
-/coach CoachR:
-  /list ListR GET
-  /profile ProfileR GET POST
-  /connect/#CoachUUID ConnectR POST
-  /connect-response/#UserUUID/#ProposalResponse ConnectResponseR POST
-  /activity/#WorkoutType AddActivityR GET POST
+/newsfeed NewsfeedR:
+  /workout/#WorkoutType AddUserWorkoutR GET POST
+  /coach-connect-response/#UserUUID/#ProposalResponse ConnectCoachResponseR POST
+
+/activities ActivitiesR:
+  / ActivitiesPageR GET
+  /workout/#WorkoutType AddCoachWorkoutR GET POST
+  /join/#CoachWorkoutUUID JoinCoachWorkoutR POST
+  /cancel-user/#CoachWorkoutUUID CancelCoachWorkoutJoinR POST
+
+/profile ProfileR:
+  / ProfilePageR GET
+  /coach-connect/#CoachUUID ConnectCoachR POST
+  /list-coaches ListCoachesR GET
+  /become-coach BecomeCoachR POST
+  /user-profile UpdateUserProfileR GET POST
+  /coach-profile UpdateCoachProfileR GET POST
 
 /exercise ExerciseR:
   /add AddR GET POST
   /view/#ExerciseUUID ViewR GET
   /view-all ViewAllR GET
-
-/workout WorkoutR:
-  / ActivitiesR GET
-  /join/#CoachWorkoutUUID JoinActivityR POST
-  /user/#WorkoutType UserR GET POST
-  /cancel/#CoachWorkoutUUID CancelActivityR POST
 
 /image/#ImageUUID ImageR GET
 /video/#VideoUUID VideoR GET

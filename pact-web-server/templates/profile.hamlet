@@ -1,13 +1,20 @@
-$if isCoach == IsCoach
-  <h1 .text-xs-center> Coach #{usernameText profileName}
-$else
-  <h1 .text-xs-center> Want to become a coach?
+<h1 .text-xs-center>Profile #{userName user}
+
+^{token}
 
 <div .text-xs-center>
   <form
     enctype="multipart/form-data"
     method="post"
-    action=@{CoachR ProfileR}>
+    action=@{ProfileR BecomeCoachR}>
+    <input .btn .btn-lg .btn-primary .pull-xs-right
+      type="submit"
+      value="Become a coach">
+
+  <form
+    enctype="multipart/form-data"
+    method="post"
+    action=@{ProfileR UpdateUserProfileR}>
     <div>
       <fieldset .form-group>
         <div>
@@ -15,12 +22,12 @@ $else
           <textarea .form-control .form-control-lg
             name="about-me"
             required>
-            #{profileAboutMe}
+            #{userAboutMe user}
 
       <fieldset .form-group>
         <div>
           Profile picture:
-          $maybe pic <- profilePic
+          $maybe pic <- userPic user
             <img
               src=@{ImageR pic}
               width="300">
@@ -29,13 +36,6 @@ $else
             optional
             type="file">
 
-      ^{token}
-
-      $if isCoach == IsCoach
-        <input .btn .btn-lg .btn-primary .pull-xs-right
-          type="submit"
-          value="Update profile">
-      $else
-        <input .btn .btn-lg .btn-primary .pull-xs-right
-          type="submit"
-          value="Become a coach now!">
+      <input .btn .btn-lg .btn-primary .pull-xs-right
+        type="submit"
+        value="Update profile">

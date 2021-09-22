@@ -27,6 +27,7 @@ library
       Pact.Data.UUID
       Pact.DB
       Pact.DB.Migrations
+      Pact.DB.Persistent
   other-modules:
       Paths_pact_db
   hs-source-dirs:
@@ -40,6 +41,7 @@ library
     , format-numbers
     , jose
     , monad-logger
+    , mtl
     , password
     , password-instances
     , persistent

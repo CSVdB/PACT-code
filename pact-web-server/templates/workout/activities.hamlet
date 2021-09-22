@@ -16,8 +16,6 @@ $maybe (_, _) <- mCoach
 
   $forall info <- coachWorkoutInfos
     <button .Gutton .text-xs-left .no-click>
-      Coach: #{coachName info}
-      <br>
       Activity: #{show $ typeCWI info}
       <br>
       Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}

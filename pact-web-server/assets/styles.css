@@ -7389,3 +7389,7 @@ footer .attribution {
 .no-click {
     pointer-events: none;
 }
+
+.click {
+    pointer-events: auto;
+}

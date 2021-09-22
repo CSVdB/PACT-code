@@ -24,6 +24,7 @@
           type="date">
 
       <fieldset .form-group>
+        Workout description, level, address
         <textarea .form-control .form-control-lg
           name="notes"
           placeholder="Notes"

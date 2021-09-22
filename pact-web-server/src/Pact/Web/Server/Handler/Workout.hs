@@ -123,5 +123,5 @@ postCancelActivityR workoutUUID = do
   case res of
     Nothing -> notFound
     Just _ -> do
-      addMessage "is-success" "You joined a workout, this will be great fun!"
+      addMessage "is-success" "Oh, you cancelled :("
       redirect $ WorkoutR ActivitiesR

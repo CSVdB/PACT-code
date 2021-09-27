@@ -242,31 +242,24 @@ testUpdateUserProfile form = do
       else pure Nothing
   updateUserProfile form mImageFile
 
-updateCoachProfileR :: CoachProfileForm -> Maybe TestFile -> YesodExample App ()
-updateCoachProfileR CoachProfileForm {..} mImageFile = request $ do
+updateCoachProfileR :: CoachProfileForm -> YesodExample App ()
+updateCoachProfileR CoachProfileForm {..} = request $ do
   setMethod methodPost
   setUrl $ ProfileR UpdateCoachProfileR
   addToken
   addPostParam "expertise" $ unTextarea expertiseCPF
-  forM_ mImageFile $ addTestFileWith "image"
 
-updateCoachProfile :: CoachProfileForm -> Maybe TestFile -> YesodExample App ()
-updateCoachProfile form mImageFile = do
+updateCoachProfile :: CoachProfileForm -> YesodExample App ()
+updateCoachProfile form = do
   testCanReach $ ProfileR ProfilePageR
-  updateCoachProfileR form mImageFile
+  updateCoachProfileR form
   statusIs 303
   locationShouldBe $ ProfileR ProfilePageR
   _ <- followRedirect
   statusIs 200
 
 testUpdateCoachProfile :: CoachProfileForm -> YesodExample App ()
-testUpdateCoachProfile form = do
-  number <- liftIO $ randomRIO (0 :: Double, 1)
-  mImageFile <-
-    if number > 0.5
-      then Just <$> readTestFile "test-resources/coach/paul.jpg"
-      else pure Nothing
-  updateCoachProfile form mImageFile
+testUpdateCoachProfile = updateCoachProfile
 
 testDB :: DB.SqlPersistT IO a -> YesodClientM App a
 testDB func = do

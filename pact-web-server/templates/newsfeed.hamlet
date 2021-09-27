@@ -14,6 +14,7 @@
 
   $forall user <- customerCoachProposals
     <div>
+      ^{showPic user}
       Name: #{userName user}
       <form method="post" action=@{NewsfeedR $ ConnectCoachResponseR (userUuid user) AcceptProposal}>
         <input
@@ -32,6 +33,7 @@
 
 $forall (user, userWorkout) <- userWorkouts
   <button .Gutton .no-click>
+    ^{showPic user}
     User: #{userName user}
     <br>
     Activity: #{show $ userWorkoutType userWorkout}

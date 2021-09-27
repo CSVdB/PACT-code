@@ -1,4 +1,6 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE QuasiQuotes #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Pact.Web.Server.Handler.Prelude
@@ -9,6 +11,9 @@ module Pact.Web.Server.Handler.Prelude
     getCoach,
     nextRandomUUID,
     hasDuplicates,
+    getPic,
+    showPic,
+    Edit (..),
   )
 where
 
@@ -54,3 +59,20 @@ getCoach =
 
 hasDuplicates :: Ord a => [a] -> Bool
 hasDuplicates xs = xs /= nubOrd xs
+
+getPic :: User -> Route App
+getPic user = case userPic user of
+  Nothing -> StaticR default_user_png
+  Just pic -> ImageR pic
+
+showPic :: User -> Widget
+showPic user =
+  [whamlet|
+    <img src=@{getPic user} width="100">
+  |]
+
+data Edit
+  = NoEdit
+  | UserEdit
+  | CoachEdit
+  deriving (Show, Eq, Ord, Generic)

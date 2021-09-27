@@ -7,10 +7,7 @@
     $if coachUser /= user
       $maybe relationText <- getRelationTextIfExists user coach relations
         <a>
-          $maybe pic <- userPic coachUser
-            <img
-              src=@{ImageR pic}
-              width="100">
+          ^{showPic coachUser}
           #{userName coachUser}
           <textarea>
             #{userAboutMe coachUser}
@@ -21,10 +18,7 @@
         <form method="post" action=@{ProfileR $ ConnectCoachR $ coachUuid coach}>
           <button type="submit">
             <a>
-              $maybe pic <- userPic coachUser
-                <img
-                  src=@{ImageR pic}
-                  width="100">
+              ^{showPic coachUser}
               #{userName coachUser}
               <textarea>
                 #{userAboutMe coachUser}

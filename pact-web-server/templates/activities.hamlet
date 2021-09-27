@@ -36,7 +36,8 @@ $forall info <- myCoachesWorkoutInfos
     method="post"
     action=@{ActivitiesR $ JoinCoachWorkoutR $ uuidCWI info}>
     <button .Gutton .text-xs-left .no-click>
-      Coach: #{coachName info}
+      ^{showPic $ coachCWI info}
+      Coach: #{userName $ coachCWI info}
       <br>
       Activity: #{show $ typeCWI info}
       <br>
@@ -61,7 +62,8 @@ $forall (cancelled, info) <- myPlannedWorkouts
     method="post"
     action=@{ActivitiesR $ CancelCoachWorkoutJoinR $ uuidCWI info}>
     <button .Gutton .text-xs-left .no-click>
-      Coach: #{coachName info}
+      ^{showPic $ coachCWI info}
+      Coach: #{userName $ coachCWI info}
       <br>
       Activity: #{show $ typeCWI info}
       <br>

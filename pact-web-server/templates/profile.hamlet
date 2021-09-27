@@ -7,35 +7,54 @@
     enctype="multipart/form-data"
     method="post"
     action=@{ProfileR BecomeCoachR}>
-    <input .btn .btn-lg .btn-primary .pull-xs-right
+    <input .btn .btn-lg .btn-primary .pull-xs-center
       type="submit"
       value="Become a coach">
+  <br>
 
-  <form
-    enctype="multipart/form-data"
-    method="post"
-    action=@{ProfileR UpdateUserProfileR}>
-    <div>
-      <fieldset .form-group>
-        <div>
-          About me:
-          <textarea .form-control .form-control-lg
-            name="about-me"
-            required>
-            #{userAboutMe user}
+  $if editProfile == UserEdit
+    <form
+      enctype="multipart/form-data"
+      method="post"
+      action=@{ProfileR UpdateUserProfileR}>
+      <div>
+        <fieldset .form-group>
+          <div>
+            About me:
+            <textarea .form-control .form-control-lg
+              name="about-me"
+              required>
+              #{userAboutMe user}
 
-      <fieldset .form-group>
-        <div>
-          Profile picture:
-          $maybe pic <- userPic user
-            <img
-              src=@{ImageR pic}
-              width="300">
-          <input .form-control .form-control-lg
-            name="image"
-            optional
-            type="file">
+        <fieldset .form-group>
+          <div>
+            Profile picture:
+            ^{showPic user}
+            <input .form-control .form-control-lg
+              name="image"
+              optional
+              type="file">
 
-      <input .btn .btn-lg .btn-primary .pull-xs-right
-        type="submit"
-        value="Update profile">
+        <a .btn .btn-lg .btn-primary .pull-xs-right
+          href=@{ProfileR ProfilePageR}>Cancel
+        <br>
+
+        <input .btn .btn-lg .btn-primary .pull-xs-right
+          type="submit"
+          value="Update profile">
+
+  $else
+    <button .no-click>
+      About me:
+      <textarea .form-control .form-control-lg
+        name="about-me">
+        #{userAboutMe user}
+      ^{showPic user}
+      <a .click .btn .btn-lg .btn-primary .pull-xs-right
+        href=@{ProfileR UpdateUserProfileR}>Edit
+
+  <br>
+  <form method="post" action=@{AuthR LogoutR}>
+    <input .btn .btn-lg .btn-primary .pull-xs-right
+      type="submit"
+      value="Logout">

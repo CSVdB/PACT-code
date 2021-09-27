@@ -29,6 +29,7 @@ getProfilePageR :: Handler Html
 getProfilePageR = do
   user <- getUser
   token <- genToken
+  let editProfile = NoEdit
   defaultLayout $ do
     setTitle "Profile"
     $(widgetFile "profile")

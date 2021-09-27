@@ -11,9 +11,13 @@ import qualified Data.Text as T
 import Pact.Web.Server.Handler.Prelude
 
 getUpdateUserProfileR :: Handler Html
-getUpdateUserProfileR = defaultLayout $ do
-  setTitle "Edit profile"
-  $(widgetFile "profile/userProfile")
+getUpdateUserProfileR = do
+  user <- getUser
+  token <- genToken
+  let editProfile = UserEdit
+  defaultLayout $ do
+    setTitle "Edit profile"
+    $(widgetFile "profile")
 
 newtype UserProfileForm = UserProfileForm
   { aboutMeUPF :: Textarea

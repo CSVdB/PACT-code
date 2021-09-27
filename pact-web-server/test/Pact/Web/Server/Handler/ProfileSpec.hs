@@ -53,6 +53,32 @@ spec = pactWebServerSpec . describe "ProfileR" $ do
         Coach {..} <- getSingleCoach
         liftIO $ coachExpertise `shouldBe` ""
 
+  describe "UpdateUserProfileR" $ do
+    testRequiresLogin "ProfileR UpdateUserProfileR" $ ProfileR UpdateUserProfileR
+
+    it "POST suceeds" $ \yc ->
+      forAllValid $ \user -> forAllValid $ \profile ->
+        runYesodClientM yc $ do
+          testRegisterUser user
+          testUpdateUserProfile profile
+
+    it "POST creates the correct coach profile" $ \yc ->
+      forAllValid $ \user -> forAllValid $ \profile ->
+        runYesodClientM yc $ do
+          testRegisterUser user
+          testUpdateUserProfile profile
+          User {..} <- getSingleUser
+          liftIO $ userAboutMe `shouldBe` aboutMeUPF profile
+
+    it "POST a second time overrides the first Coach" $ \yc ->
+      forAllValid $ \user -> forAllValid $ \profile ->
+        forAllValid $ \profile' -> runYesodClientM yc $ do
+          testRegisterUser user
+          testUpdateUserProfile profile
+          testUpdateUserProfile profile'
+          User {..} <- getSingleUser
+          liftIO $ userAboutMe `shouldBe` aboutMeUPF profile'
+
   describe "UpdateCoachProfileR" $ do
     testRequiresCoach "ProfileR UpdateCoachProfileR" $ ProfileR UpdateCoachProfileR
 

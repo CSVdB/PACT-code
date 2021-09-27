@@ -362,7 +362,7 @@ collectCoaches User {..} = do
 
 data CoachWorkoutInfo = CoachWorkoutInfo
   { uuidCWI :: CoachWorkoutUUID,
-    coachName :: Username,
+    coachCWI :: User,
     typeCWI :: WorkoutType,
     dayCWI :: Day,
     amountCWI :: WorkoutAmount,
@@ -378,11 +378,11 @@ getCoachWorkoutInfos coach =
 workoutToInfo :: MonadIO m => CoachWorkout -> SqlPersistT m CoachWorkoutInfo
 workoutToInfo cw@CoachWorkout {..} = do
   Coach {..} <- entityVal . fromJust <$> getBy (UniqueCoach coachWorkoutCoach)
-  User {..} <- entityVal . fromJust <$> getBy (UniqueUser coachUser)
+  user <- entityVal . fromJust <$> getBy (UniqueUser coachUser)
   getParticipants cw <&> \participants ->
     CoachWorkoutInfo
       { uuidCWI = coachWorkoutUuid,
-        coachName = userName,
+        coachCWI = user,
         typeCWI = coachWorkoutType,
         dayCWI = coachWorkoutDay,
         amountCWI = coachWorkoutAmount,

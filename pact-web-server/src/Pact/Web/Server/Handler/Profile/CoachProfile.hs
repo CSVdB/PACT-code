@@ -1,23 +1,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE TemplateHaskell #-}
 
 module Pact.Web.Server.Handler.Profile.CoachProfile where
 
 import qualified Data.Text as T
 import Pact.Web.Server.Handler.Prelude
-
-getUpdateCoachProfileR :: Handler Html
-getUpdateCoachProfileR = do
-  user <- getUser
-  token <- genToken
-  let editProfile = CoachEdit
-  defaultLayout $ do
-    setTitle "Edit profile"
-    $(widgetFile "profile")
 
 newtype CoachProfileForm = CoachProfileForm
   { expertiseCPF :: Textarea

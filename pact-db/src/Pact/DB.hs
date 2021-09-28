@@ -360,6 +360,25 @@ collectCoaches User {..} = do
         CustomerCoachRelationResponse ==. Just AcceptProposal
       ]
 
+collectCoachesAndUser :: MonadIO m => User -> SqlPersistT m [(User, Coach)]
+collectCoachesAndUser user = do
+  coaches <- collectCoaches user
+  fmap catMaybes $
+    forM coaches $ \coach ->
+      fmap ((,coach) . entityVal) <$> getBy (UniqueUser $ coachUser coach)
+
+collectCustomers :: MonadIO m => Coach -> SqlPersistT m [User]
+collectCustomers Coach {..} = do
+  relations <- selectListVals conditions []
+  fmap catMaybes $
+    forM relations $ \relation ->
+      fmap entityVal <$> getBy (UniqueUser $ customerCoachRelationCustomer relation)
+  where
+    conditions =
+      [ CustomerCoachRelationCoach ==. coachUuid,
+        CustomerCoachRelationResponse ==. Just AcceptProposal
+      ]
+
 data CoachWorkoutInfo = CoachWorkoutInfo
   { uuidCWI :: CoachWorkoutUUID,
     coachCWI :: User,
@@ -373,33 +392,50 @@ data CoachWorkoutInfo = CoachWorkoutInfo
 
 getCoachWorkoutInfos :: MonadIO m => Coach -> SqlPersistT m [CoachWorkoutInfo]
 getCoachWorkoutInfos coach =
-  getCoachWorkouts coach >>= traverse workoutToInfo
+  fmap catMaybes $ getCoachWorkouts coach >>= traverse workoutToInfo
 
-workoutToInfo :: MonadIO m => CoachWorkout -> SqlPersistT m CoachWorkoutInfo
-workoutToInfo cw@CoachWorkout {..} = do
-  Coach {..} <- entityVal . fromJust <$> getBy (UniqueCoach coachWorkoutCoach)
-  user <- entityVal . fromJust <$> getBy (UniqueUser coachUser)
-  getParticipants cw <&> \participants ->
-    CoachWorkoutInfo
-      { uuidCWI = coachWorkoutUuid,
-        coachCWI = user,
-        typeCWI = coachWorkoutType,
-        dayCWI = coachWorkoutDay,
-        amountCWI = coachWorkoutAmount,
-        notesCWI = coachWorkoutNotes,
-        participants = participants
-      }
+getCoachU :: MonadIO m => CoachUUID -> SqlPersistT m (Maybe (User, Coach))
+getCoachU uuid =
+  getBy (UniqueCoach uuid) >>= \case
+    Nothing -> pure Nothing
+    Just (Entity _ coach@Coach {..}) ->
+      getBy (UniqueUser coachUser) >>= \case
+        Nothing -> pure Nothing
+        Just (Entity _ user) -> pure $ Just (user, coach)
+
+workoutToInfo :: MonadIO m => CoachWorkout -> SqlPersistT m (Maybe CoachWorkoutInfo)
+workoutToInfo cw@CoachWorkout {..} =
+  getCoachU coachWorkoutCoach >>= \case
+    Nothing -> pure Nothing
+    Just (user, Coach {..}) ->
+      fmap Just $
+        getParticipants cw <&> \participants ->
+          CoachWorkoutInfo
+            { uuidCWI = coachWorkoutUuid,
+              coachCWI = user,
+              typeCWI = coachWorkoutType,
+              dayCWI = coachWorkoutDay,
+              amountCWI = coachWorkoutAmount,
+              notesCWI = coachWorkoutNotes,
+              participants = participants
+            }
 
 getMyCoachesWorkoutInfos :: MonadIO m => User -> SqlPersistT m [CoachWorkoutInfo]
 getMyCoachesWorkoutInfos user = do
   coaches <- collectCoaches user
   join <$> forM coaches getCoachWorkoutInfos
 
+(<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+(<$$>) func = fmap (fmap func)
+
 userPlannedWorkouts :: MonadIO m => User -> SqlPersistT m [(Cancelled, CoachWorkoutInfo)]
 userPlannedWorkouts User {..} = do
   workoutJoins <- selectListVals conditions []
-  forM workoutJoins $ \WorkoutJoin {..} -> do
-    workout <- entityVal . fromJust <$> getBy (UniqueCoachWorkout workoutJoinWorkout)
-    (workoutJoinCancelled,) <$> workoutToInfo workout
+  fmap catMaybes $
+    forM workoutJoins $ \WorkoutJoin {..} ->
+      getBy (UniqueCoachWorkout workoutJoinWorkout) >>= \case
+        Nothing -> pure Nothing
+        Just (Entity _ workout) ->
+          (workoutJoinCancelled,) <$$> workoutToInfo workout
   where
     conditions = [WorkoutJoinCustomer ==. userUuid]

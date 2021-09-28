@@ -1,8 +1,5 @@
-<h1 .text-xs-center>Profile #{userName user}
-
-^{token}
-
-<div .text-xs-center>
+$if not $ isJust mCoach
+  <h1 .text-xs-center>Profile #{userName user}
   <form
     enctype="multipart/form-data"
     method="post"
@@ -10,51 +7,106 @@
     <input .btn .btn-lg .btn-primary .pull-xs-center
       type="submit"
       value="Become a coach">
-  <br>
+$else
+  <h1 .text-xs-center>Profile coach #{userName user}
 
-  $if editProfile == UserEdit
+<br>
+
+^{token}
+
+$if editProfile == UserEdit
+  <form
+    enctype="multipart/form-data"
+    method="post"
+    action=@{ProfileR UpdateUserProfileR}>
+    <div>
+      <fieldset .form-group>
+        <div>
+          About me:
+          <textarea .form-control .form-control-lg
+            name="about-me"
+            required>
+            #{userAboutMe user}
+
+      <fieldset .form-group>
+        <div>
+          Profile picture:
+          ^{showPic user}
+          <input .form-control .form-control-lg
+            name="image"
+            optional
+            type="file">
+
+      <a .btn .btn-lg .btn-primary .pull-xs-right
+        href=@{ProfileR ProfilePageR}>Cancel
+      <br>
+
+      <input .btn .btn-lg .btn-primary .pull-xs-right
+        type="submit"
+        value="Update profile">
+
+$else
+  <button .no-click>
+    About me:
+    <textarea .form-control .form-control-lg>#{userAboutMe user}
+    ^{showPic user}
+    <a .click .btn .btn-lg .btn-primary .pull-xs-right
+      href=@{ProfileR UpdateUserProfileR}>Edit
+
+
+$maybe coach <- mCoach
+  $if editProfile == CoachEdit
     <form
       enctype="multipart/form-data"
       method="post"
-      action=@{ProfileR UpdateUserProfileR}>
+      action=@{ProfileR UpdateCoachProfileR}>
       <div>
         <fieldset .form-group>
           <div>
-            About me:
+            Expertise:
             <textarea .form-control .form-control-lg
-              name="about-me"
+              name="expertise"
               required>
-              #{userAboutMe user}
-
-        <fieldset .form-group>
-          <div>
-            Profile picture:
-            ^{showPic user}
-            <input .form-control .form-control-lg
-              name="image"
-              optional
-              type="file">
-
+              #{coachExpertise coach}
         <a .btn .btn-lg .btn-primary .pull-xs-right
           href=@{ProfileR ProfilePageR}>Cancel
         <br>
-
         <input .btn .btn-lg .btn-primary .pull-xs-right
           type="submit"
           value="Update profile">
-
   $else
     <button .no-click>
-      About me:
-      <textarea .form-control .form-control-lg
-        name="about-me">
-        #{userAboutMe user}
-      ^{showPic user}
+      Expertise:
+      <textarea .form-control .form-control-lg>#{coachExpertise coach}
       <a .click .btn .btn-lg .btn-primary .pull-xs-right
-        href=@{ProfileR UpdateUserProfileR}>Edit
-
+        href=@{ProfileR UpdateCoachProfileR}>Edit
+$nothing
   <br>
-  <form method="post" action=@{AuthR LogoutR}>
-    <input .btn .btn-lg .btn-primary .pull-xs-right
-      type="submit"
-      value="Logout">
+
+$if not $ null customers
+  <h2 .text-xs-center>Your customers
+  $forall customer <- customers
+    <button .no-click>
+      #{userName customer}
+      <textarea .form-control .form-control-lg>#{userAboutMe customer}
+      ^{showPic customer}
+
+<div .text-xs-center>
+  <h2>Your coaches
+  $forall (coachUser, coach) <- coaches
+    <button .no-click>
+      #{userName coachUser}
+      <textarea .form-control .form-control-lg>#{userAboutMe coachUser}
+      ^{showPic coachUser}
+      <textarea .form-control .form-control-lg>#{coachExpertise coach}
+
+  <a .click .btn .btn-lg .btn-primary .pull-xs-right
+    href=@{ProfileR ListCoachesR}>Add coach
+
+<br>
+<br>
+<br>
+<form method="post" action=@{AuthR LogoutR}>
+  <input .btn .btn-lg .btn-primary .pull-xs-right
+    type="submit"
+    value="Logout">

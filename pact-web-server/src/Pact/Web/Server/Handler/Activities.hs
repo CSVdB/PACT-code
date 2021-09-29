@@ -14,7 +14,6 @@ module Pact.Web.Server.Handler.Activities
   )
 where
 
-import Data.Time.Clock
 import Pact.Web.Server.Handler.Activities.CancelUser
 import Pact.Web.Server.Handler.Activities.Join
 import Pact.Web.Server.Handler.Activities.Workout
@@ -23,7 +22,7 @@ import Pact.Web.Server.Handler.Prelude
 getActivitiesPageR :: Handler Html
 getActivitiesPageR = do
   (user, mCoach) <- getCoachM
-  today <- liftIO $ utctDay <$> getCurrentTime
+  today <- getCurrentDay
   coachWorkoutInfos <-
     sortCWIs today . fromMaybe []
       <$> forM mCoach (runDB . getCoachWorkoutInfos)

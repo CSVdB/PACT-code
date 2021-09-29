@@ -9,12 +9,14 @@ module Pact.Web.Server.Handler.Profile
     postBecomeCoachR,
     postConnectCoachR,
     getListCoachesR,
+    getListFriendsR,
     CoachProfileForm (..),
     UserProfileForm (..),
     getUpdateCoachProfileR,
     postUpdateCoachProfileR,
     getUpdateUserProfileR,
     postUpdateUserProfileR,
+    postConnectFriendR,
   )
 where
 
@@ -22,21 +24,21 @@ import Pact.Web.Server.Handler.Prelude
 import Pact.Web.Server.Handler.Profile.BecomeCoach
 import Pact.Web.Server.Handler.Profile.CoachConnect
 import Pact.Web.Server.Handler.Profile.CoachProfile
+import Pact.Web.Server.Handler.Profile.FriendConnect
 import Pact.Web.Server.Handler.Profile.ListCoaches
+import Pact.Web.Server.Handler.Profile.ListFriends
 import Pact.Web.Server.Handler.Profile.UserProfile
 
 getProfilePage :: Edit -> Handler Html
 getProfilePage editProfile = do
   (user, mCoach) <- getCoachM
-  case editProfile of
-    -- You must be a coach to edit your coach profile
-    CoachEdit -> when (isNothing mCoach) notFound
-    _ -> pure ()
+  -- You must be a coach to edit your coach profile
+  when (editProfile == CoachEdit && isNothing mCoach) notFound
 
-  customers <- case mCoach of
-    Nothing -> pure []
-    Just coach -> runDB $ collectCustomers coach
+  customers <- fmap (fromMaybe []) $ forM mCoach $ runDB . collectCustomers
   coaches <- runDB $ collectCoachesAndUser user
+  friendInfos <- runDB $ collectFriendInfos user
+  let friends = friendFRI <$> filter isFriend friendInfos
   token <- genToken
   defaultLayout $ do
     setTitle "Profile"

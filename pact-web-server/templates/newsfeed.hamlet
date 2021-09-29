@@ -9,9 +9,10 @@
 <br>
 <br>
 
-<div .text-xs-center>
-  ^{token}
+^{token}
 
+$if not $ null customerCoachProposals
+  <h2 .text-xs-center>Customer requests
   $forall user <- customerCoachProposals
     <div>
       ^{showPic user}
@@ -25,9 +26,25 @@
         <input
           type="submit"
           value="Deny">
-  <p>
-    Messages will come here to confirm friend requests  and confirm you did a
-    planned workout.
+
+$if not $ null proposedFriends
+  <h2 .text-xs-center>Friend requests
+  $forall friend <- proposedFriends
+    <div>
+      ^{showPic friend}
+      Name: #{userName friend}
+      <form method="post" action=@{NewsfeedR $ ConnectFriendResponseR (userUuid friend) AcceptFriend}>
+        <input
+          type="submit"
+          value="Accept">
+
+      <form method="post" action=@{NewsfeedR $ ConnectFriendResponseR (userUuid friend) DenyFriend}>
+        <input
+          type="submit"
+          value="Deny">
+
+<p>
+  Messages will come here to confirm you did a planned workout.
 
 <br>
 

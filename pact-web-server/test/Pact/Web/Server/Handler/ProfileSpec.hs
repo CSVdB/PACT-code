@@ -107,3 +107,38 @@ spec = pactWebServerSpec . describe "ProfileR" $ do
           testUpdateCoachProfile coachProfile2
           Coach {..} <- getSingleCoach
           liftIO $ coachExpertise `shouldBe` expertiseCPF coachProfile2
+
+  testRequiresLogin "ProfileR ListFriendsR" $ ProfileR ListFriendsR
+
+  describe "ConnectFriendR" $ do
+    it "POST suceeds" $ \yc ->
+      forAllValid $ \user1 -> forAllValid $ \user2 -> runYesodClientM yc $ do
+        testRegisterUser user1
+        user <- getSingleUser
+        testLogout
+        testRegisterUser user2
+        testSendFriendRequest user
+
+    it "POST creates the correct friend request" $ \yc -> do
+      forAllValid $ \user1 -> forAllValid $ \user2 -> runYesodClientM yc $ do
+        testRegisterUser user1
+        user <- getSingleUser
+        testLogout
+        testRegisterUser user2
+        testSendFriendRequest user
+
+        friendProposals <- testDB $ selectListVals [] []
+        case friendProposals of
+          [FriendRelation {..}] ->
+            liftIO $ friendRelationReceiver `shouldBe` userUuid user
+          xs -> fail $ "Found " <> show (length xs) <> " friend proposal instead of 1"
+
+    it "POSTing twice to the same user gives notFound" $ \yc -> do
+      forAllValid $ \user1 -> forAllValid $ \user2 -> runYesodClientM yc $ do
+        testRegisterUser user1
+        user <- getSingleUser
+        testLogout
+        testRegisterUser user2
+        testSendFriendRequest user
+        post . ProfileR . ConnectFriendR $ userUuid user
+        statusIs 404

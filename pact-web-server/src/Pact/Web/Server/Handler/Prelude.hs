@@ -14,6 +14,7 @@ module Pact.Web.Server.Handler.Prelude
     getPic,
     showPic,
     Edit (..),
+    getCurrentDay,
   )
 where
 
@@ -24,6 +25,8 @@ import Data.List as X (sortOn, (\\))
 import Data.Maybe as X
 import Data.Ord as X (Down (..))
 import Data.Text as X (Text)
+import Data.Time.Calendar as X
+import Data.Time.LocalTime as X
 import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity as X
 import Data.Validity.Time as X ()
@@ -76,3 +79,6 @@ data Edit
   | UserEdit
   | CoachEdit
   deriving (Show, Eq, Ord, Generic)
+
+getCurrentDay :: MonadIO m => m Day
+getCurrentDay = localDay . zonedTimeToLocalTime <$> liftIO getZonedTime

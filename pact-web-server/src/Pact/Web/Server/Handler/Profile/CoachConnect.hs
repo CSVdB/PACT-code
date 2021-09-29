@@ -13,12 +13,14 @@ postConnectCoachR uuid = do
     Just _ -> do
       addMessage "is-danger" "You already proposed to connect to this coach"
       notFound
-    Nothing -> do
-      runDB $
-        insert_
-          CustomerCoachRelation
-            { customerCoachRelationCustomer = userUuid,
-              customerCoachRelationCoach = uuid,
-              customerCoachRelationResponse = Nothing
-            }
-      redirect $ ProfileR ListCoachesR
+    Nothing -> pure ()
+  runDB (getBy $ UniqueCoach uuid) >>= \case
+    Nothing -> notFound
+    Just _ -> pure ()
+  runDB . insert_ $
+    CustomerCoachRelation
+      { customerCoachRelationCustomer = userUuid,
+        customerCoachRelationCoach = uuid,
+        customerCoachRelationResponse = Nothing
+      }
+  redirect $ ProfileR ListCoachesR

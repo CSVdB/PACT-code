@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -9,14 +8,10 @@ import Pact.Web.Server.Handler.Prelude
 postConnectCoachR :: CoachUUID -> Handler Html
 postConnectCoachR uuid = do
   User {..} <- getUser
-  runDB (getBy $ UniqueRelation userUuid uuid) >>= \case
-    Just _ -> do
-      addMessage "is-danger" "You already proposed to connect to this coach"
-      notFound
-    Nothing -> pure ()
-  runDB (getBy $ UniqueCoach uuid) >>= \case
-    Nothing -> notFound
-    Just _ -> pure ()
+  runDB (getBy $ UniqueRelation userUuid uuid) >>= \relation -> when (isJust relation) $ do
+    addMessage "is-danger" "You already proposed to connect to this coach"
+    notFound
+  runDB (getBy $ UniqueCoach uuid) >>= \coach -> when (isNothing coach) notFound
   runDB . insert_ $
     CustomerCoachRelation
       { customerCoachRelationCustomer = userUuid,

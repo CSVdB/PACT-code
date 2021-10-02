@@ -17,21 +17,21 @@ import GHC.Generics (Generic)
 import Text.Read
 import Yesod
 
-data CoachCoachProposalResponse
+data CoachProposalResponse
   = AcceptProposal
   | DenyProposal
   deriving (Show, Read, Eq, Ord, Generic)
 
-instance Validity CoachCoachProposalResponse
+instance Validity CoachProposalResponse
 
-instance PersistField CoachCoachProposalResponse where
+instance PersistField CoachProposalResponse where
   toPersistValue = toPersistValue . show
   fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v
 
-instance PersistFieldSql CoachCoachProposalResponse where
+instance PersistFieldSql CoachProposalResponse where
   sqlType _ = SqlString
 
-instance PathPiece CoachCoachProposalResponse where
+instance PathPiece CoachProposalResponse where
   fromPathPiece = readMaybe . T.unpack
   toPathPiece = T.pack . show
 

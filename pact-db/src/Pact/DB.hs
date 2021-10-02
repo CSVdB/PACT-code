@@ -141,7 +141,7 @@ ExerciseAlternativeName
 CustomerCoachRelation
   customer UserUUID
   coach CoachUUID
-  response CoachCoachProposalResponse Maybe
+  response CoachProposalResponse Maybe
 
   UniqueRelation customer coach
 
@@ -276,16 +276,13 @@ collectMaterials :: MonadIO m => ExerciseUUID -> SqlPersistT m [Material]
 collectMaterials uuid = do
   materialFilters <- selectListVals [MaterialFilterExercise ==. uuid] []
   let materialUuids = materialFilterMaterial <$> materialFilters
-  materials <- forM materialUuids $ \mUuid -> do
-    res <- getBy $ UniqueMaterialUUID mUuid
-    pure $ case res of
-      Nothing -> Nothing
-      Just (Entity _ material) -> Just material
+  materials <- forM materialUuids $ \mUuid ->
+    entityVal <$$> getBy (UniqueMaterialUUID mUuid)
   pure $ Material . exerciseMaterialName <$> catMaybes materials
 
 collectAltNames :: MonadIO m => ExerciseUUID -> SqlPersistT m [AlternativeName]
 collectAltNames uuid =
-  fmap toAltName <$> selectListVals [ExerciseAlternativeNameUuid ==. uuid] []
+  toAltName <$$> selectListVals [ExerciseAlternativeNameUuid ==. uuid] []
   where
     toAltName = AlternativeName . exerciseAlternativeNameName
 
@@ -315,7 +312,7 @@ respondToProposal ::
   MonadIO m =>
   UserUUID ->
   Coach ->
-  CoachCoachProposalResponse ->
+  CoachProposalResponse ->
   SqlPersistT m SqlUpdateResult
 respondToProposal user coach response =
   getBy (UniqueRelation user $ coachUuid coach) >>= \case
@@ -338,25 +335,62 @@ respondToFriendRequest user currentUser response =
         update key [FriendRelationResponse =. Just response]
         pure SqlSuccess
 
--- TODO: Once the concept of friends is introduced, this should list all
--- workouts done in the last week by a friend of the given user.
-getLastWeeksWorkouts ::
-  MonadIO m => Day -> User -> SqlPersistT m [(User, UserWorkout)]
+data CoachOrganized = CoachOrganized | UserOrganized
+  deriving (Show, Eq, Ord, Generic)
+
+data Workout = Workout
+  { organizerW :: User, -- User/coach who 'organized' the workout
+    workoutTypeW :: WorkoutType,
+    workoutAmountW :: WorkoutAmount,
+    dayW :: Day,
+    coachOrganized :: CoachOrganized
+  }
+  deriving (Show, Eq, Ord, Generic)
+
+getLastWeeksWorkouts :: MonadIO m => Day -> User -> SqlPersistT m [Workout]
 getLastWeeksWorkouts today currentUser = do
-  friends <-
-    fmap friendFRI . filter ((==) (Just AcceptFriend) . responseFRI)
-      <$> collectFriendInfos currentUser
-  coaches <- fst <$$> collectCoachesAndUser currentUser
-  let allUsers = uniq $ currentUser : friends ++ coaches
+  friends <- fmap friendFRI . filter isFriend <$> collectFriendInfos currentUser
+  coaches <- collectCoachesAndUser currentUser
+  let allUsers = uniq $ currentUser : friends ++ (fst <$> coaches)
       usersMap = Map.fromList $ allUsers <&> \user -> (userUuid user, user)
-  workouts <- selectListVals (conditions allUsers) []
-  pure $ workouts <&> \workout -> (usersMap Map.! userWorkoutUser workout, workout)
+  userWorkouts <- selectListVals (userConditions allUsers) []
+  let userWorkouts' =
+        userWorkouts <&> \workout ->
+          Workout
+            { organizerW = getUser usersMap $ userWorkoutUser workout,
+              workoutTypeW = userWorkoutType workout,
+              workoutAmountW = userWorkoutAmount workout,
+              dayW = userWorkoutDay workout,
+              coachOrganized = UserOrganized
+            }
+  coachWorkouts <- selectListVals (coachConditions $ snd <$> coaches) []
+  let coachWorkouts' =
+        catMaybes $
+          coachWorkouts <&> \workout ->
+            getCoachUser coaches (coachWorkoutCoach workout) <&> \organizer ->
+              Workout
+                { organizerW = organizer,
+                  workoutTypeW = coachWorkoutType workout,
+                  workoutAmountW = coachWorkoutAmount workout,
+                  dayW = coachWorkoutDay workout,
+                  coachOrganized = CoachOrganized
+                }
+  pure $ userWorkouts' ++ coachWorkouts'
   where
     lastWeek = addDays (-7) today
-    conditions users =
+    userConditions users =
       [ UserWorkoutUser <-. (userUuid <$> users),
         UserWorkoutDay >. lastWeek
       ]
+    coachConditions cs =
+      [ CoachWorkoutCoach <-. (coachUuid <$> cs),
+        CoachWorkoutDay >. lastWeek,
+        CoachWorkoutDay <=. today
+      ]
+    getUser usersMap userUuid = usersMap Map.! userUuid
+    getCoachUser coaches uuid = case filter ((== uuid) . coachUuid . snd) coaches of
+      [(user, _)] -> Just user
+      _ -> Nothing
 
 uniq :: Ord a => [a] -> [a]
 uniq = nubOrd
@@ -491,6 +525,9 @@ collectFriendInfos User {..} = do
     (\(Entity _ user) -> FriendRequestInfo user Receiver friendRelationResponse)
       <$$> getBy (UniqueUser $ friendUuid fr userUuid)
   pure $ catMaybes proposedFRIs ++ catMaybes receivedFRIs
+
+collectFriends :: MonadIO m => User -> SqlPersistT m [User]
+collectFriends user = fmap friendFRI . filter isFriend <$> collectFriendInfos user
 
 isReceiver :: FriendRequestInfo -> Bool
 isReceiver FriendRequestInfo {..} =

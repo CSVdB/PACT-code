@@ -46,7 +46,7 @@ $if editProfile == UserEdit
         value="Update profile">
 
 $else
-  <button .no-click>
+  <button .no-click .Gutton>
     About me:
     <textarea .form-control .form-control-lg>#{userAboutMe user}
     ^{showPic user}
@@ -75,7 +75,7 @@ $maybe coach <- mCoach
           type="submit"
           value="Update profile">
   $else
-    <button .no-click>
+    <button .no-click .Gutton>
       Expertise:
       <textarea .form-control .form-control-lg>#{coachExpertise coach}
       <a .click .btn .btn-lg .btn-primary .pull-xs-right
@@ -84,14 +84,14 @@ $maybe coach <- mCoach
 $if not $ null customers
   <h2 .text-xs-center>Your customers
   $forall customer <- customers
-    <button .no-click>
+    <button .no-click .Gutton>
       #{userName customer}
       ^{showPic customer}
 
 $if not $ null coaches
   <h2 .text-xs-center>Your coaches
   $forall (coachUser, _) <- coaches
-    <button .no-click>
+    <button .no-click .Gutton>
       #{userName coachUser}
       ^{showPic coachUser}
 
@@ -102,7 +102,7 @@ $if not $ null coaches
 $if not $ null friends
   <h2 .text-xs-center>Your friends
   $forall friend <- friends
-    <button .no-click>
+    <button .no-click .Gutton>
       #{userName friend}
       ^{showPic friend}
 

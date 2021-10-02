@@ -27,7 +27,7 @@ newsfeedR user mCoach = do
   proposedFriends <- runDB $ fmap friendFRI . filter isReceiver <$> collectFriendInfos user
   token <- genToken
   today <- getCurrentDay
-  userWorkouts <- sortOn (Down . userWorkoutDay . snd) <$> runDB (getLastWeeksWorkouts today user)
+  workouts <- sortOn (Down . dayW) <$> runDB (getLastWeeksWorkouts today user)
   defaultLayout $ do
     setTitle "PACT"
     $(widgetFile "newsfeed")

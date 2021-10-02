@@ -6,7 +6,7 @@
 
 /newsfeed NewsfeedR:
   /workout/#WorkoutType AddUserWorkoutR GET POST
-  /coach-connect-response/#UserUUID/#CoachCoachProposalResponse ConnectCoachResponseR POST
+  /coach-connect-response/#UserUUID/#CoachProposalResponse ConnectCoachResponseR POST
   /friend-connect-response/#UserUUID/#FriendRequestResponse ConnectFriendResponseR POST
 
 /activities ActivitiesR:

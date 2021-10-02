@@ -278,7 +278,7 @@ testSendConnectionProposal coach = do
   _ <- followRedirect
   statusIs 200
 
-testRespondToProposal :: UserUUID -> CoachCoachProposalResponse -> YesodExample App ()
+testRespondToProposal :: UserUUID -> CoachProposalResponse -> YesodExample App ()
 testRespondToProposal user response = do
   get HomeR
   post . NewsfeedR $ ConnectCoachResponseR user response

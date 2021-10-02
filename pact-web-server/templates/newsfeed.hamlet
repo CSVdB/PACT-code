@@ -48,13 +48,16 @@ $if not $ null proposedFriends
 
 <br>
 
-$forall (user, userWorkout) <- userWorkouts
+$forall Workout {..} <- workouts
   <button .Gutton .no-click>
-    ^{showPic user}
-    User: #{userName user}
+    ^{showPic organizerW}
+    User: #{userName organizerW}
     <br>
-    Activity: #{show $ userWorkoutType userWorkout}
+    Activity: #{show workoutTypeW}
     <br>
-    Amount: #{showWorkoutAmount (userWorkoutType userWorkout) $ userWorkoutAmount userWorkout}
+    Amount: #{showWorkoutAmount workoutTypeW workoutAmountW}
     <br>
-    Day: #{show $ userWorkoutDay userWorkout}
+    Day: #{show dayW}
+    $if coachOrganized == CoachOrganized
+      <br>
+      (Coach organized)

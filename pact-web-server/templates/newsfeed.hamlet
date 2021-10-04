@@ -30,12 +30,13 @@
 
 <br>
 
-$forall (user, userWorkout) <- userWorkouts
-  <button .Gutton .no-click>
-    User: #{userName user}
-    <br>
-    Activity: #{show $ userWorkoutType userWorkout}
-    <br>
-    Amount: #{showWorkoutAmount (userWorkoutType userWorkout) $ userWorkoutAmount userWorkout}
-    <br>
-    Day: #{show $ userWorkoutDay userWorkout}
+<div .text-xs-center>
+  $forall (user, userWorkout) <- userWorkouts
+    <button .Gutton .no-click>
+      User: #{userName user}
+      <br>
+      Activity: #{show $ userWorkoutType userWorkout}
+      <br>
+      Amount: #{showWorkoutAmount (userWorkoutType userWorkout) $ userWorkoutAmount userWorkout}
+      <br>
+      Day: #{show $ userWorkoutDay userWorkout}

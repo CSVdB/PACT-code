@@ -1,31 +1,25 @@
 <h1 .text-xs-center> Coaches
 
-<div .text-xs-center-div-coach>
-
-  
+<div .text-xs-center>
   ^{token}
   $forall (coachUser, coach) <- coachInfos
     $if coachUser /= user
       $maybe relationText <- getRelationTextIfExists user coach relations
-        <div .coach-layout>
-          <a>
+        <button .Gutton .no-click .coach-layout>
             $maybe pic <- coachPic coach
               <img
-                src=@{ImageR pic}
-                width="100">
+                src=@{ImageR pic}>
             #{userName coachUser}
-            <textarea>
-              #{coachAboutMe coach}
-            <br> (#{relationText})
-        $nothing
+            <br>
+            #{coachAboutMe coach}
+            <div .text-xs-right> (#{relationText})
+      $nothing
           <form method="post" action=@{CoachR $ ConnectR $ coachUuid coach}>
-            <button type="submit">
-              <a>
+            <button type="submit" .Gutton .coach-layout>
                 $maybe pic <- coachPic coach
                   <img
-                    src=@{ImageR pic}
-                    width="100">
+                    src=@{ImageR pic}>
                 #{userName coachUser}
-                <textarea>
-                  #{coachAboutMe coach}
+                <br>
+                #{coachAboutMe coach}
         <br>

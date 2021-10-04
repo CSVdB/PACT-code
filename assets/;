@@ -121,26 +121,6 @@ a:hover {
 
 }
 
-.containerhome{
-    position: absolute;
-    top: 18%;
-    left: 14%;
-    right: 20%;
-    text-align: center;
-    width: 60%;
-    height: 55%;
-    margin: 0% 5% 0% 5%; 
-    padding: 2% 0% 2% 0%;
-    background-image: url(https://c.neh.tw/thumb/f/720/c284503afe1a48d0a11e.jpg) ;
-    background: rgba(255, 255, 255, 0.301);
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-    backdrop-filter: blur( 3.5px );
-    -webkit-backdrop-filter: blur( 3.5px );
-    border-radius: 10px;
-    border: 1px solid rgba( 255, 255, 255, 0.18 );
-
-
-}
 
 
 .text-xs-left-icons div{
@@ -525,4 +505,50 @@ font-size: 50%;
         .coach-layout textarea{
             width:30%;
             height: 20%:
+        }
+
+        .col-md-6.offset-md-3.col-xs12 {
+        
+            text-align: center;
+            border:none;
+        }
+        .containerhome{
+            position: absolute;
+            top: 18%;
+            left: 14%;
+            right: 20%;
+            text-align: center;
+            width: 60%;
+            height: 55%;
+            margin: 0% 5% 0% 5%; 
+            padding: 2% 0% 2% 0%;
+            background-image: url(https://c.neh.tw/thumb/f/720/c284503afe1a48d0a11e.jpg) ;
+            background: rgba(255, 255, 255, 0.301);
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            backdrop-filter: blur( 3.5px );
+            -webkit-backdrop-filter: blur( 3.5px );
+            border-radius: 10px;
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+        
+        
+        }
+        
+        .containerlogin{
+            position: absolute;
+            top: 18%;
+            left: 14%;
+            right: 20%;
+            text-align: center;
+            width: 40%;
+            height: 45%;
+            margin: 0% 5% 0% 5%; 
+            padding: 2% 0% 2% 0%;
+            background-image: url(https://c.neh.tw/thumb/f/720/c284503afe1a48d0a11e.jpg) ;
+            background: rgba(255, 255, 255, 0.301);
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            backdrop-filter: blur( 3.5px );
+            -webkit-backdrop-filter: blur( 3.5px );
+            border-radius: 10px;
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+        
         }

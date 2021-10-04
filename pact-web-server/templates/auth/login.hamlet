@@ -1,36 +1,37 @@
-<h1 .text-xs-center>Sign In
-<div .text-xs-center>
-  <a href=@{AuthR registerR}>
-    Need an account?
+<div .containerlogin>
+  <h1 .text-xs-center>Sign In
+  <div .text-xs-center-div>
+    <a href=@{AuthR registerR}>
+      Need an account?
 
-  <form
-    method="post"
-    action=@{AuthR loginR}>
-    <div>
-      <fieldset .form-group>
-        <input .form-control .form-control-lg
-          name="username"
-          placeholder="Username"
-          required
-          autofocus="autofocus"
-          type="text">
+    <form
+      method="post"
+      action=@{AuthR loginR}>
+      <div>
+        <fieldset .form-group>
+          <input .form-control .form-control-lg
+            name="username"
+            placeholder="Username"
+            required
+            autofocus="autofocus"
+            type="text">
 
-      <fieldset .form-group>
-        <input .form-control .form-control-lg
-          name="password"
-          placeholder="Password"
-          required
-          type="password">
+        <fieldset .form-group>
+          <input .form-control .form-control-lg
+            name="password"
+            placeholder="Password"
+            required
+            type="password">
 
-      ^{token}
+        ^{token}
 
-      $if not (null messages)
-        <div .field>
-          $forall (_, message) <- messages
-            <p .help .is-danger>
-              #{message}
+        $if not (null messages)
+          <div .field>
+            $forall (_, message) <- messages
+              <p .help .is-danger>
+                #{message}
 
 
-      <input .btn .btn-lg .btn-primary .pull-xs-right
-        type="submit"
-        value="Sign in">
+        <input .btn .btn-lg .btn-primary .pull-xs-right
+          type="submit"
+          value="Sign in">

@@ -9,7 +9,7 @@
 <br>
 <br>
 
-<div .text-xs-center>
+<div .text-xs-center-div>
   ^{token}
 
   $forall user <- customerCoachProposals

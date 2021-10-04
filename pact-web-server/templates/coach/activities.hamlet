@@ -1,4 +1,4 @@
-<h1 .text-xs-center>Plan a #{show workoutType} workout
+<h1 .workout-h1>Plan a #{show workoutType} workout
 <div .text-xs-center>
   <form
     enctype="multipart/form-data"

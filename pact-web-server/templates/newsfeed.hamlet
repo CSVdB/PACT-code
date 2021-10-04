@@ -1,4 +1,4 @@
-<h1 .text-xs-center>
+<h1 .newsfeed-h1>
   Newsfeed
 
 <div .dropdown>
@@ -9,7 +9,7 @@
 <br>
 <br>
 
-<div .text-xs-center>
+<div .text-xs-center-div>
   ^{token}
 
   $forall user <- customerCoachProposals

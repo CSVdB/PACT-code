@@ -1,5 +1,5 @@
-<h1 .text-xs-center> You just did a #{show wType} workout!
-<div .text-xs-center>
+<h1 .user-h1> You just did a #{show wType} workout!
+<div .text-xs-center-div>
   <form
     enctype="multipart/form-data"
     method="post"

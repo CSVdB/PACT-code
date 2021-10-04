@@ -1,16 +1,16 @@
 $if isCoach == IsCoach
-  <h1 .text-xs-center> Coach #{usernameText profileName}
+  <h1 .coach-h1> Coach #{usernameText profileName}
 $else
-  <h1 .text-xs-center> Want to become a coach?
+  <h1 .coach-h1> Want to become a coach?
 
-<div .text-xs-center>
+<div .text-xs-center-div>
   <form
     enctype="multipart/form-data"
     method="post"
     action=@{CoachR ProfileR}>
     <div>
       <fieldset .form-group>
-        <div>
+        <div .formdata>
           About me:
           <textarea .form-control .form-control-lg
             name="about-me"
@@ -18,7 +18,7 @@ $else
             #{profileAboutMe}
 
       <fieldset .form-group>
-        <div>
+        <div .formdata>
           Profile picture:
           $maybe pic <- profilePic
             <img

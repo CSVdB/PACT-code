@@ -1,12 +1,19 @@
-<h1 .text-xs-center>
-  Welcome to the PACT community!
-<br>
-<br>
-<div .text-xs-center>
-  <h2>
-    It's our mission to provide the support you need <br>
+<div .containerhome>
+  <h1 .text-xs-left>
+    Welcome to the <br> 
+    PACT community
+  <br>
+  <br>
+  <div .text-xs-left-div>
+    <p .text-xs-left-p>
+    - It's our mission to provide the support you need <br> 
     to live an energetic and inspired life.
-  <br> <br>
-  Make a PACT <br>
-  Join the team <br>
-  Change your world
+<div .text-xs-left-icons>
+  <div .icons>
+    <i .gg-dribbble> 
+    <i .gg-profile> 
+    <i .gg-awards>
+  <ul .welcome>
+    <li .pact> Make a PACT
+    <li .team> Join the team
+    <li .world> Change your world

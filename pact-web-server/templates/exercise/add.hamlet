@@ -1,4 +1,4 @@
-<h1 .text-xs-center> Submit new exercise
+<h1 .newexercise-h1> Submit new exercise
 <div .text-xs-center>
   <form
     enctype="multipart/form-data"

@@ -1,4 +1,4 @@
-<h1 .text-xs-center> Exercises
+<h1 .exercises-h1> Exercises
 
 <div>
   $forall ce <- completeExercises

@@ -10,8 +10,6 @@ $maybe _ <- mCoach
         <a href=@{ActivitiesR $ AddCoachWorkoutR workoutType}>#{show workoutType}
   <br>
 
-  Note to the designers: Resizing these events should happen in CSS, not HTML.
-
   <h2 .text-xs-center>My organized events
 
   $forall info <- coachWorkoutInfos
@@ -20,10 +18,11 @@ $maybe _ <- mCoach
       <br>
       Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
       <br>
-      Day: #{show $ dayCWI info}
+      When: #{show $ timeCWI info}
       <br>
-      Notes:
-      <textarea>#{notesCWI info}
+      Address: <textarea>#{addressCWI info}</textarea>
+      <br>
+      Notes: <textarea>#{notesCWI info} </textarea>
       <br>
       #Participants registered: #{show $ length $ participants info}
       <br>
@@ -43,10 +42,11 @@ $forall info <- myCoachesWorkoutInfos
       <br>
       Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
       <br>
-      Day: #{show $ dayCWI info}
+      When: #{show $ timeCWI info}
       <br>
-      Notes:
-      <textarea>#{notesCWI info}
+      Address: <textarea>#{addressCWI info}</textarea>
+      <br>
+      Notes: <textarea>#{notesCWI info} </textarea>
       <br>
       #Participants registered: #{show $ length $ participants info}
       <br>
@@ -69,10 +69,11 @@ $forall (cancelled, info) <- myPlannedWorkouts
       <br>
       Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
       <br>
-      Day: #{show $ dayCWI info}
+      When: #{show $ timeCWI info}
       <br>
-      Notes:
-      <textarea>#{notesCWI info}
+      Address: <textarea>#{addressCWI info}</textarea>
+      <br>
+      Notes: <textarea>#{notesCWI info} </textarea>
       <br>
       #Participants registered: #{show $ length $ participants info}
       <br>

@@ -11,6 +11,7 @@ import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
 import Data.List (sort)
 import qualified Data.Text as T
+import Data.Time.Format
 import qualified Database.Persist.Sql as DB
 import Database.Persist.Sqlite (fkEnabled, mkSqliteConnectionInfo, runSqlPool, walEnabled, withSqlitePoolInfo)
 import GHC.Generics
@@ -329,6 +330,8 @@ addCoachWorkoutRequest AddCoachWorkoutForm {..} workoutType = request $ do
   addToken
   addPostParam "amount" . T.pack . show $ (round $ amountACWF / stepSize workoutType :: Int)
   addPostParam "day" . T.pack $ show dayACWF
+  addPostParam "timeOfDay" . T.pack $ formatTime defaultTimeLocale "%T" timeOfDayACWF
+  addPostParam "address" $ unTextarea addressACWF
   addPostParam "notes" $ unTextarea notesACWF
 
 submitCoachWorkout :: AddCoachWorkoutForm -> WorkoutType -> YesodExample App ()

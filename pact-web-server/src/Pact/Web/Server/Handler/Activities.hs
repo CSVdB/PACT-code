@@ -22,20 +22,20 @@ import Pact.Web.Server.Handler.Prelude
 getActivitiesPageR :: Handler Html
 getActivitiesPageR = do
   (user, mCoach) <- getCoachM
-  today <- getCurrentDay
+  nowLocal <- liftIO $ zonedTimeToLocalTime <$> getZonedTime
   coachWorkoutInfos <-
-    sortCWIs today . fromMaybe []
+    sortCWIs nowLocal . fromMaybe []
       <$> forM mCoach (runDB . getCoachWorkoutInfos)
   myPlannedWorkouts <-
-    sortOn (dayCWI . snd) . filter (filterCondition today . snd)
+    sortOn (timeCWI . snd) . filter (filterCondition nowLocal . snd)
       <$> runDB (userPlannedWorkouts user)
   myCoachesWorkoutInfos <- do
-    infos <- sortCWIs today <$> runDB (getMyCoachesWorkoutInfos user)
+    infos <- sortCWIs nowLocal <$> runDB (getMyCoachesWorkoutInfos user)
     pure $ infos \\ (snd <$> myPlannedWorkouts)
   defaultLayout $ do
     token <- genToken
     setTitleI ("Activities" :: Text)
     $(widgetFile "activities")
   where
-    sortCWIs today = sortOn dayCWI . filter (filterCondition today)
-    filterCondition today CoachWorkoutInfo {..} = today <= dayCWI
+    sortCWIs nowLocal = sortOn timeCWI . filter (filterCondition nowLocal)
+    filterCondition nowLocal CoachWorkoutInfo {..} = nowLocal <= timeCWI

@@ -9,6 +9,7 @@ module Pact.Web.Server.Handler.Activities.Workout where
 
 import qualified Data.Text as T
 import Data.Time.Calendar
+import Data.Time.LocalTime
 import Pact.Web.Server.Handler.Prelude
 
 getAddCoachWorkoutR :: WorkoutType -> Handler Html
@@ -22,6 +23,8 @@ getAddCoachWorkoutR workoutType = defaultLayout $ do
 data AddCoachWorkoutForm = AddCoachWorkoutForm
   { amountACWF :: Double,
     dayACWF :: Day,
+    timeOfDayACWF :: TimeOfDay,
+    addressACWF :: Textarea,
     notesACWF :: Textarea
   }
   deriving (Show, Eq, Ord, Generic)
@@ -38,6 +41,8 @@ addCoachWorkoutForm =
   AddCoachWorkoutForm
     <$> ireq doubleField "amount"
     <*> ireq dayField "day"
+    <*> ireq timeField "timeOfDay"
+    <*> ireq textareaField "address"
     <*> ireq textareaField "notes"
 
 postAddCoachWorkoutR :: WorkoutType -> Handler Html
@@ -60,9 +65,11 @@ addCoachWorkout AddCoachWorkoutForm {..} workoutType = do
       CoachWorkout
         { coachWorkoutUuid = uuid,
           coachWorkoutCoach = coachUuid,
+          coachWorkoutAmount = amount,
           coachWorkoutType = workoutType,
           coachWorkoutDay = dayACWF,
-          coachWorkoutAmount = amount,
+          coachWorkoutTimeOfDay = timeOfDayACWF,
+          coachWorkoutAddress = addressACWF,
           coachWorkoutNotes = notesACWF
         }
   addMessage "is-success" "Great, you're organizing a workout!"

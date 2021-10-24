@@ -33,6 +33,7 @@ import Data.Password.Instances ()
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Time.Calendar
+import Data.Time.LocalTime
 import Data.Validity
 import Data.Validity.ByteString ()
 import Data.Validity.Persist ()
@@ -168,8 +169,10 @@ CoachWorkout
   uuid CoachWorkoutUUID
   coach CoachUUID
   type WorkoutType
-  day Day
   amount WorkoutAmount
+  day Day
+  timeOfDay TimeOfDay
+  address Textarea
   notes Textarea
 
   UniqueCoachWorkout uuid
@@ -445,8 +448,9 @@ data CoachWorkoutInfo = CoachWorkoutInfo
   { uuidCWI :: CoachWorkoutUUID,
     coachCWI :: User,
     typeCWI :: WorkoutType,
-    dayCWI :: Day,
+    timeCWI :: LocalTime,
     amountCWI :: WorkoutAmount,
+    addressCWI :: Textarea,
     notesCWI :: Textarea,
     participants :: [User]
   }
@@ -476,8 +480,9 @@ workoutToInfo cw@CoachWorkout {..} =
             { uuidCWI = coachWorkoutUuid,
               coachCWI = user,
               typeCWI = coachWorkoutType,
-              dayCWI = coachWorkoutDay,
+              timeCWI = LocalTime coachWorkoutDay coachWorkoutTimeOfDay,
               amountCWI = coachWorkoutAmount,
+              addressCWI = coachWorkoutAddress,
               notesCWI = coachWorkoutNotes,
               participants = participants
             }

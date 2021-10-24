@@ -24,7 +24,20 @@
           type="date">
 
       <fieldset .form-group>
-        Workout description, level, address
+        <input .form-control .form-control-lg
+          name="timeOfDay"
+          required
+          type="time">
+
+      <fieldset .form-group>
+        Address
+        <textarea .form-control .form-control-lg
+          name="address"
+          placeholder="Address"
+          required>
+
+      <fieldset .form-group>
+        Workout description, level
         <textarea .form-control .form-control-lg
           name="notes"
           placeholder="Notes"

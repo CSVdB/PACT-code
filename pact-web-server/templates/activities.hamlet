@@ -24,7 +24,7 @@ $maybe _ <- mCoach
       <br>
       Notes: <textarea>#{notesCWI info} </textarea>
       <br>
-      #Participants registered: #{show $ length $ participants info}
+      #Participants: #{show $ length $ participants info}
       <br>
       <br>
 
@@ -48,7 +48,7 @@ $forall info <- myCoachesWorkoutInfos
       <br>
       Notes: <textarea>#{notesCWI info} </textarea>
       <br>
-      #Participants registered: #{show $ length $ participants info}
+      #Participants: #{show $ length $ participants info}
       <br>
       <input .btn .btn-lg .btn-primary .pull-xs-right .click
         type="submit"
@@ -56,11 +56,11 @@ $forall info <- myCoachesWorkoutInfos
     <br>
 
 <h2 .text-xs-center>My events
-$forall (cancelled, info) <- myPlannedWorkouts
+$forall (status, info) <- myPlannedWorkouts
   <form
     enctype="multipart/form-data"
     method="post"
-    action=@{ActivitiesR $ CancelCoachWorkoutJoinR $ uuidCWI info}>
+    action=@{ActivitiesR $ UpdateCoachWorkoutJoinR (uuidCWI info) Cancelled}>
     <button .Gutton .text-xs-left .no-click>
       ^{showPic $ coachCWI info}
       Coach: #{userName $ coachCWI info}
@@ -75,12 +75,12 @@ $forall (cancelled, info) <- myPlannedWorkouts
       <br>
       Notes: <textarea>#{notesCWI info} </textarea>
       <br>
-      #Participants registered: #{show $ length $ participants info}
+      #Participants: #{show $ length $ participants info}
       <br>
-      $if cancelled == NotCancelled
+      $if status == WillCome
         <input .btn .btn-lg .btn-primary .pull-xs-right .click
           type="submit"
           value="Cancel">
       $else
-        (Cancelled)
+        (#{show status})
     <br>

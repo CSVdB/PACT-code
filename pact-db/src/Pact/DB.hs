@@ -182,7 +182,7 @@ CoachWorkout
 WorkoutJoin
   customer UserUUID
   workout CoachWorkoutUUID
-  cancelled Cancelled
+  status JoinStatus
 
   UniqueJoin customer workout
 
@@ -410,7 +410,7 @@ getParticipants CoachWorkout {..} = do
   where
     conditions =
       [ WorkoutJoinWorkout ==. coachWorkoutUuid,
-        WorkoutJoinCancelled ==. NotCancelled
+        WorkoutJoinStatus !=. Cancelled
       ]
 
 collectCoaches :: MonadIO m => User -> SqlPersistT m [Coach]
@@ -495,7 +495,7 @@ getMyCoachesWorkoutInfos user = do
 (<$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
 (<$$>) func = fmap (fmap func)
 
-userPlannedWorkouts :: MonadIO m => User -> SqlPersistT m [(Cancelled, CoachWorkoutInfo)]
+userPlannedWorkouts :: MonadIO m => User -> SqlPersistT m [(JoinStatus, CoachWorkoutInfo)]
 userPlannedWorkouts User {..} = do
   workoutJoins <- selectListVals conditions []
   fmap catMaybes $
@@ -503,7 +503,7 @@ userPlannedWorkouts User {..} = do
       getBy (UniqueCoachWorkout workoutJoinWorkout) >>= \case
         Nothing -> pure Nothing
         Just (Entity _ workout) ->
-          (workoutJoinCancelled,) <$$> workoutToInfo workout
+          (workoutJoinStatus,) <$$> workoutToInfo workout
   where
     conditions = [WorkoutJoinCustomer ==. userUuid]
 

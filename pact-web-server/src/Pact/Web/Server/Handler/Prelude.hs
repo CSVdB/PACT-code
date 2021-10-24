@@ -15,6 +15,7 @@ module Pact.Web.Server.Handler.Prelude
     showPic,
     Edit (..),
     getCurrentDay,
+    getLocalNow,
   )
 where
 
@@ -82,3 +83,6 @@ data Edit
 
 getCurrentDay :: MonadIO m => m Day
 getCurrentDay = localDay . zonedTimeToLocalTime <$> liftIO getZonedTime
+
+getLocalNow :: MonadIO m => m LocalTime
+getLocalNow = liftIO $ zonedTimeToLocalTime <$> getZonedTime

@@ -13,7 +13,7 @@
   / ActivitiesPageR GET
   /workout/#WorkoutType AddCoachWorkoutR GET POST
   /join/#CoachWorkoutUUID JoinCoachWorkoutR POST
-  /cancel-user/#CoachWorkoutUUID CancelCoachWorkoutJoinR POST
+  /update-join/#CoachWorkoutUUID/#JoinStatus UpdateCoachWorkoutJoinR POST
 
 /profile ProfileR:
   / ProfilePageR GET

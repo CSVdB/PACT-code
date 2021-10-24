@@ -43,6 +43,22 @@ $if not $ null proposedFriends
           type="submit"
           value="Deny">
 
+$if not $ null workoutsToConfirm
+  <h2 .text-xs-center>Did you go to this workout?
+  $forall info <- snd <$> workoutsToConfirm
+    <div>
+      ^{showPic $ coachCWI info}
+      Name: #{userName $ coachCWI info}
+      <form method="post" action=@{ActivitiesR $ UpdateCoachWorkoutJoinR (uuidCWI info) WasPresent}>
+        <input
+          type="submit"
+          value="Check!">
+
+      <form method="post" action=@{ActivitiesR $ UpdateCoachWorkoutJoinR (uuidCWI info) WasAbsent}>
+        <input
+          type="submit"
+          value="No :(">
+
 <p>
   Messages will come here to confirm you did a planned workout.
 

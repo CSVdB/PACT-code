@@ -59,7 +59,7 @@ spec = pactWebServerSpec . describe "ActivitiesR" $ do
             CoachWorkout {..} <- getSingleCoachWorkout
             joinWorkout coachWorkoutUuid
             WorkoutJoin {..} <- getSingleWorkoutJoin
-            liftIO $ workoutJoinCancelled `shouldBe` NotCancelled
+            liftIO $ workoutJoinStatus `shouldBe` WillCome
 
     it "POST to join the same workout twice, results in `notFound`" $ \yc ->
       forAllValid $ \testUser -> forAllValid $ \acwf ->
@@ -76,10 +76,10 @@ spec = pactWebServerSpec . describe "ActivitiesR" $ do
             post . ActivitiesR $ JoinCoachWorkoutR coachWorkoutUuid
             statusIs 404
 
-  describe "CancelCoachWorkoutJoinR" $ do
+  describe "JoinCoachWorkoutJoinR" $ do
     it "can POST when logged in" $ \yc ->
-      forAllValid $ \user -> forAllValid $ \form ->
-        forAllValid $ \coach -> forAllValid $ \workoutType ->
+      forAllValid $ \user -> forAllValid $ \form -> forAll genNewJoinStatus $
+        \status -> forAllValid $ \coach -> forAllValid $ \workoutType ->
           runYesodClientM yc $ do
             testRegisterUser coach
             becomeCoach
@@ -89,11 +89,11 @@ spec = pactWebServerSpec . describe "ActivitiesR" $ do
             testLogout
             testRegisterUser user
             joinWorkout coachWorkoutUuid
-            cancelWorkout coachWorkoutUuid
+            updateJoinWorkout coachWorkoutUuid status
 
     it "POST updates a WorkoutJoin appropriately in the dB" $ \yc ->
-      forAllValid $ \user -> forAllValid $ \form ->
-        forAllValid $ \coach -> forAllValid $ \workoutType ->
+      forAllValid $ \user -> forAllValid $ \form -> forAll genNewJoinStatus $
+        \status -> forAllValid $ \coach -> forAllValid $ \workoutType ->
           runYesodClientM yc $ do
             testRegisterUser coach
             becomeCoach
@@ -103,13 +103,13 @@ spec = pactWebServerSpec . describe "ActivitiesR" $ do
             testLogout
             testRegisterUser user
             joinWorkout coachWorkoutUuid
-            cancelWorkout coachWorkoutUuid
+            updateJoinWorkout coachWorkoutUuid status
             WorkoutJoin {..} <- getSingleWorkoutJoin
-            liftIO $ workoutJoinCancelled `shouldBe` Cancelled
+            liftIO $ workoutJoinStatus `shouldBe` status
 
-    it "POST to cancel a non-existent workout, results in `notFound`" $ \yc ->
-      forAllValid $ \user -> forAllValid $ \form ->
-        forAllValid $ \coach -> forAllValid $ \workoutType ->
+    it "POST to update a non-existent workout, results in `notFound`" $ \yc ->
+      forAllValid $ \user -> forAllValid $ \form -> forAll genNewJoinStatus $
+        \status -> forAllValid $ \coach -> forAllValid $ \workoutType ->
           runYesodClientM yc $ do
             testRegisterUser coach
             becomeCoach
@@ -119,21 +119,22 @@ spec = pactWebServerSpec . describe "ActivitiesR" $ do
             testLogout
             testRegisterUser user
             -- Didn't join the workout.
-            post . ActivitiesR $ CancelCoachWorkoutJoinR coachWorkoutUuid
+            post . ActivitiesR $ UpdateCoachWorkoutJoinR coachWorkoutUuid status
             statusIs 404
 
-    it "POST to cancel the same workout twice, results in `notFound`" $ \yc ->
+    it "POST to update the same workout twice, results in `notFound`" $ \yc ->
       forAllValid $ \user -> forAllValid $ \form ->
-        forAllValid $ \coach -> forAllValid $ \workoutType ->
-          runYesodClientM yc $ do
-            testRegisterUser coach
-            becomeCoach
-            submitCoachWorkout form workoutType
-            CoachWorkout {..} <- getSingleCoachWorkout
+        forAll genNewJoinStatus $ \status -> forAll genNewJoinStatus $ \status' ->
+          forAllValid $ \coach -> forAllValid $ \workoutType ->
+            runYesodClientM yc $ do
+              testRegisterUser coach
+              becomeCoach
+              submitCoachWorkout form workoutType
+              CoachWorkout {..} <- getSingleCoachWorkout
 
-            testLogout
-            testRegisterUser user
-            joinWorkout coachWorkoutUuid
-            cancelWorkout coachWorkoutUuid
-            post . ActivitiesR $ CancelCoachWorkoutJoinR coachWorkoutUuid
-            statusIs 404
+              testLogout
+              testRegisterUser user
+              joinWorkout coachWorkoutUuid
+              updateJoinWorkout coachWorkoutUuid status
+              post . ActivitiesR $ UpdateCoachWorkoutJoinR coachWorkoutUuid status'
+              statusIs 404

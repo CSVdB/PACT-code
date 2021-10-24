@@ -352,12 +352,15 @@ joinWorkout uuid = do
   _ <- followRedirect
   statusIs 200
 
-cancelWorkout :: CoachWorkoutUUID -> YesodExample App ()
-cancelWorkout uuid = do
+updateJoinWorkout :: CoachWorkoutUUID -> JoinStatus -> YesodExample App ()
+updateJoinWorkout uuid status = do
   testCanReach $ ActivitiesR ActivitiesPageR
-  post . ActivitiesR $ CancelCoachWorkoutJoinR uuid
+  post . ActivitiesR $ UpdateCoachWorkoutJoinR uuid status
   statusIs 303
-  locationShouldBe $ ActivitiesR ActivitiesPageR
+  case status of
+    Cancelled -> locationShouldBe $ ActivitiesR ActivitiesPageR
+    WillCome -> fail "The join status cannot be updated to WillCome!"
+    _ -> locationShouldBe HomeR
   _ <- followRedirect
   statusIs 200
 

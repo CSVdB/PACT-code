@@ -17,7 +17,7 @@ postJoinCoachWorkoutR workoutUUID = do
           WorkoutJoin
             { workoutJoinCustomer = userUuid,
               workoutJoinWorkout = workoutUUID,
-              workoutJoinCancelled = NotCancelled
+              workoutJoinStatus = WillCome
             }
       addMessage "is-success" "You joined a workout, this will be great fun!"
       redirect $ ActivitiesR ActivitiesPageR

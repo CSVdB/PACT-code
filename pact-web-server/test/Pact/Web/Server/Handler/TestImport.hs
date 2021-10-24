@@ -1,4 +1,4 @@
-module Pact.Web.Server.Handler.TestImport (module X) where
+module Pact.Web.Server.Handler.TestImport (module X, genNewJoinStatus) where
 
 import Pact.DB as X
 import Pact.Data as X
@@ -13,3 +13,7 @@ import Test.Syd.Validity.Aeson as X
 import Test.Syd.Validity.Persist as X
 import Test.Syd.Yesod as X
 import Yesod.Auth as X
+
+-- Generate a join status other than WillCome.
+genNewJoinStatus :: Gen JoinStatus
+genNewJoinStatus = genValid `suchThat` (/= WillCome)

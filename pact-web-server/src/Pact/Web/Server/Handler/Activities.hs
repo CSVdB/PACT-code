@@ -6,7 +6,7 @@
 
 module Pact.Web.Server.Handler.Activities
   ( getActivitiesPageR,
-    postCancelCoachWorkoutJoinR,
+    postUpdateCoachWorkoutJoinR,
     postJoinCoachWorkoutR,
     getAddCoachWorkoutR,
     postAddCoachWorkoutR,
@@ -14,15 +14,15 @@ module Pact.Web.Server.Handler.Activities
   )
 where
 
-import Pact.Web.Server.Handler.Activities.CancelUser
 import Pact.Web.Server.Handler.Activities.Join
+import Pact.Web.Server.Handler.Activities.UpdateJoin
 import Pact.Web.Server.Handler.Activities.Workout
 import Pact.Web.Server.Handler.Prelude
 
 getActivitiesPageR :: Handler Html
 getActivitiesPageR = do
   (user, mCoach) <- getCoachM
-  nowLocal <- liftIO $ zonedTimeToLocalTime <$> getZonedTime
+  nowLocal <- getLocalNow
   coachWorkoutInfos <-
     sortCWIs nowLocal . fromMaybe []
       <$> forM mCoach (runDB . getCoachWorkoutInfos)

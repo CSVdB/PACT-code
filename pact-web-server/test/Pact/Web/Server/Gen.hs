@@ -127,3 +127,7 @@ instance GenValid AddCoachWorkoutForm where
 instance GenUnchecked WorkoutType
 
 instance GenValid WorkoutType
+
+instance GenUnchecked JoinStatus
+
+instance GenValid JoinStatus

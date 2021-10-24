@@ -35,19 +35,25 @@ instance PathPiece CoachProposalResponse where
   fromPathPiece = readMaybe . T.unpack
   toPathPiece = T.pack . show
 
-data Cancelled
+data JoinStatus
   = Cancelled
-  | NotCancelled
+  | WillCome
+  | WasPresent
+  | WasAbsent
   deriving (Show, Read, Eq, Ord, Generic)
 
-instance Validity Cancelled
+instance Validity JoinStatus
 
-instance PersistField Cancelled where
+instance PersistField JoinStatus where
   toPersistValue = toPersistValue . show
   fromPersistValue v = mapLeft T.pack . readEither =<< fromPersistValue v
 
-instance PersistFieldSql Cancelled where
+instance PersistFieldSql JoinStatus where
   sqlType _ = SqlString
+
+instance PathPiece JoinStatus where
+  fromPathPiece = readMaybe . T.unpack
+  toPathPiece = T.pack . show
 
 data FriendRequestResponse
   = AcceptFriend

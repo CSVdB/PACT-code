@@ -1,0 +1,24 @@
+<h1 .text-xs-center>Friends
+
+<div .text-xs-center>
+  ^{token}
+
+  $forall notFriend <- notProposedUsers
+    $if notFriend /= user
+      <form method="post" action=@{ProfileR $ ConnectFriendR $ userUuid notFriend}>
+        <button type="submit">
+          <a>
+            ^{showPic notFriend}
+            #{userName notFriend}
+            <textarea>
+              #{userAboutMe notFriend}
+      <br>
+
+  $forall FriendRequestInfo friend _ response <- relations
+      <a>
+        ^{showPic friend}
+        #{userName friend}
+        <textarea>
+          #{userAboutMe friend}
+        (#{prettyPrintFriendRequestResponse response})
+        <br>

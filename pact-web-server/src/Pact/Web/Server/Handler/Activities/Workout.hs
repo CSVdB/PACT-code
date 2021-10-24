@@ -9,14 +9,13 @@ module Pact.Web.Server.Handler.Activities.Workout where
 
 import qualified Data.Text as T
 import Data.Time.Calendar
-import Data.Time.Clock
 import Pact.Web.Server.Handler.Prelude
 
 getAddCoachWorkoutR :: WorkoutType -> Handler Html
 getAddCoachWorkoutR workoutType = defaultLayout $ do
   messages <- getMessages
   token <- genToken
-  today <- utctDay <$> liftIO getCurrentTime
+  today <- getCurrentDay
   setTitleI ("Activity" :: Text)
   $(widgetFile "activities/workout")
 

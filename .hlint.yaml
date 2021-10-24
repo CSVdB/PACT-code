@@ -88,12 +88,6 @@
 
   - {name: fromJust, within: []} # Partial
 
-  # Does silent truncation:
-  # > fromIntegral (300 :: Word) :: Word8
-  # 44
-  - {name: fromIntegral, within: []}
-
-
   - {name: 'read', within: []} # Partial, use `Text.Read.readMaybe` instead.
   
   # Deprecated, use `pure` instead.

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9c762e8817fa63a3fa9faf7d4cd61590f15b63bf3cbcceca2c926e6b8e5bb5fd
+-- hash: 4cee90410a979830028d723be7075f0a8cfe1ffa5842e320a41ad01d3a5e7e89
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -37,13 +37,16 @@ library
       Pact.Web.Server.Handler.Image
       Pact.Web.Server.Handler.Newsfeed
       Pact.Web.Server.Handler.Newsfeed.CoachConnectResponse
+      Pact.Web.Server.Handler.Newsfeed.FriendConnectResponse
       Pact.Web.Server.Handler.Newsfeed.Workout
       Pact.Web.Server.Handler.Prelude
       Pact.Web.Server.Handler.Profile
       Pact.Web.Server.Handler.Profile.BecomeCoach
       Pact.Web.Server.Handler.Profile.CoachConnect
       Pact.Web.Server.Handler.Profile.CoachProfile
+      Pact.Web.Server.Handler.Profile.FriendConnect
       Pact.Web.Server.Handler.Profile.ListCoaches
+      Pact.Web.Server.Handler.Profile.ListFriends
       Pact.Web.Server.Handler.Profile.UserProfile
       Pact.Web.Server.Handler.Video
       Pact.Web.Server.OptParse

@@ -278,10 +278,28 @@ testSendConnectionProposal coach = do
   _ <- followRedirect
   statusIs 200
 
-testRespondToProposal :: UserUUID -> ProposalResponse -> YesodExample App ()
+testRespondToProposal :: UserUUID -> CoachProposalResponse -> YesodExample App ()
 testRespondToProposal user response = do
   get HomeR
   post . NewsfeedR $ ConnectCoachResponseR user response
+  statusIs 303
+  locationShouldBe HomeR
+  _ <- followRedirect
+  statusIs 200
+
+testSendFriendRequest :: User -> YesodExample App ()
+testSendFriendRequest User {..} = do
+  get $ ProfileR ListFriendsR
+  post . ProfileR $ ConnectFriendR userUuid
+  statusIs 303
+  locationShouldBe $ ProfileR ListFriendsR
+  _ <- followRedirect
+  statusIs 200
+
+testFriendResponse :: UserUUID -> FriendRequestResponse -> YesodExample App ()
+testFriendResponse uuid response = do
+  get HomeR
+  post . NewsfeedR $ ConnectFriendResponseR uuid response
   statusIs 303
   locationShouldBe HomeR
   _ <- followRedirect

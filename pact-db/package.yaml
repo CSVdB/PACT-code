@@ -15,6 +15,7 @@ library:
     - aeson
     - blaze-markup
     - bytestring
+    - containers
     - either
     - format-numbers
     - jose

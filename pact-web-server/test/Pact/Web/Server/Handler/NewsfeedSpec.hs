@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -87,4 +88,59 @@ spec = pactWebServerSpec . describe "NewsfeedR" $ do
           testRespondToProposal (userUuid user) response
 
           post . NewsfeedR $ ConnectCoachResponseR (userUuid user) response'
+          statusIs 404
+
+  describe "ConnectFriendResponseR" $ do
+    it "Respond to a non-existent friend request results in `notFound`" $ \yc ->
+      forAllValid $ \user1 -> forAllValid $ \user2 ->
+        forAllValid $ \response -> runYesodClientM yc $ do
+          testRegisterUser user1
+          user <- getSingleUser
+          testLogout
+          testRegisterUser user2
+          post . NewsfeedR $ ConnectFriendResponseR (userUuid user) response
+          statusIs 404
+
+    it "POST to respond to an unanswered request, updates the dB" $ \yc ->
+      forAllValid $ \user1 -> forAllValid $ \user2 ->
+        forAllValid $ \response -> runYesodClientM yc $ do
+          testRegisterUser user1
+          user <- getSingleUser
+          testLogout
+
+          testRegisterUser user2
+          testSendFriendRequest user
+          testLogout
+
+          uuid2 <-
+            testDB (P.getBy . UniqueUsername $ testUsername user2) >>= \case
+              Nothing -> fail "Couldn't find user 2"
+              Just (P.Entity _ User {..}) -> pure userUuid
+
+          testLoginUser user1
+          testFriendResponse uuid2 response
+          friendRelations <- testDB $ selectListVals [] []
+          case friendRelations of
+            [FriendRelation {..}] -> liftIO $ friendRelationResponse `shouldBe` Just response
+            xs -> fail $ "Found " <> show (length xs) <> " friend relations instead of 1"
+
+    it "POST to respond to an answered request, results in `notFound`" $ \yc ->
+      forAllValid $ \user1 -> forAllValid $ \user2 -> forAllValid $ \response ->
+        forAllValid $ \response' -> runYesodClientM yc $ do
+          testRegisterUser user1
+          user <- getSingleUser
+          testLogout
+
+          testRegisterUser user2
+          testSendFriendRequest user
+          testLogout
+
+          uuid2 <-
+            testDB (P.getBy . UniqueUsername $ testUsername user2) >>= \case
+              Nothing -> fail "Couldn't find user 2"
+              Just (P.Entity _ User {..}) -> pure userUuid
+
+          testLoginUser user1
+          testFriendResponse uuid2 response
+          post . NewsfeedR $ ConnectFriendResponseR uuid2 response'
           statusIs 404

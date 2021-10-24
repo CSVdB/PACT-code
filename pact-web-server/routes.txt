@@ -6,7 +6,8 @@
 
 /newsfeed NewsfeedR:
   /workout/#WorkoutType AddUserWorkoutR GET POST
-  /coach-connect-response/#UserUUID/#ProposalResponse ConnectCoachResponseR POST
+  /coach-connect-response/#UserUUID/#CoachProposalResponse ConnectCoachResponseR POST
+  /friend-connect-response/#UserUUID/#FriendRequestResponse ConnectFriendResponseR POST
 
 /activities ActivitiesR:
   / ActivitiesPageR GET
@@ -16,11 +17,13 @@
 
 /profile ProfileR:
   / ProfilePageR GET
-  /coach-connect/#CoachUUID ConnectCoachR POST
   /list-coaches ListCoachesR GET
+  /coach-connect/#CoachUUID ConnectCoachR POST
   /become-coach BecomeCoachR POST
   /user-profile UpdateUserProfileR GET POST
   /coach-profile UpdateCoachProfileR GET POST
+  /list-friends ListFriendsR GET
+  /friend-connect/#UserUUID ConnectFriendR POST
 
 /exercise ExerciseR:
   /add AddR GET POST

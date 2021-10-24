@@ -108,9 +108,13 @@ instance GenValid Video where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
 
-instance GenUnchecked ProposalResponse
+instance GenUnchecked CoachProposalResponse
 
-instance GenValid ProposalResponse
+instance GenValid CoachProposalResponse
+
+instance GenUnchecked FriendRequestResponse
+
+instance GenValid FriendRequestResponse
 
 instance GenValid AddUserWorkoutForm where
   genValid = genValidStructurally

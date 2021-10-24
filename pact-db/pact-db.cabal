@@ -21,8 +21,8 @@ source-repository head
 library
   exposed-modules:
       Pact.Data
-      Pact.Data.Coach
       Pact.Data.Exercise
+      Pact.Data.Proposal
       Pact.Data.User
       Pact.Data.UUID
       Pact.DB
@@ -37,6 +37,7 @@ library
     , base >=4.7 && <5
     , blaze-markup
     , bytestring
+    , containers
     , either
     , format-numbers
     , jose

@@ -46,7 +46,7 @@ $if editProfile == UserEdit
         value="Update profile">
 
 $else
-  <button .no-click>
+  <button .no-click .Gutton>
     About me:
     <textarea .form-control .form-control-lg>#{userAboutMe user}
     ^{showPic user}
@@ -75,37 +75,41 @@ $maybe coach <- mCoach
           type="submit"
           value="Update profile">
   $else
-    <button .no-click>
+    <button .no-click .Gutton>
       Expertise:
       <textarea .form-control .form-control-lg>#{coachExpertise coach}
       <a .click .btn .btn-lg .btn-primary .pull-xs-right
         href=@{ProfileR UpdateCoachProfileR}>Edit
-$nothing
-  <br>
 
 $if not $ null customers
   <h2 .text-xs-center>Your customers
   $forall customer <- customers
-    <button .no-click>
+    <button .no-click .Gutton>
       #{userName customer}
-      <textarea .form-control .form-control-lg>#{userAboutMe customer}
       ^{showPic customer}
 
-<div .text-xs-center>
-  <h2>Your coaches
-  $forall (coachUser, coach) <- coaches
-    <button .no-click>
+$if not $ null coaches
+  <h2 .text-xs-center>Your coaches
+  $forall (coachUser, _) <- coaches
+    <button .no-click .Gutton>
       #{userName coachUser}
-      <textarea .form-control .form-control-lg>#{userAboutMe coachUser}
       ^{showPic coachUser}
-      <textarea .form-control .form-control-lg>#{coachExpertise coach}
 
-  <a .click .btn .btn-lg .btn-primary .pull-xs-right
-    href=@{ProfileR ListCoachesR}>Add coach
+<a .click .btn .btn-lg .btn-primary .pull-xs-right
+  href=@{ProfileR ListCoachesR}>Find coaches
+<br>
 
+$if not $ null friends
+  <h2 .text-xs-center>Your friends
+  $forall friend <- friends
+    <button .no-click .Gutton>
+      #{userName friend}
+      ^{showPic friend}
+
+<a .click .btn .btn-lg .btn-primary .pull-xs-right
+  href=@{ProfileR ListFriendsR}>Add friends
 <br>
-<br>
-<br>
+
 <form method="post" action=@{AuthR LogoutR}>
   <input .btn .btn-lg .btn-primary .pull-xs-right
     type="submit"

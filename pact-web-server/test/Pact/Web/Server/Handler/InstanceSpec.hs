@@ -8,12 +8,12 @@ import Yesod
 
 spec :: Spec
 spec = do
-  describe "ProposalResponse" $ do
-    showReadSpec @ProposalResponse
+  describe "CoachProposalResponse" $ do
+    showReadSpec @CoachProposalResponse
     it "toPathPiece DenyProposal" $ toPathPiece DenyProposal `shouldBe` "DenyProposal"
     it "fromPathPiece DenyProposal" $ fromPathPiece "DenyProposal" `shouldBe` Just DenyProposal
-    pathPieceSpec @ProposalResponse
-    persistSpec @ProposalResponse
+    pathPieceSpec @CoachProposalResponse
+    persistSpec @CoachProposalResponse
   describe "Difficulty" $ do
     showReadSpec @Difficulty
     jsonSpec @Difficulty

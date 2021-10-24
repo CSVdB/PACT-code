@@ -8,14 +8,13 @@
 module Pact.Web.Server.Handler.Newsfeed.Workout where
 
 import Data.Time.Calendar
-import Data.Time.Clock
 import Pact.Web.Server.Handler.Prelude
 
 getAddUserWorkoutR :: WorkoutType -> Handler Html
 getAddUserWorkoutR wType = defaultLayout $ do
   messages <- getMessages
   token <- genToken
-  today <- liftIO $ utctDay <$> getCurrentTime
+  today <- getCurrentDay
   setTitleI ("Workout" :: Text)
   $(widgetFile "newsfeed/addUserWorkout")
 

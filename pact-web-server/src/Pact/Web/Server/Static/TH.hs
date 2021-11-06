@@ -12,4 +12,4 @@ mkStatic =
   mkEmbeddedStatic
     development
     "pactWebServerStatic"
-    [embedDir "assets"]
+    [embedDir "../assets"]

@@ -10,8 +10,6 @@ $if not $ isJust mCoach
 $else
   <h1 .text-xs-center>Profile coach #{userName user}
 
-<br>
-
 ^{token}
 
 $if editProfile == UserEdit
@@ -39,7 +37,6 @@ $if editProfile == UserEdit
 
       <a .btn .btn-lg .btn-primary .pull-xs-right
         href=@{ProfileR ProfilePageR}>Cancel
-      <br>
 
       <input .btn .btn-lg .btn-primary .pull-xs-right
         type="submit"
@@ -49,6 +46,7 @@ $else
   <button .no-click .Gutton>
     About me:
     <textarea .form-control .form-control-lg>#{userAboutMe user}
+    <br>
     ^{showPic user}
     <a .click .btn .btn-lg .btn-primary .pull-xs-right
       href=@{ProfileR UpdateUserProfileR}>Edit
@@ -94,10 +92,8 @@ $if not $ null coaches
     <button .no-click .Gutton>
       #{userName coachUser}
       ^{showPic coachUser}
-
-<a .click .btn .btn-lg .btn-primary .pull-xs-right
+<a .btn .btn-lg .btn-primary .pull-xs-right
   href=@{ProfileR ListCoachesR}>Find coaches
-<br>
 
 $if not $ null friends
   <h2 .text-xs-center>Your friends
@@ -105,10 +101,8 @@ $if not $ null friends
     <button .no-click .Gutton>
       #{userName friend}
       ^{showPic friend}
-
-<a .click .btn .btn-lg .btn-primary .pull-xs-right
+<a .btn .btn-lg .btn-primary .pull-xs-right
   href=@{ProfileR ListFriendsR}>Add friends
-<br>
 
 <form method="post" action=@{AuthR LogoutR}>
   <input .btn .btn-lg .btn-primary .pull-xs-right

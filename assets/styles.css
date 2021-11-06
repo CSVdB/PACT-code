@@ -72,14 +72,6 @@ a {
     font-size: 100%;
 }
 
-a:active {
-    outline: 0
-}
-
-a:hover {
-    outline: 0;
-}
-
 .nav-item {
     display: inline;
 }
@@ -93,7 +85,6 @@ a:hover {
     padding: 2.5%;
     color: black;
     text-decoration: none;
-    transition: transform .2s;
 }
 
 .nav a:hover {
@@ -356,10 +347,6 @@ p {
     transition: transform .2s;
 }
 
-.icons div:hover {
-    transform: scale(1.2);
-}
-
 /*login*/
 
 .containerlogin {
@@ -405,10 +392,6 @@ p {
     font-style: italic;
     text-decoration: none;
     color: black;
-}
-
-.text-xs-center-div a:hover {
-    transform: scale(1.2);
 }
 
 .containerlogin h1 {
@@ -478,24 +461,21 @@ p {
     ;
 }
 
-.btn.btn-lg.btn-primary.pull-xs-right {
+.btn {
     background-color: #219E4B;
     box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.45);
     backdrop-filter: blur( 4px);
     -webkit-backdrop-filter: blur( 4px);
     border-radius: 20px;
     border: 1px solid rgba( 255, 255, 255, 0.1);
-    height: 40px;
-    width: 80px;
     font-weight: light;
     color: white;
-    text-transform: uppercase;
     margin: 2px 30px;
     transition: transform .2s;
 }
 
-.btn.btn-lg.btn-primary.pull-xs-right:hover {
-    transform: scale(1.1);
+.btn:hover {
+    transform: scale(1.2);
 }
 
 .text-xs-center-div {
@@ -581,9 +561,7 @@ p {
 /*activity per user*/
 
 .Gutton {
-    width: 20%;
     border: 1px white solid;
-    height: 100px;
     background: rgba(255, 255, 255, 0.301);
     box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37);
     backdrop-filter: blur( 3.5px);
@@ -591,7 +569,6 @@ p {
     border-radius: 10px;
     border: 1px solid rgba( 255, 255, 255, 0.18);
     margin: 2%;
-    text-decoration: none;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-style: lighter;
     font-size: 80%;
@@ -602,8 +579,8 @@ p {
 }
 
 .Gutton img {
-    width: auto;
-    height: 50%;
+    width: 20%;
+    height: auto;
 }
 
 /* coaches */
@@ -628,7 +605,7 @@ p {
 }
 
 .coach-layout img {
-    width: 50%;
+    width: 20%;
     height: auto;
 }
 

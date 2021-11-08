@@ -555,7 +555,7 @@ countCoins userId (start, end) = fmap (Coins . fromIntegral) $ do
   liftIO $ putStrLn ""
   liftIO $ putStrLn ""
   workoutJoins <- selectListVals [WorkoutJoinCustomer ==. userId] []
-  coachPoints <- fmap sum $
+  coachPoints <- fmap mySum $
     forM workoutJoins $ \workoutJoin ->
       getBy (UniqueCoachWorkout $ workoutJoinWorkout workoutJoin) <&> \case
         Nothing -> 0 :: Int
@@ -571,3 +571,4 @@ countCoins userId (start, end) = fmap (Coins . fromIntegral) $ do
         UserWorkoutUser ==. userId
       ]
     inInterval day = start <= day && day <= end
+    mySum = foldl' (+) 0 -- Strict accumulator, can be removed from GHC 9.0.1

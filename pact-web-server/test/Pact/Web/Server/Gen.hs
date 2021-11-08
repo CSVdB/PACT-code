@@ -131,3 +131,7 @@ instance GenValid WorkoutType
 instance GenUnchecked JoinStatus
 
 instance GenValid JoinStatus
+
+instance GenUnchecked Coins
+
+instance GenValid Coins

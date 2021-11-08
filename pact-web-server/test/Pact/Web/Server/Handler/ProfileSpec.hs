@@ -3,6 +3,8 @@
 
 module Pact.Web.Server.Handler.ProfileSpec (spec) where
 
+import Pact.Web.Server.Handler.Activities.Workout
+import Pact.Web.Server.Handler.Newsfeed.Workout
 import Pact.Web.Server.Handler.Profile
 import Pact.Web.Server.Handler.TestImport
 
@@ -142,3 +144,39 @@ spec = pactWebServerSpec . describe "ProfileR" $ do
         testSendFriendRequest user
         post . ProfileR . ConnectFriendR $ userUuid user
         statusIs 404
+
+  describe "countCoins" $ do
+    it "Calculates correctly" $ \yc ->
+      forAllValid $ \user -> forAllValid $ \coach -> forAllValid $ \form ->
+        forAllValid $ \workoutType -> forAllValid $ \userForm -> runYesodClientM yc $ do
+          let userWorkoutTime = dayAWF userForm
+              coachWorkoutTime = dayACWF form
+              timeInterval =
+                if userWorkoutTime <= coachWorkoutTime
+                  then (userWorkoutTime, coachWorkoutTime)
+                  else (coachWorkoutTime, userWorkoutTime)
+          testRegisterUser user
+          userId <- userUuid <$> getSingleUser
+          testLogout
+
+          testRegisterCoach coach
+          submitCoachWorkout form workoutType
+          coachWorkoutId <- coachWorkoutUuid <$> getSingleCoachWorkout
+          testLogout
+
+          testLoginUser user
+          coins1 <- testDB $ countCoins userId timeInterval
+          liftIO $ coins1 `shouldBe` Coins 0
+
+          submitUserWorkout userForm workoutType
+          coins2 <- testDB $ countCoins userId timeInterval
+          liftIO $ coins2 `shouldBe` Coins 3
+
+          joinWorkout coachWorkoutId
+          coins3 <- testDB $ countCoins userId timeInterval
+          liftIO $ coins3 `shouldBe` Coins 4
+
+          -- Confirm you went to the workout
+          post $ ActivitiesR $ UpdateCoachWorkoutJoinR coachWorkoutId WasPresent
+          coins4 <- testDB $ countCoins userId timeInterval
+          liftIO $ coins4 `shouldBe` Coins 8

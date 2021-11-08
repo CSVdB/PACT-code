@@ -107,6 +107,11 @@ testLogout = do
 testLoginUser :: TestUser -> YesodExample App ()
 testLoginUser TestUser {..} = testLogin testUsername testUserPassword
 
+testRegisterCoach :: TestUser -> YesodExample App ()
+testRegisterCoach user = do
+  testRegisterUser user
+  becomeCoach
+
 loginRequest :: Username -> Text -> YesodExample App ()
 loginRequest username password = request $ do
   setMethod methodPost

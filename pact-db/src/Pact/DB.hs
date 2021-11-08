@@ -540,3 +540,34 @@ isReceiver FriendRequestInfo {..} =
 
 isFriend :: FriendRequestInfo -> Bool
 isFriend FriendRequestInfo {..} = responseFRI == Just AcceptFriend
+
+type TimeInterval = (Day, Day)
+
+-- 5 points for attending a coach workout, 1 for registering, and 3 for a user
+-- workout.
+countCoins :: MonadIO m => UserUUID -> TimeInterval -> SqlPersistT m Coins
+countCoins userId (start, end) = fmap (Coins . fromIntegral) $ do
+  userWorkouts <- selectList userWorkoutConditions []
+  liftIO $ print userWorkouts
+  liftIO $ putStrLn ""
+  liftIO $ putStrLn ""
+  liftIO $ putStrLn ""
+  liftIO $ putStrLn ""
+  liftIO $ putStrLn ""
+  workoutJoins <- selectListVals [WorkoutJoinCustomer ==. userId] []
+  coachPoints <- fmap sum $
+    forM workoutJoins $ \workoutJoin ->
+      getBy (UniqueCoachWorkout $ workoutJoinWorkout workoutJoin) <&> \case
+        Nothing -> 0 :: Int
+        Just (Entity _ CoachWorkout {..}) ->
+          if not $ inInterval coachWorkoutDay
+            then 0
+            else if workoutJoinStatus workoutJoin == WasPresent then 5 else 1
+  pure $ 3 * length userWorkouts + coachPoints
+  where
+    userWorkoutConditions =
+      [ UserWorkoutDay >=. start,
+        UserWorkoutDay <=. end,
+        UserWorkoutUser ==. userId
+      ]
+    inInterval day = start <= day && day <= end

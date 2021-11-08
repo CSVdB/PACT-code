@@ -12,7 +12,7 @@ postJoinCoachWorkoutR workoutUUID = do
   runDB (getBy $ UniqueJoin userUuid workoutUUID) >>= \case
     Just _ -> notFound
     Nothing -> do
-      runDB $
+      runDB $ do
         insert_
           WorkoutJoin
             { workoutJoinCustomer = userUuid,

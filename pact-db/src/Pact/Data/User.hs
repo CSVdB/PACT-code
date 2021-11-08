@@ -3,6 +3,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
@@ -10,12 +11,14 @@
 module Pact.Data.User where
 
 import Data.Password.Bcrypt
+import Data.Proxy
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Validity
 import Data.Validity.Text ()
 import Database.Persist
 import Database.Persist.Sql
+import Numeric.Natural
 import Servant.API.Generic
 import Text.Blaze
 import YamlParse.Applicative
@@ -85,3 +88,19 @@ parseUsername = mapLeft T.pack . prettyValidate . Username
 
 parseUsernameOrErr :: Text -> Either String Username
 parseUsernameOrErr = prettyValidate . Username
+
+newtype Coins = Coins {unCoins :: Natural} deriving (Show, Eq, Ord, Generic)
+
+instance Validity Coins where
+  validate coins =
+    mconcat
+      [ genericValidate coins,
+        declare "coins >= 0" $ unCoins coins >= 0
+      ]
+
+instance PersistField Coins where
+  toPersistValue (Coins n) = toPersistValue n
+  fromPersistValue v = Coins <$> fromPersistValue v
+
+instance PersistFieldSql Coins where
+  sqlType _ = sqlType $ Proxy @Int

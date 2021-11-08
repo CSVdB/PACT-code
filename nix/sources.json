@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "NorfairKing",
         "repo": "sydtest",
-        "rev": "4b8c307ac0fd7bbe9a6bf26150f9982f82cf0a89",
-        "sha256": "0d6l6cpj2a43mz55pxwnmypwa55ry6x4bg30p4ml63gi47g0vcl9",
+        "rev": "9a4c6040db470a88172d36ffa8ce3e466b3cd827",
+        "sha256": "sha256:0ms79li9f0x73m4450yglvwhdvvjxbw71vdmy1iyscc3pmkd0q79",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/sydtest/archive/4b8c307ac0fd7bbe9a6bf26150f9982f82cf0a89.tar.gz",
+        "url": "https://github.com/NorfairKing/sydtest/archive/9a4c6040db470a88172d36ffa8ce3e466b3cd827.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "typed-uuid": {
@@ -89,10 +89,10 @@
         "homepage": "https://www.youtube.com/watch?v=eIs9qNh17SM",
         "owner": "NorfairKing",
         "repo": "validity",
-        "rev": "f5e5d69b3502cdd9243b412c31ba9619b9e89462",
-        "sha256": "sha256:1ak07mxyv43c5a988s47b8h4jhqzp3lsmnlhjj3jdi0fil4jdjz2",
+        "rev": "bafcaf3799fa76edd5968923f6efde25085815f9",
+        "sha256": "sha256:17qvy3qj18p7vyrfqlq82zzr4s8gmmr2qpvby2bj64r7m1nhbxr0",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/validity/archive/f5e5d69b3502cdd9243b412c31ba9619b9e89462.tar.gz",
+        "url": "https://github.com/NorfairKing/validity/archive/bafcaf3799fa76edd5968923f6efde25085815f9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "yamlparse-applicative": {

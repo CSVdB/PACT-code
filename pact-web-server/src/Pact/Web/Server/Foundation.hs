@@ -39,6 +39,7 @@ data App = App
     appHTTPManager :: !HTTP.Manager,
     appConnectionPool :: !ConnectionPool,
     appSessionKeyFile :: !(Path Abs File),
+    appHashDifficulty :: Int,
     appGoogleAnalyticsTracking :: !(Maybe Text),
     appGoogleSearchConsoleVerification :: !(Maybe Text)
   }
@@ -246,7 +247,8 @@ postRegisterR = liftHandler $ do
           addMessageI "is-danger" PassMismatch
           redirect $ AuthR registerR
         else do
-          passphraseHash <- liftIO $ hashPassword registerFormPassword
+          hashDifficulty <- getsYesod appHashDifficulty
+          passphraseHash <- liftIO $ hashPasswordWithParams hashDifficulty registerFormPassword
           uuid <- nextRandomUUID
           runDB . insert_ $
             User

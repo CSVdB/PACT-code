@@ -42,6 +42,7 @@ runPactWebServer Settings {..} = runStderrLoggingT $
                 appConnectionPool = pool,
                 appHTTPManager = man,
                 appSessionKeyFile = sessionKeyFile,
+                appHashDifficulty = 10,
                 appGoogleAnalyticsTracking = settingGoogleAnalyticsTracking,
                 appGoogleSearchConsoleVerification = settingGoogleSearchConsoleVerification
               }

@@ -49,6 +49,7 @@ serverSetup man = do
         appHTTPManager = man,
         appConnectionPool = pool,
         appSessionKeyFile = sessionKeyFile,
+        appHashDifficulty = 4, -- Make registration and login faster
         appGoogleAnalyticsTracking = Nothing,
         appGoogleSearchConsoleVerification = Nothing
       }

@@ -44,7 +44,6 @@
   - {name: nub, within: []} # O(n^2)
 
   - {name: foldl, within: []} # Lazy. Use foldl' instead.
-  - {name: sum, within: []} # Lazy accumulator until GHC 9.0.0
   - {name: product, within: []} # Lazy accumulator until GHC 9.0.0
 
   # Functions involving division

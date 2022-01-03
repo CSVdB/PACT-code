@@ -1,6 +1,8 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TypeApplications #-}
@@ -89,7 +91,11 @@ parseUsername = mapLeft T.pack . prettyValidate . Username
 parseUsernameOrErr :: Text -> Either String Username
 parseUsernameOrErr = prettyValidate . Username
 
-newtype Coins = Coins {unCoins :: Natural} deriving (Show, Eq, Ord, Generic)
+newtype Coins = Coins
+  { unCoins :: Natural
+  }
+  deriving newtype (Num)
+  deriving (Show, Eq, Ord, Generic)
 
 instance Validity Coins where
   validate coins =

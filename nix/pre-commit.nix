@@ -10,6 +10,7 @@ in
       hpack.enable = true;
       nixpkgs-fmt.enable = true;
       ormolu.enable = true;
+      shellcheck.enable = true;
     };
   };
   tools = with pre-commit-hooks; [

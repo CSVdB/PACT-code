@@ -132,6 +132,7 @@ test-suite pact-web-server-test
     , base >=4.7 && <5
     , bytestring
     , containers
+    , directory
     , filepath
     , genvalidity
     , genvalidity-bytestring

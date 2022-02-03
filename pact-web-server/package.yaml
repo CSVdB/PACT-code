@@ -69,6 +69,7 @@ tests:
     dependencies:
     - bytestring
     - containers
+    - directory
     - filepath
     - genvalidity
     - genvalidity-bytestring

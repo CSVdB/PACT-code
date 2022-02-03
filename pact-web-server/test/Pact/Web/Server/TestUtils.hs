@@ -24,6 +24,7 @@ import Pact.Web.Server.Foundation
 import Pact.Web.Server.Gen
 import Pact.Web.Server.Handler hiding (get)
 import Path.IO
+import qualified System.Directory as Dir
 import System.FilePath (takeExtension)
 import System.Random (randomRIO)
 import Test.Syd
@@ -161,7 +162,7 @@ data TestFile = TestFile
 
 readTestFile :: MonadIO m => FilePath -> m TestFile
 readTestFile testFilePath = do
-  testFileContents <- liftIO $ B.readFile testFilePath
+  testFileContents <- liftIO $ B.readFile =<< Dir.makeAbsolute testFilePath
   let testFileType = case takeExtension testFilePath of
         ".jpg" -> Just "image/jpeg"
         ".jpeg" -> Just "image/jpeg"

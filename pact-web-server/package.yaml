@@ -1,7 +1,6 @@
 name:                pact-web-server
 version:             0.0.0.0
 github:              "CSVdB/pact-code"
-license:             AllRightsReserved
 author:              "Nick Van den Broeck"
 maintainer:          "vandenbroeck@cs-vdb.com"
 copyright:           "Copyright (c) 2021 PACT"

@@ -43,9 +43,16 @@
       url = "github:NorfairKing/yesod-autoreload";
       flake = false;
     };
+
+    flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
+
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, gitignore-hercules-src, gitignore-src, validity-src, sydtest-src, safe-coloured-text-src, typed-uuid-src, yamlparse-applicative-src, yesod-autoreload-src }@inputs:
+  outputs = { self, nixpkgs, gitignore-hercules-src, gitignore-src, validity-src, sydtest-src, safe-coloured-text-src, typed-uuid-src, yamlparse-applicative-src, yesod-autoreload-src, flake-compat-ci, flake-compat }@inputs:
     let
       # Generate a user-friendly version number.
       version = builtins.substring 0 8 self.lastModifiedDate;
@@ -79,9 +86,9 @@
           gitignoreSource = (final.callPackage gitignore-src { }).gitignoreSource;
         in
         {
-          yesod-autoreload = final.callPackage yesod-autoreload-src { ghcVersions = [ final.haskell.packages.${compiler}.ghc.version ]; };
           haskellPackages = prev.haskellPackages // {
             inherit (self.packages.x86_64-linux)
+              yesod-autoreload
               pact-web-server
               pact-db;
           };
@@ -98,6 +105,7 @@
               (final: prev: {
                 haskellPackages = final.haskell.packages.${compiler}.override {
                   overrides = hself: hsuper: {
+                    yesod-autoreload = (hself.callCabal2nix "yesod-autoreload" (gitignoreSource ignorance yesod-autoreload-src) { });
                     pact-web-server = (hself.callCabal2nix "pact-web-server" (gitignoreSource ignorance ./pact-web-server) { });
                     pact-db = hself.callCabal2nix "pact-db" (gitignoreSource ignorance ./pact-db) { };
                   };
@@ -129,7 +137,10 @@
 
       # devShells
 
-      # ciNix = 
+      ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
+        flake = self;
+        systems = [ "x86_64-linux" ];
+      };
 
       # apps = 
 

@@ -105,8 +105,8 @@ instance Validity Coins where
       ]
 
 instance PersistField Coins where
-  toPersistValue (Coins n) = toPersistValue n
-  fromPersistValue v = Coins <$> fromPersistValue v
+  toPersistValue (Coins n) = toPersistValue (fromIntegral n :: Int)
+  fromPersistValue v = Coins . fromIntegral <$> (fromPersistValue v :: Either Text Int)
 
 instance PersistFieldSql Coins where
   sqlType _ = sqlType $ Proxy @Int

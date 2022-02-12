@@ -100,27 +100,28 @@
       packages = forAllSystems (system:
         let
           pkgs = import nixpkgs {
-            inherit system; overlays =
-            [
-              (final: prev: {
-                haskellPackages = final.haskell.packages.${compiler}.override {
-                  overrides = hself: hsuper: {
-                    yesod-autoreload = (hself.callCabal2nix "yesod-autoreload" (gitignoreSource ignorance yesod-autoreload-src) { });
-                    pact-web-server = (hself.callCabal2nix "pact-web-server" (gitignoreSource ignorance ./pact-web-server) { });
-                    pact-db = hself.callCabal2nix "pact-db" (gitignoreSource ignorance ./pact-db) { };
+            inherit system; config.allowUnfree = true;
+            overlays =
+              [
+                (final: prev: {
+                  haskellPackages = final.haskell.packages.${compiler}.override {
+                    overrides = hself: hsuper: {
+                      yesod-autoreload = (hself.callCabal2nix "yesod-autoreload" (gitignoreSource ignorance yesod-autoreload-src) { });
+                      pact-web-server = (hself.callCabal2nix "pact-web-server" (gitignoreSource ignorance ./pact-web-server) { });
+                      pact-db = hself.callCabal2nix "pact-db" (gitignoreSource ignorance ./pact-db) { };
+                    };
                   };
-                };
-              })
+                })
 
-              # Syd's overlay assumes that it will be given haskellPackages
-              # overrides already in place. These, nor haskellPackages, cannot
-              # be overriden afterwards without threading Syd's changes.
-              # https://github.com/NorfairKing/sydtest/blob/5b0eee208753e3554d9b158a6e48b1760514aed0/nix/overlay.nix#L89
-              (import "${sydtest-src}/nix/overlay.nix")
-              (import "${validity-src}/nix/overlay.nix")
-              (import "${safe-coloured-text-src}/nix/overlay.nix")
-              (final: prev: { inherit (gitignore-hercules-src.lib) gitignoreSource; })
-            ];
+                # Syd's overlay assumes that it will be given haskellPackages
+                # overrides already in place. These, nor haskellPackages, cannot
+                # be overriden afterwards without threading Syd's changes.
+                # https://github.com/NorfairKing/sydtest/blob/5b0eee208753e3554d9b158a6e48b1760514aed0/nix/overlay.nix#L89
+                (import "${sydtest-src}/nix/overlay.nix")
+                (import "${validity-src}/nix/overlay.nix")
+                (import "${safe-coloured-text-src}/nix/overlay.nix")
+                (final: prev: { inherit (gitignore-hercules-src.lib) gitignoreSource; })
+              ];
           };
           gitignoreSource = (pkgs.callPackage gitignore-src { }).gitignoreSource;
           haskellPackages = pkgs.haskellPackages;
@@ -133,7 +134,7 @@
         });
 
 
-      devShell = forAllSystems (system: self.devShells.${system}.default);
+      # devShell = forAllSystems (system: self.devShells.${system}.default);
 
       # devShells
 

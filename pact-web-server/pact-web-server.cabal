@@ -1,8 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: e83c3aba1be708bc43b1d2f419318e42f3fc8ff09116b41384f4882d8d8a186d
 
 name:           pact-web-server
 version:        0.0.0.0

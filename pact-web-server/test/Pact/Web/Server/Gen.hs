@@ -53,11 +53,7 @@ instance GenValid TestUser where
   genValid = TestUser <$> genValid <*> genValidPassword
   shrinkValid _ = []
 
-instance GenUnchecked Difficulty
-
 instance GenValid Difficulty
-
-instance GenUnchecked Muscle
 
 instance GenValid Muscle
 
@@ -108,11 +104,7 @@ instance GenValid Video where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
 
-instance GenUnchecked CoachProposalResponse
-
 instance GenValid CoachProposalResponse
-
-instance GenUnchecked FriendRequestResponse
 
 instance GenValid FriendRequestResponse
 
@@ -124,14 +116,8 @@ instance GenValid AddCoachWorkoutForm where
   genValid = genValidStructurally
   shrinkValid = shrinkValidStructurally
 
-instance GenUnchecked WorkoutType
-
 instance GenValid WorkoutType
 
-instance GenUnchecked JoinStatus
-
 instance GenValid JoinStatus
-
-instance GenUnchecked Coins
 
 instance GenValid Coins

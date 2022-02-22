@@ -22,8 +22,8 @@ spec = do
     showReadSpec @Muscle
     persistSpec @Muscle
   describe "Username" $ do
-    persistSpecOnValid @Username
+    persistSpec @Username
   describe "UserUUID" $ do
-    jsonSpecOnValid @UserUUID
-    persistSpecOnValid @UserUUID
-    pathPieceSpecOnValid @UserUUID
+    jsonSpec @UserUUID
+    persistSpec @UserUUID
+    pathPieceSpec @UserUUID

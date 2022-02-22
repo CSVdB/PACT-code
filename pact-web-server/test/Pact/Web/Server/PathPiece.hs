@@ -14,17 +14,11 @@ import Test.Syd
 import Test.Syd.Validity.Utils
 import Yesod
 
-pathPieceSpecOnValid ::
+pathPieceSpec ::
   forall a.
   (Show a, Eq a, Typeable a, GenValid a, PathPiece a) =>
   Spec
-pathPieceSpecOnValid = pathPieceSpecOnGen (genValid @a) "valid" shrinkValid
-
-pathPieceSpec ::
-  forall a.
-  (Show a, Eq a, Typeable a, GenUnchecked a, PathPiece a) =>
-  Spec
-pathPieceSpec = pathPieceSpecOnGen (genUnchecked @a) "unchecked" shrinkUnchecked
+pathPieceSpec = pathPieceSpecOnGen (genValid @a) "valid" shrinkValid
 
 pathPieceSpecOnGen ::
   forall a.

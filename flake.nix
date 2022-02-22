@@ -25,22 +25,22 @@
     };
 
     safe-coloured-text-src = {
-      url = "github:NorfairKing/safe-coloured-text";
+      url = "github:NorfairKing/safe-coloured-text/7f157485e55528648a95edf3508a122b2e55779e";
+      flake = false;
+    };
+
+    autodocodec-src = {
+      url = "github:NorfairKing/autodocodec";
       flake = false;
     };
 
     typed-uuid-src = {
-      url = "github:NorfairKing/typed-uuid";
-      flake = false;
-    };
-
-    yamlparse-applicative-src = {
-      url = "github:NorfairKing/yamlparse-applicative";
+      url = "github:NorfairKing/typed-uuid/ec82b82a545d06094ac355bd65a03f25f86c0a48";
       flake = false;
     };
 
     yesod-autoreload-src = {
-      url = "github:NorfairKing/yesod-autoreload";
+      url = "github:NorfairKing/yesod-autoreload/7135e864c0d4a48efeae473ee2761f5168946e58";
       flake = false;
     };
 
@@ -52,7 +52,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, gitignore-hercules-src, gitignore-src, validity-src, sydtest-src, safe-coloured-text-src, typed-uuid-src, yamlparse-applicative-src, yesod-autoreload-src, flake-compat-ci, flake-compat }@inputs:
+  outputs = { self, nixpkgs, gitignore-hercules-src, gitignore-src, validity-src, sydtest-src, safe-coloured-text-src, autodocodec-src, typed-uuid-src, yesod-autoreload-src, flake-compat-ci, flake-compat }@inputs:
     let
       # Generate a user-friendly version number.
       version = builtins.substring 0 8 self.lastModifiedDate;
@@ -114,12 +114,14 @@
                 })
 
                 # Syd's overlay assumes that it will be given haskellPackages
-                # overrides already in place. These, nor haskellPackages, cannot
-                # be overriden afterwards without threading Syd's changes.
+                # overrides already in place. These nor haskellPackages can be
+                # overriden afterwards without threading Syd's changes.
                 # https://github.com/NorfairKing/sydtest/blob/5b0eee208753e3554d9b158a6e48b1760514aed0/nix/overlay.nix#L89
                 (import "${sydtest-src}/nix/overlay.nix")
                 (import "${validity-src}/nix/overlay.nix")
                 (import "${safe-coloured-text-src}/nix/overlay.nix")
+                (import "${autodocodec-src}/nix/overlay.nix")
+                (import "${typed-uuid-src}/nix/overlay.nix")
                 (final: prev: { inherit (gitignore-hercules-src.lib) gitignoreSource; })
               ];
           };
@@ -134,16 +136,55 @@
         });
 
 
-      # devShell = forAllSystems (system: self.devShells.${system}.default);
+      devShell = forAllSystems (system: self.devShells.${system}.default);
 
-      # devShells
+      devShells = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor."${system}";
+        in
+        rec
+        {
+          withHoogle = default.overrideAttrs (_: { withHoogle = true; });
+          default = pkgs.haskell.packages.${compiler}.shellFor {
+            packages = _: with self.packages.${system};
+              [
+                pact-db
+                pact-web-server
+              ];
+            buildInputs = with pkgs; [
+              haskellPackages.cabal-install
+              haskellPackages.ghcid
+              haskellPackages.ormolu
+              haskellPackages.hlint
+              haskellPackages.hpc
+            ];
+            COMPILER = compiler;
+          };
+        });
 
       ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
         flake = self;
         systems = [ "x86_64-linux" ];
       };
 
-      # apps = 
+      apps = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor."${system}";
+        in
+        {
+          lint-haskell = {
+            type = "app";
+            program = "${self.linters.${system}.haskell.lintScript}/bin/lint";
+          };
+        });
+
+      linters = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor."${system}";
+        in
+        {
+          haskell = import ./nix/linters.nix { inherit pkgs; };
+        });
 
       # checks = 
 

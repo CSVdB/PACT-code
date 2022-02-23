@@ -136,7 +136,7 @@ genToken = do
       Just n -> [shamlet|<input type=hidden name=#{tokenKey} value=#{n}>|]
 
 getFaviconR :: Handler TypedContent
-getFaviconR = redirect $ StaticR logo_jpg
+getFaviconR = redirect $ StaticR favicon_ico
 
 data UserType
   = Nobody

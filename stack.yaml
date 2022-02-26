@@ -9,15 +9,17 @@ extra-deps:
   commit: de5944fb09e9d941fafa35c0f05446af348e7b4d
 
 - github: NorfairKing/typed-uuid
-  commit: ec82b82a545d06094ac355bd65a03f25f86c0a48
+  commit: 00fbc7e0380ab2ff72e8fd02323e76f13b7d5b59
   subdirs:
     - typed-uuid
 
 - github: NorfairKing/validity
-  commit: bafcaf3799fa76edd5968923f6efde25085815f9
+  commit: 466bb2f140e62cae0d4fe3770681c3d74e99cf40
   subdirs:
+  - validity
   - validity-persistent
   - validity-time
+  - genvalidity
   - genvalidity-sydtest
   - genvalidity-sydtest-aeson
   - genvalidity-sydtest-persistent
@@ -30,7 +32,7 @@ extra-deps:
     - safe-coloured-text-terminfo
 
 - github: NorfairKing/sydtest
-  commit: 9a4c6040db470a88172d36ffa8ce3e466b3cd827
+  commit: 54b5d0bf59e5bdabd3be098780afee63fbbbf158
   subdirs:
     - sydtest
     - sydtest-aeson
@@ -42,6 +44,13 @@ extra-deps:
 
 - github: NorfairKing/yesod-autoreload
   commit: 7135e864c0d4a48efeae473ee2761f5168946e58
+
+- github: NorfairKing/autodocodec
+  commit: 9880ec062f1166bdac50b8eb59c6dd010bc9af0c
+  subdirs:
+    - autodocodec
+    - autodocodec-yaml
+    - autodocodec-schema
 
 nix:
   enable: true

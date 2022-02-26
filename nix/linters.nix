@@ -1,12 +1,8 @@
 { pkgs }:
 rec {
   lintScript = pkgs.writers.writeBashBin "lint" ''
-    PATH="$PATH:${pkgs.git}/bin:${pkgs.stylish-haskell}/bin:${pkgs.haskellPackages.cabal-fmt}/bin:${pkgs.hlint}/bin"
-    # Find all of the .hs and .cabal files in the current directory
-    HS_FILES=$(find . -type f -name '*.hs' ! -path './dist-newstyle/*')
-
     # Lint and modify the files in place.
-    ormolu --inplace $HS_FILES 
+    ${pkgs.haskellPackages.ormolu} -m inplace **/*.hs
     # TODO: Add hpack formatting
     # TODO: Add nixpkgs-fmt
     # TODO: Add shellcheck

@@ -15,12 +15,12 @@
     };
 
     validity-src = {
-      url = "github:NorfairKing/validity/bafcaf3799fa76edd5968923f6efde25085815f9";
+      url = "github:NorfairKing/validity/466bb2f140e62cae0d4fe3770681c3d74e99cf40";
       flake = false;
     };
 
     sydtest-src = {
-      url = "github:NorfairKing/sydtest/9a4c6040db470a88172d36ffa8ce3e466b3cd827";
+      url = "github:NorfairKing/sydtest";
       flake = false;
     };
 
@@ -35,7 +35,7 @@
     };
 
     typed-uuid-src = {
-      url = "github:NorfairKing/typed-uuid/ec82b82a545d06094ac355bd65a03f25f86c0a48";
+      url = "github:NorfairKing/typed-uuid";
       flake = false;
     };
 

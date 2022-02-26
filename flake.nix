@@ -152,11 +152,11 @@
                 pact-web-server
               ];
             buildInputs = with pkgs; [
-              haskellPackages.cabal-install
-              haskellPackages.ghcid
               haskellPackages.ormolu
               haskellPackages.hlint
               haskellPackages.hpc
+              nixpkgs-fmt
+              shellcheck
             ];
             COMPILER = compiler;
           };

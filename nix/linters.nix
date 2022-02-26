@@ -2,9 +2,16 @@
 rec {
   lintScript = pkgs.writers.writeBashBin "lint" ''
     # Lint and modify the files in place.
-    ${pkgs.haskellPackages.ormolu} -m inplace **/*.hs
-    # TODO: Add hpack formatting
-    # TODO: Add nixpkgs-fmt
+    HS_FILES=$(find . -type f -name '*.hs' ! -path './dist-newstyle/*')
+    HPACK_FILES=$(find . -type f -name 'package.yaml' ! -path './dist-newstyle/*')
+    ${pkgs.ormolu}/bin/ormolu -m inplace $HS_FILES
+
+    for hpack_file in $HPACK_FILES
+    do
+      ${pkgs.hpack}/bin/hpack $hpack_file
+    done
+
+    ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt **/*.nix
     # TODO: Add shellcheck
 
     # Exit with non zero status if we're now in unclean state

@@ -155,6 +155,7 @@
               haskellPackages.ormolu
               haskellPackages.hlint
               haskellPackages.hpc
+              # haskellPackages.autoexporter # This doesn't work!
               nixpkgs-fmt
               shellcheck
             ];

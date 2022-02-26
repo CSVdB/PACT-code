@@ -36,4 +36,4 @@ jobs:
       with:
         name: foobar
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-    - run: nix-build ci.nix -A release
+    - run: nix flake check

@@ -24,7 +24,7 @@ rec {
         echo "Run git status to see the changes made."
         exit 1
     fi
-    hlint .
+    ${pkgs.hlint}/bin/hlint .
   '';
   lintDerivation = src: pkgs.stdenv.mkDerivation {
     name = "lint-haskell";

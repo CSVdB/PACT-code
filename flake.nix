@@ -186,7 +186,13 @@
           haskell = import ./nix/linters.nix { inherit pkgs; };
         });
 
-      # checks = 
+      checks = forAllSystems (system:
+        with nixpkgsFor.${system};
+        lib.optionalAttrs stdenv.isLinux {
+          haskellLint = self.linters.${system}.haskell.lintDerivation ./.;
+          # danalib.linters.${system}.haskell.lintDerivation ./.;
+          # A VM test of the NixOS module.
+        });
 
       nixosModules.pact-web-server = { pkgs, lib, config, ... }:
         {

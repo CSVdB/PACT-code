@@ -158,7 +158,7 @@
               haskellPackages.hpc
               nixpkgs-fmt
               shellcheck
-              # hoogle
+              hoogle
               haskellPackages.autoexporter
               zlib
             ];

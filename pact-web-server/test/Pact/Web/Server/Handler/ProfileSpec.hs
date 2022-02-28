@@ -146,37 +146,38 @@ spec = pactWebServerSpec . describe "ProfileR" $ do
         statusIs 404
 
   describe "countCoins" $ do
-    it "Calculates correctly" $ \yc ->
-      forAllValid $ \user -> forAllValid $ \coach -> forAllValid $ \form ->
-        forAllValid $ \workoutType -> forAllValid $ \userForm -> runYesodClientM yc $ do
-          let userWorkoutTime = dayAWF userForm
-              coachWorkoutTime = dayACWF form
-              timeInterval =
-                if userWorkoutTime <= coachWorkoutTime
-                  then (userWorkoutTime, coachWorkoutTime)
-                  else (coachWorkoutTime, userWorkoutTime)
-          testRegisterUser user
-          userId <- userUuid <$> getSingleUser
-          testLogout
+    modifyMaxSuccess (const 100) $
+      it "Calculates correctly" $ \yc ->
+        forAllValid $ \user -> forAllValid $ \coach -> forAllValid $ \form ->
+          forAllValid $ \workoutType -> forAllValid $ \userForm -> runYesodClientM yc $ do
+            let userWorkoutTime = dayAWF userForm
+                coachWorkoutTime = dayACWF form
+                timeInterval =
+                  if userWorkoutTime <= coachWorkoutTime
+                    then (userWorkoutTime, coachWorkoutTime)
+                    else (coachWorkoutTime, userWorkoutTime)
+            testRegisterUser user
+            userId <- userUuid <$> getSingleUser
+            testLogout
 
-          testRegisterCoach coach
-          submitCoachWorkout form workoutType
-          coachWorkoutId <- coachWorkoutUuid <$> getSingleCoachWorkout
-          testLogout
+            testRegisterCoach coach
+            submitCoachWorkout form workoutType
+            coachWorkoutId <- coachWorkoutUuid <$> getSingleCoachWorkout
+            testLogout
 
-          testLoginUser user
-          coins1 <- testDB $ countCoins userId timeInterval
-          liftIO $ coins1 `shouldBe` Coins 0
+            testLoginUser user
+            coins1 <- testDB $ countCoins userId timeInterval
+            liftIO $ coins1 `shouldBe` Coins 0
 
-          submitUserWorkout userForm workoutType
-          coins2 <- testDB $ countCoins userId timeInterval
-          liftIO $ coins2 `shouldBe` Coins 3
+            submitUserWorkout userForm workoutType
+            coins2 <- testDB $ countCoins userId timeInterval
+            liftIO $ coins2 `shouldBe` Coins 3
 
-          joinWorkout coachWorkoutId
-          coins3 <- testDB $ countCoins userId timeInterval
-          liftIO $ coins3 `shouldBe` Coins 4
+            joinWorkout coachWorkoutId
+            coins3 <- testDB $ countCoins userId timeInterval
+            liftIO $ coins3 `shouldBe` Coins 4
 
-          -- Confirm you went to the workout
-          post $ ActivitiesR $ UpdateCoachWorkoutJoinR coachWorkoutId WasPresent
-          coins4 <- testDB $ countCoins userId timeInterval
-          liftIO $ coins4 `shouldBe` Coins 8
+            -- Confirm you went to the workout
+            post $ ActivitiesR $ UpdateCoachWorkoutJoinR coachWorkoutId WasPresent
+            coins4 <- testDB $ countCoins userId timeInterval
+            liftIO $ coins4 `shouldBe` Coins 8

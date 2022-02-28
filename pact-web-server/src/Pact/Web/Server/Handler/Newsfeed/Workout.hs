@@ -24,7 +24,14 @@ data AddUserWorkoutForm = AddUserWorkoutForm
   }
   deriving (Show, Eq, Ord, Generic)
 
-instance Validity AddUserWorkoutForm
+instance Validity AddUserWorkoutForm where
+  validate form@AddUserWorkoutForm {..} =
+    mconcat
+      [ genericValidate form,
+        declare "amountAWF is positive" $ amountAWF > 0,
+        declare "amountAWF is finite" . not $ isInfinite amountAWF,
+        declare "amountAWF is not NaN" . not $ isNaN amountAWF
+      ]
 
 addWorkoutForm :: FormInput Handler AddUserWorkoutForm
 addWorkoutForm =

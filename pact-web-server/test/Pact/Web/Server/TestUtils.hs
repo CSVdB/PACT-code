@@ -312,7 +312,7 @@ addUserWorkoutRequest AddUserWorkoutForm {..} workoutType = request $ do
   setMethod methodPost
   setUrl . NewsfeedR $ AddUserWorkoutR workoutType
   addToken
-  addPostParam "amount" . T.pack . show $ (round $ amountAWF / stepSize workoutType :: Int)
+  addPostParam "amount" . T.pack $ show amountAWF
   addPostParam "day" . T.pack $ show dayAWF
 
 submitUserWorkout :: AddUserWorkoutForm -> WorkoutType -> YesodExample App ()
@@ -329,9 +329,9 @@ addCoachWorkoutRequest AddCoachWorkoutForm {..} workoutType = request $ do
   setMethod methodPost
   setUrl . ActivitiesR $ AddCoachWorkoutR workoutType
   addToken
-  addPostParam "amount" . T.pack . show $ (round $ amountACWF / stepSize workoutType :: Int)
+  addPostParam "amount" . T.pack $ show amountACWF
   addPostParam "day" . T.pack $ show dayACWF
-  addPostParam "timeOfDay" . T.pack $ formatTime defaultTimeLocale "%T" timeOfDayACWF
+  addPostParam "timeOfDay" . T.pack $ formatTime defaultTimeLocale "%T" $ timeOfDayACWF {todSec = 0}
   addPostParam "address" $ unTextarea addressACWF
   addPostParam "notes" $ unTextarea notesACWF
 

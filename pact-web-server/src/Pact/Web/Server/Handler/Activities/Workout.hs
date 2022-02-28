@@ -33,6 +33,10 @@ instance Validity AddCoachWorkoutForm where
   validate form@AddCoachWorkoutForm {..} =
     mconcat
       [ genericValidate form,
+        declare "amountACWF is positive" $ amountACWF > 0,
+        declare "amountACWF is finite" . not $ isInfinite amountACWF,
+        declare "amountACWF is not NaN" . not $ isNaN amountACWF,
+        declare "addressACWF isn't empty" . not . T.null $ unTextarea addressACWF,
         declare "notesACWF isn't empty" . not . T.null $ unTextarea notesACWF
       ]
 
@@ -53,6 +57,7 @@ postAddCoachWorkoutR workoutType =
       addMessage "is-danger" "No form was filled in"
       redirect . ActivitiesR $ AddCoachWorkoutR workoutType
     FormFailure errors -> do
+      liftIO . print $ errors
       forM_ errors $ addMessage "is-danger" . toHtml
       redirect . ActivitiesR $ AddCoachWorkoutR workoutType
 
@@ -68,7 +73,7 @@ addCoachWorkout AddCoachWorkoutForm {..} workoutType = do
           coachWorkoutAmount = amount,
           coachWorkoutType = workoutType,
           coachWorkoutDay = dayACWF,
-          coachWorkoutTimeOfDay = timeOfDayACWF,
+          coachWorkoutTimeOfDay = timeOfDayACWF {todSec = 0},
           coachWorkoutAddress = addressACWF,
           coachWorkoutNotes = notesACWF
         }

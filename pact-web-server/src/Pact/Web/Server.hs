@@ -11,6 +11,7 @@ import Lens.Micro ((.~))
 import Network.HTTP.Client.TLS as HTTP
 import qualified Network.Wai.Handler.Warp as Warp
 import Network.Wai.Middleware.RequestLogger
+import Pact.DB
 import Pact.DB.Migrations
 import Pact.Web.Server.Application ()
 import Pact.Web.Server.Constants
@@ -32,7 +33,9 @@ runPactWebServer :: Settings -> IO ()
 runPactWebServer Settings {..} = runStderrLoggingT $
   filterLogger (\_ ll -> ll >= settingLogLevel) $
     withSqlitePoolInfo info 1 $ \pool -> do
-      runSqlPool allServerMigrations pool
+      liftIO . flip runSqlPool pool $ do
+        runMigration serverMigration
+        appSpecificMigrations
       sessionKeyFile <- resolveFile' "client_session_key.aes"
       man <- HTTP.newTlsManager
       let app =

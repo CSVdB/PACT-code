@@ -17,7 +17,7 @@ jobs:
       with:
         name: foobar
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-    - run: nix-build ci.nix -A pre-commit-hooks
+    - run: nix flake check --extra-experimental-features flakes --extra-experimental-features nix-command
 
 
   build:
@@ -36,4 +36,4 @@ jobs:
       with:
         name: foobar
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
-    - run: nix flake check
+    - run: nix build --extra-experimental-features flakes --extra-experimental-features nix-command

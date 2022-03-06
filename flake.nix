@@ -141,23 +141,26 @@
       devShells = forAllSystems (system:
         let
           pkgs = nixpkgsFor."${system}";
+
+          hoogle = pkgs.buildEnv {
+            name = "hoogle";
+            paths = [ (pkgs.haskellPackages.ghcWithHoogle (_: pkgs.lib.attrValues self.packages.${system})) ];
+          };
+
         in
         rec
         {
-          withHoogle = default.overrideAttrs (_: { withHoogle = true; });
           default = pkgs.haskell.packages.${compiler}.shellFor {
-            packages = _: with self.packages.${system};
-              [
-                pact-db
-                pact-web-server
-              ];
+            packages = _: with self.packages.${system}; [ ];
             buildInputs = with pkgs; [
               haskellPackages.ormolu
               haskellPackages.hlint
               haskellPackages.hpc
-              # haskellPackages.autoexporter # This doesn't work!
               nixpkgs-fmt
               shellcheck
+              # hoogle
+              haskellPackages.autoexporter
+              zlib
             ];
             COMPILER = compiler;
           };

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e83c3aba1be708bc43b1d2f419318e42f3fc8ff09116b41384f4882d8d8a186d
+-- hash: a01786e574b9e239c4d144d6025f329fb26561ce255a370f5bd958f420e55ba1
 
 name:           pact-web-server
 version:        0.0.0.0
@@ -158,6 +158,8 @@ test-suite pact-web-server-test
     , persistent-sqlite
     , random
     , sydtest
+    , sydtest-persistent
+    , sydtest-persistent-sqlite
     , sydtest-wai
     , sydtest-yesod
     , text

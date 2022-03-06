@@ -94,6 +94,8 @@ tests:
     - QuickCheck
     - random
     - sydtest
+    - sydtest-persistent
+    - sydtest-persistent-sqlite
     - sydtest-wai
     - sydtest-yesod
     - text

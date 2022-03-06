@@ -13,11 +13,10 @@ import Data.List (sort)
 import qualified Data.Text as T
 import Data.Time.Format
 import qualified Database.Persist.Sql as DB
-import Database.Persist.Sqlite (fkEnabled, mkSqliteConnectionInfo, runSqlPool, walEnabled, withSqlitePoolInfo)
 import GHC.Generics
-import Lens.Micro ((&), (.~))
 import Network.HTTP.Client as HTTP
-import Pact.DB.Migrations (allServerMigrations)
+import Pact.DB
+import Pact.DB.Migrations
 import Pact.Data
 import Pact.Web.Server.Application ()
 import Pact.Web.Server.Foundation
@@ -29,6 +28,8 @@ import System.FilePath (takeExtension)
 import System.Random (randomRIO)
 import Test.Syd
 import Test.Syd.Path
+import Test.Syd.Persistent
+import Test.Syd.Persistent.Sqlite
 import Test.Syd.Validity as X
 import Test.Syd.Wai (managerSpec)
 import Test.Syd.Yesod
@@ -36,16 +37,17 @@ import Test.Syd.Yesod
 type PactWebServerSpec = YesodSpec App
 
 pactWebServerSpec :: PactWebServerSpec -> Spec
-pactWebServerSpec = modifyMaxSuccess (const 5) . managerSpec . yesodSpecWithSiteSetupFunc serverSetup
+pactWebServerSpec = modifyMaxSuccess (`div` 20) . managerSpec . yesodSpecWithSiteSetupFunc serverSetup
 
 serverSetup :: HTTP.Manager -> SetupFunc App
 serverSetup man = do
   tdir <- tempDirSetupFunc "pact"
-  pool <- pactConnectionPoolSetupFunc
+  pool <- connectionPoolSetupFunc serverMigration
+  liftIO $ runSqlPool appSpecificMigrations pool
   sessionKeyFile <- resolveFile tdir "session-key.aes"
   pure
     App
-      { appLogLevel = LevelWarn,
+      { appLogLevel = LevelError,
         appStatic = pactWebServerStatic,
         appHTTPManager = man,
         appConnectionPool = pool,
@@ -54,14 +56,6 @@ serverSetup man = do
         appGoogleAnalyticsTracking = Nothing,
         appGoogleSearchConsoleVerification = Nothing
       }
-
-pactConnectionPoolSetupFunc :: SetupFunc DB.ConnectionPool
-pactConnectionPoolSetupFunc = SetupFunc $ \func ->
-  runNoLoggingT . withSqlitePoolInfo info 1 $ \pool -> do
-    runSqlPool allServerMigrations pool
-    liftIO $ func pool
-  where
-    info = mkSqliteConnectionInfo ":memory:" & walEnabled .~ False & fkEnabled .~ False
 
 testRegisterUser :: TestUser -> YesodExample App ()
 testRegisterUser TestUser {..} = testRegister testUsername testUserPassword

@@ -11,8 +11,8 @@ rec {
       ${pkgs.hpack}/bin/hpack $hpack_file
     done
 
-    ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt **/*.nix
-    # TODO: Add shellcheck
+    ${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt $(find . -type f -name '*.nix')
+    ${pkgs.shellcheck}/bin/shellcheck $(find . -type f -name '*.sh')
 
     # Exit with non zero status if we're now in unclean state
     if [ -z "$(git status --porcelain)" ]; then

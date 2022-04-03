@@ -213,6 +213,12 @@
               type = lib.types.port;
               description = "Port to run on";
             };
+            db_path = lib.mkOption {
+              default = "pact.sqlite3";
+              defaultText = "pact.sqlite3";
+              type = lib.types.path;
+              description = "db path";
+            };
           };
           config =
             let
@@ -228,7 +234,7 @@
                   DynamicUser = "true";
                   User = "pact-web-server";
                   ExecStart =
-                    "${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port}";
+                    "${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --database ${cfg.db_path}";
                   PrivateTmp = true;
                   Restart = "always";
                 };

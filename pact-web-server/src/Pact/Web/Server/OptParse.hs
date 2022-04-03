@@ -185,12 +185,11 @@ parseFlags =
           )
       )
     <*> optional
-      ( option
-          auto
+      ( strOption
           ( mconcat
               [ long "database",
                 help "The path to the database file",
-                metavar "DATABASE"
+                metavar "FILEPATH"
               ]
           )
       )

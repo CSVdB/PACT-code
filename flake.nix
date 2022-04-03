@@ -198,7 +198,7 @@
 
       nixosModules.pact-web-server = { pkgs, lib, config, ... }:
         {
-          options.services.pactServer = {
+          options.services.pact-web-server = {
             enable = lib.mkEnableOption
               "Enable PACT server";
             package = lib.mkOption {
@@ -216,7 +216,7 @@
           };
           config =
             let
-              cfg = config.services.danaswapstats;
+              cfg = config.services.pact-web-server;
             in
             lib.mkIf cfg.enable {
               nixpkgs.overlays = [ self.overlay ];

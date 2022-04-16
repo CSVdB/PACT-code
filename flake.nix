@@ -273,9 +273,7 @@
                   pact-server-host
                 ];
 
-              networking.firewall.allowedTCPPorts = builtins.concatLists [
-                (builtins.optional (cfg.web-server.enable or false) cfg.web-server.port)
-              ];
+              networking.firewall.allowedTCPPorts = [ cfg.port ];
 
               systemd.services.pact-web-server = {
                 description = "The PACT web server service";

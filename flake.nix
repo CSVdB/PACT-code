@@ -268,8 +268,13 @@
             lib.mkIf cfg.enable {
               nixpkgs.overlays = [ self.overlay ];
 
-              services.nginx.virtualHosts = mergeListRecursively [
-                pact-server-host
+              services.nginx.virtualHosts =
+                mergeListRecursively [
+                  pact-server-host
+                ];
+
+              networking.firewall.allowedTCPPorts = builtins.concatLists [
+                (builtins.optional (cfg.web-server.enable or false) cfg.web-server.port)
               ];
 
               systemd.services.pact-web-server = {

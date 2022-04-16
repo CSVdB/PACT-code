@@ -250,7 +250,9 @@
             lib.mkIf cfg.enable {
               nixpkgs.overlays = [ self.overlay ];
 
-              services.nginx.virtualHosts = [ pact-server-host ];
+              services.nginx.virtualHosts = mergeListRecursively [
+                pact-server-host
+              ];
 
               systemd.services.pact-web-server = {
                 description = "The PACT web server service";

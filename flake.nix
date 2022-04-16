@@ -232,8 +232,8 @@
                 wantedBy = [ "multi-user.target" ];
                 after = [ "networking.target" ];
                 serviceConfig = {
-                  DynamicUser = "true";
-                  User = "pact-web-server";
+                  # DynamicUser = "true";
+                  # User = "pact-web-server";
                   ExecStart =
                     "${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}";
                   PrivateTmp = true;

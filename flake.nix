@@ -233,6 +233,24 @@
 
               mergeListRecursively = pkgs.callPackage ./nix/merge-lists-recursively.nix { };
 
+              web-server-host = with cfg; {
+                "${head hosts}" =
+                  {
+                    enableACME = true;
+                    forceSSL = true;
+                    locations."/" = {
+                      proxyPass = "http://localhost:${builtins.toString port}";
+                      # To make the websockets api work
+                      proxyWebsockets = true;
+                      # Just to make sure we don't run into 413 errors on big syncs
+                      extraConfig = ''
+                        client_max_body_size 0;
+                      '';
+                    };
+                    serverAliases = tail hosts;
+                  };
+              };
+
               pact-server-host = with cfg;
                 let
                   primaryHost = {
@@ -270,7 +288,8 @@
 
               services.nginx.virtualHosts =
                 mergeListRecursively [
-                  pact-server-host
+                  web-server-host
+                  # pact-server-host
                 ];
 
               networking.firewall.allowedTCPPorts = [ cfg.port ];

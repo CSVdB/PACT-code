@@ -220,20 +220,43 @@
               type = lib.types.path;
               description = "path where the SQLite dB and session key file are stored";
             };
+            hosts = lib.mkOption {
+              type = lib.types.listOf (lib.types.str);
+              example = "pactcommunity.be";
+              default = [ ];
+              description = "The host to serve web requests on";
+            };
           };
           config =
             let
               cfg = config.services.pact-web-server;
+
+              mergeListRecursively = pkgs.callPackage ./nix/merge-lists-recursively.nix { };
+
+              pact-server-host = with cfg;
+                let
+                  primaryHost = {
+                    "${head hosts}" = {
+                      locations."/" = {
+                        proxyPass = "http://localhost:${builtins.toString port}";
+                      };
+                    };
+                  };
+                in
+                optionalAttrs (enable && hosts != [ ]) (
+                  primaryHost
+                );
             in
             lib.mkIf cfg.enable {
               nixpkgs.overlays = [ self.overlay ];
+
+              services.nginx.virtualHosts = [ pact-server-host ];
+
               systemd.services.pact-web-server = {
                 description = "The PACT web server service";
                 wantedBy = [ "multi-user.target" ];
                 after = [ "networking.target" ];
                 serviceConfig = {
-                  # DynamicUser = "true";
-                  # User = "pact-web-server";
                   ExecStart =
                     "${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}";
                   PrivateTmp = true;

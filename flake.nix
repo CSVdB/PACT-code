@@ -151,8 +151,8 @@
         rec
         {
           default = pkgs.haskell.packages.${compiler}.shellFor {
-            packages = _: with pkgs.haskell.pkgs.${system}; [ ];
-            # packages = _: with self.packages.${system}; [ ];
+            # packages = _: with pkgs.haskell.pkgs.${system}; [ ];
+            packages = _: with self.packages.${system}; [ ];
             buildInputs = with pkgs; [
               haskellPackages.ormolu
               haskellPackages.hlint

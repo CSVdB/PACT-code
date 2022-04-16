@@ -237,14 +237,32 @@
                 let
                   primaryHost = {
                     "${head hosts}" = {
+                      enableACME = true;
+                      forceSSL = true;
                       locations."/" = {
                         proxyPass = "http://localhost:${builtins.toString port}";
                       };
                     };
                   };
+                  redirectHost = host: {
+                    "${host}" = {
+                      enableACME = true;
+                      forceSSL = true;
+                      globalRedirect = head hosts;
+                    };
+                  };
+                  wwwRedirectHost = host: {
+                    "www.${host}" = {
+                      enableACME = true;
+                      forceSSL = true;
+                      globalRedirect = host;
+                    };
+                  };
                 in
                 optionalAttrs (enable && hosts != [ ]) (
                   primaryHost
+                  // mergeListRecursively (builtins.map redirectHost (tail hosts))
+                  // mergeListRecursively (builtins.map wwwRedirectHost hosts)
                 );
             in
             lib.mkIf cfg.enable {

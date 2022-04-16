@@ -30,7 +30,7 @@ getSettings = do
 data Settings = Settings
   { settingPort :: !Int,
     settingLogLevel :: !LogLevel,
-    settingDbFile :: !(Path Abs File),
+    settingArtifactsDir :: !(Path Abs Dir),
     settingGoogleAnalyticsTracking :: !(Maybe Text),
     settingGoogleSearchConsoleVerification :: !(Maybe Text)
   }
@@ -38,14 +38,17 @@ data Settings = Settings
 
 combineToSettings :: Flags -> Environment -> Maybe Configuration -> IO Settings
 combineToSettings Flags {..} Environment {..} mConf = do
-  settingDbFile <- case flagDbFile <|> envDbFile <|> mc confDbFile of
-    Nothing -> resolveFile' "pact.sqlite3"
-    Just dbf -> resolveFile' dbf
+  settingArtifactsDir <-
+    maybe getCurrentDir parseAbsDir $
+      flagArtifactsDir <|> envArtifactsDir <|> mc confArtifactsDir
+  ensureDir settingArtifactsDir
   pure Settings {..}
   where
     mc :: (Configuration -> Maybe a) -> Maybe a
     mc f = mConf >>= f
+
     settingPort = fromMaybe 8000 $ flagPort <|> envPort <|> mc confPort
+
     settingLogLevel = fromMaybe LevelWarn $ flagLogLevel <|> envLogLevel <|> mc confLogLevel
     settingGoogleAnalyticsTracking =
       flagGoogleAnalyticsTracking
@@ -59,7 +62,7 @@ combineToSettings Flags {..} Environment {..} mConf = do
 data Configuration = Configuration
   { confPort :: !(Maybe Int),
     confLogLevel :: !(Maybe LogLevel),
-    confDbFile :: !(Maybe FilePath),
+    confArtifactsDir :: !(Maybe FilePath),
     confGoogleAnalyticsTracking :: !(Maybe Text),
     confGoogleSearchConsoleVerification :: !(Maybe Text)
   }
@@ -74,7 +77,7 @@ instance YamlSchema Configuration where
       Configuration
         <$> optionalField "port" "Port"
         <*> optionalFieldWith "log-level" "Minimal severity for log messages" viaRead
-        <*> optionalField "database" "The path to the database file"
+        <*> optionalField "artifacts-dir" "The path to the folder holding the dB file and client session keys"
         <*> optionalField "google-analytics-tracking" "Google analytics tracking code"
         <*> optionalField "google-search-console-verification" "Google search console html element verification code"
 
@@ -95,7 +98,7 @@ data Environment = Environment
   { envConfigFile :: !(Maybe FilePath),
     envPort :: !(Maybe Int),
     envLogLevel :: !(Maybe LogLevel),
-    envDbFile :: !(Maybe FilePath),
+    envArtifactsDir :: !(Maybe FilePath),
     envGoogleAnalyticsTracking :: !(Maybe Text),
     envGoogleSearchConsoleVerification :: !(Maybe Text)
   }
@@ -112,7 +115,7 @@ environmentParser =
       <$> Env.var (fmap Just . Env.str) "CONFIG_FILE" (mE <> Env.help "Config file")
       <*> Env.var (fmap Just . Env.auto) "PORT" (mE <> Env.help "Port")
       <*> Env.var (fmap Just . Env.auto) "LOG_LEVEL" (mE <> Env.help "Minimal severity for log messages")
-      <*> Env.var (fmap Just . Env.auto) "DATABASE" (mE <> Env.help "The path to the database file")
+      <*> Env.var (fmap Just . Env.auto) "ARTIFACTS_DIR" (mE <> Env.help "The path to the artifacts directory")
       <*> Env.var (fmap Just . Env.str) "GOOGLE_ANALYTICS_TRACKING" (mE <> Env.help "Google analytics tracking code")
       <*> Env.var (fmap Just . Env.str) "GOOGLE_SEARCH_CONSOLE_VERIFICATION" (mE <> Env.help "Google search console html element verification code")
   where
@@ -146,7 +149,7 @@ data Flags = Flags
   { flagConfigFile :: !(Maybe FilePath),
     flagPort :: !(Maybe Int),
     flagLogLevel :: !(Maybe LogLevel),
-    flagDbFile :: !(Maybe FilePath),
+    flagArtifactsDir :: !(Maybe FilePath),
     flagGoogleAnalyticsTracking :: !(Maybe Text),
     flagGoogleSearchConsoleVerification :: !(Maybe Text)
   }
@@ -187,8 +190,8 @@ parseFlags =
     <*> optional
       ( strOption
           ( mconcat
-              [ long "database",
-                help "The path to the database file",
+              [ long "artifacts_dir",
+                help "The path to the folder storing the sqlite dB and session key file",
                 metavar "FILEPATH"
               ]
           )

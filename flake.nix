@@ -151,7 +151,8 @@
         rec
         {
           default = pkgs.haskell.packages.${compiler}.shellFor {
-            packages = _: with self.packages.${system}; [ ];
+            packages = _: with pkgs.haskell.pkgs.${system}; [ ];
+            # packages = _: with self.packages.${system}; [ ];
             buildInputs = with pkgs; [
               haskellPackages.ormolu
               haskellPackages.hlint
@@ -213,11 +214,11 @@
               type = lib.types.port;
               description = "Port to run on";
             };
-            db_path = lib.mkOption {
-              default = "pact.sqlite3";
-              defaultText = "pact.sqlite3";
+            artifacts_dir = lib.mkOption {
+              default = "./";
+              defaultText = "./";
               type = lib.types.path;
-              description = "db path";
+              description = "path where the SQLite dB and session key file are stored";
             };
           };
           config =
@@ -234,7 +235,7 @@
                   DynamicUser = "true";
                   User = "pact-web-server";
                   ExecStart =
-                    "${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --database ${cfg.db_path}";
+                    "${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}";
                   PrivateTmp = true;
                   Restart = "always";
                 };

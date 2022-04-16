@@ -36,7 +36,7 @@ runPactWebServer Settings {..} = runStderrLoggingT $
       liftIO . flip runSqlPool pool $ do
         runMigration serverMigration
         appSpecificMigrations
-      sessionKeyFile <- resolveFile' "client_session_key.aes"
+      sessionKeyFile <- resolveFile settingArtifactsDir "client_session_key.aes"
       man <- HTTP.newTlsManager
       let app =
             App
@@ -51,6 +51,9 @@ runPactWebServer Settings {..} = runStderrLoggingT $
               }
       liftIO $ Yesod.toWaiAppPlain app >>= Warp.run settingPort . middles
   where
-    info = mkSqliteConnectionInfo (T.pack (fromAbsFile settingDbFile)) & walEnabled .~ False & fkEnabled .~ False
+    info =
+      mkSqliteConnectionInfo (T.pack (fromAbsDir settingArtifactsDir <> "/pact.sqlite3"))
+        & walEnabled .~ False
+        & fkEnabled .~ False
     loggerMiddle = if development then logStdoutDev else logStdout
     middles = loggerMiddle . defaultMiddlewaresNoLogging

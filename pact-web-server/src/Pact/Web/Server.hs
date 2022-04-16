@@ -52,7 +52,7 @@ runPactWebServer Settings {..} = runStderrLoggingT $
       liftIO $ Yesod.toWaiAppPlain app >>= Warp.run settingPort . middles
   where
     info =
-      mkSqliteConnectionInfo (T.pack (fromAbsDir settingArtifactsDir <> "/pact.sqlite3"))
+      mkSqliteConnectionInfo (T.pack (fromAbsDir settingArtifactsDir <> "pact.sqlite3"))
         & walEnabled .~ False
         & fkEnabled .~ False
     loggerMiddle = if development then logStdoutDev else logStdout

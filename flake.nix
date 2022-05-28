@@ -289,7 +289,7 @@
               services.nginx.virtualHosts =
                 mergeListRecursively [
                   web-server-host
-                  # pact-server-host
+                  pact-server-host
                 ];
 
               networking.firewall.allowedTCPPorts = [ cfg.port ];

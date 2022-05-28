@@ -36,8 +36,7 @@ instance Validity AddCoachWorkoutForm where
         declare "amountACWF is positive" $ amountACWF > 0,
         declare "amountACWF is finite" . not $ isInfinite amountACWF,
         declare "amountACWF is not NaN" . not $ isNaN amountACWF,
-        declare "addressACWF isn't empty" . not . T.null $ unTextarea addressACWF,
-        declare "notesACWF isn't empty" . not . T.null $ unTextarea notesACWF
+        declare "addressACWF isn't empty" . not . T.null $ unTextarea addressACWF
       ]
 
 addCoachWorkoutForm :: FormInput Handler AddCoachWorkoutForm
@@ -47,7 +46,7 @@ addCoachWorkoutForm =
     <*> ireq dayField "day"
     <*> ireq timeField "timeOfDay"
     <*> ireq textareaField "address"
-    <*> ireq textareaField "notes"
+    <*> (fromMaybe "" <$> iopt textareaField "notes")
 
 postAddCoachWorkoutR :: WorkoutType -> Handler Html
 postAddCoachWorkoutR workoutType =

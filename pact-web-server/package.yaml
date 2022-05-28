@@ -44,12 +44,17 @@ library:
   - yesod-auth
   - yesod-autoreload
   - yesod-static
+  ghc-options:
+  - -Wall
+  - -Werror
 
 executables:
   pact-web-server:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -Wall
+    - -Werror
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
@@ -63,6 +68,7 @@ tests:
     build-tools: sydtest-discover
     ghc-options:
     - -Wall
+    - -Werror
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N

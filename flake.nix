@@ -268,7 +268,7 @@
                 serviceConfig = {
                   ExecStart =
                     ''
-                      mkdir -p ${cfg.artifacts_dir}
+                      ${pkgs.mkdir} -p ${cfg.artifacts_dir}
                       ${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
                     '';
                   PrivateTmp = true;

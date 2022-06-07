@@ -59,9 +59,6 @@ $if not $ null workoutsToConfirm
           type="submit"
           value="No :(">
 
-<p>
-  Messages will come here to confirm you did a planned workout.
-
 <br>
 
 $forall Workout {..} <- workouts

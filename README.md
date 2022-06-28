@@ -48,9 +48,6 @@ Simple things to start with:
 - "Community" concept
   * New type of user = community leaders. People can follow communities, put
     together a news feed..
-
-## Later
-
 - Allow people to post text and pictures with motivational and positive things
   related to positive lifestyles: Sports pics, nice meal, friendship..
 

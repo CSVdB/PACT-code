@@ -38,5 +38,10 @@ Development:
 - Add "duration" as optional for each workout type
 - Put all newsfeed events anti-chronologically
 
+## Later
+
+- Allow people to post text and pictures with motivational and positive things
+  related to positive lifestyles: Sports pics, nice meal, friendship..
+
 
 

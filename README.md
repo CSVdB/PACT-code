@@ -20,6 +20,7 @@ Simple things to start with:
   * Fix bug first (including bug report & regression test)
 - Add "Walking", "Climbing", "Gym" and "Acrogym" as sports
 
+- Implement Sander's designs together
 - Staging environment
 - Finish "coins" feature, and call it "experience" (ask Sander a better name)
 - Private profile
@@ -50,6 +51,8 @@ Simple things to start with:
     together a news feed..
 - Allow people to post text and pictures with motivational and positive things
   related to positive lifestyles: Sports pics, nice meal, friendship..
+- Build an app: https://cordova.apache.org/
+- sydtest-webdriver: Selenium tests
 
 
 

@@ -553,7 +553,6 @@ type TimeInterval = (Day, Day)
 countCoins :: MonadIO m => UserUUID -> TimeInterval -> SqlPersistT m Coins
 countCoins userId (start, end) = fmap (Coins . fromIntegral) $ do
   userWorkouts <- selectList userWorkoutConditions []
-  liftIO $ print userWorkouts
   workoutJoins <- selectListVals [WorkoutJoinCustomer ==. userId] []
   coachPoints <- fmap sum $
     forM workoutJoins $

@@ -65,10 +65,15 @@ instance PersistFieldSql Muscle where
   sqlType _ = SqlString
 
 data WorkoutType
-  = Jog
-  | Swim
+  = Acrogym
   | Calisthenics
+  | Climbing
+  | Cycling
+  | Gym
   | HIIT
+  | Jog
+  | Swim
+  | Walking
   deriving (Show, Eq, Ord, Generic, Read, Enum, Bounded)
 
 instance Validity WorkoutType -- Any value is valid
@@ -89,34 +94,47 @@ newtype WorkoutAmount = WorkoutAmount {unWorkoutAmount :: Int}
 
 instance Validity WorkoutAmount
 
--- Note: We explicitly write all WorkoutType cases here, instead of setting
--- `amountMessage _ = "minutes"`, to be safe against future WorkoutTypes.
-amountMessage :: WorkoutType -> String
-amountMessage Jog = "km"
-amountMessage Swim = "m"
-amountMessage Calisthenics = "minutes"
-amountMessage HIIT = "minutes"
+data UnitType = Minutes | Kilometers | Meters
+  deriving (Show, Eq, Ord, Generic)
+
+unitType :: WorkoutType -> UnitType
+unitType Acrogym = Minutes
+unitType Jog = Kilometers
+unitType Calisthenics = Minutes
+unitType Climbing = Minutes
+unitType Cycling = Kilometers
+unitType HIIT = Minutes
+unitType Gym = Minutes
+unitType Swim = Meters
+unitType Walking = Kilometers
+
+unitDecimals :: UnitType -> Int
+unitDecimals Minutes = 0
+unitDecimals Kilometers = 1
+unitDecimals Meters = 0
+
+amountMessage :: WorkoutType -> Text
+amountMessage = amountMessage' . unitType
+
+amountMessage' :: UnitType -> Text
+amountMessage' Minutes = "minutes"
+amountMessage' Kilometers = "km"
+amountMessage' Meters = "m"
 
 stepSize :: WorkoutType -> Double
-stepSize Jog = 0.1
-stepSize Swim = 1
-stepSize Calisthenics = 1
-stepSize HIIT = 1
+stepSize = stepSize' . unitType
+
+stepSize' :: UnitType -> Double
+stepSize' Minutes = 1
+stepSize' Kilometers = 0.1
+stepSize' Meters = 1
 
 myPrettyCfg :: Int -> PrettyCfg
 myPrettyCfg n = PrettyCfg n (Just '\'') '.'
 
-showWorkoutAmount' :: Int -> Text -> WorkoutType -> WorkoutAmount -> Text
-showWorkoutAmount' i stepSizeText workoutType (WorkoutAmount n) =
-  prettyF (myPrettyCfg i) (fromIntegral n * stepSize workoutType) <> stepSizeText
-
 showWorkoutAmount :: WorkoutType -> WorkoutAmount -> Text
-showWorkoutAmount workoutType amount = showWorkoutAmount' i stepSizeText workoutType amount
+showWorkoutAmount workoutType (WorkoutAmount n) =
+  prettyF (myPrettyCfg i) (fromIntegral n * stepSize workoutType) <> stepSizeText
   where
-    -- Note: We explicitly write all WorkoutType cases here, instead of setting
-    -- "_ -> "(0, minutes)", to be safe against future WorkoutTypes.
-    (i, stepSizeText) = case workoutType of
-      Jog -> (1, "km")
-      Swim -> (0, "m")
-      Calisthenics -> (0, "minutes")
-      HIIT -> (0, "minutes")
+    i = unitDecimals $ unitType workoutType
+    stepSizeText = amountMessage workoutType

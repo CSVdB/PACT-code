@@ -18,7 +18,6 @@ Simple things to start with:
 - Show all dates as dd/mm/yyyy
 - Coach confirms whether you went to the event, not you
   * Fix bug first (including bug report & regression test)
-- Add "Walking", "Climbing", "Gym" and "Acrogym" as sports
 
 - Implement Sander's designs together
 - Staging environment

@@ -41,6 +41,7 @@ Simple things to start with:
   instead
 - Put coming up coach organized workouts at the top of the newsfeed?
 - Add "duration" as optional for each workout type
+- Make "today" the default proposed day when creating a UserWorkout
 
 # Later
 

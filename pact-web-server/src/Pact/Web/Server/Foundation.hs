@@ -202,10 +202,11 @@ pactLoginHandler _toParentRoute = do
 pactAuthPlugin :: AuthPlugin App
 pactAuthPlugin = AuthPlugin pactAuthPluginName dispatch pactLoginHandler
   where
-    dispatch "POST" ["register"] = postRegisterR :: AuthHandler App TypedContent
-    dispatch "POST" ["login"] = postLoginR :: AuthHandler App TypedContent
-    dispatch "GET" ["register"] = getRegisterR >>= sendResponse :: AuthHandler App TypedContent
-    dispatch _ _ = notFound :: AuthHandler App TypedContent
+    dispatch :: Text -> [Text] -> AuthHandler App TypedContent
+    dispatch "POST" ["register"] = postRegisterR
+    dispatch "POST" ["login"] = postLoginR
+    dispatch "GET" ["register"] = getRegisterR >>= sendResponse
+    dispatch _ _ = notFound
 
 registerR :: Route Auth
 registerR = PluginR pactAuthPluginName ["register"]

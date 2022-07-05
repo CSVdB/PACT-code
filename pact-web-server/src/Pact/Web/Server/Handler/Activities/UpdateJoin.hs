@@ -25,7 +25,4 @@ postUpdateCoachWorkoutJoinR workoutUUID status = do
           WasAbsent -> do
             addMessage "is-success" "Too bad you couldn't make it!"
             redirect HomeR
-          WillCome -> notFound
-      -- WillCome isn't an option here. That's enforced in the first line of
-      -- this function.
       _ -> notFound

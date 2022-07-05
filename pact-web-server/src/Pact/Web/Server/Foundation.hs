@@ -33,16 +33,17 @@ import Yesod.Auth.Message
 import Yesod.AutoReload
 import Yesod.EmbeddedStatic
 
-data App = App
-  { appLogLevel :: !LogLevel,
-    appStatic :: !EmbeddedStatic,
-    appHTTPManager :: !HTTP.Manager,
-    appConnectionPool :: !ConnectionPool,
-    appSessionKeyFile :: !(Path Abs File),
-    appHashDifficulty :: Int,
-    appGoogleAnalyticsTracking :: !(Maybe Text),
-    appGoogleSearchConsoleVerification :: !(Maybe Text)
-  }
+data App
+  = App
+      { appLogLevel :: !LogLevel,
+        appStatic :: !EmbeddedStatic,
+        appHTTPManager :: !HTTP.Manager,
+        appConnectionPool :: !ConnectionPool,
+        appSessionKeyFile :: !(Path Abs File),
+        appHashDifficulty :: Int,
+        appGoogleAnalyticsTracking :: !(Maybe Text),
+        appGoogleSearchConsoleVerification :: !(Maybe Text)
+      }
 
 mkYesodData "App" $(makeRelativeToProject "routes.txt" >>= parseRoutesFile)
 
@@ -201,10 +202,10 @@ pactLoginHandler _toParentRoute = do
 pactAuthPlugin :: AuthPlugin App
 pactAuthPlugin = AuthPlugin pactAuthPluginName dispatch pactLoginHandler
   where
-    dispatch "GET" ["register"] = getRegisterR >>= sendResponse
-    dispatch "POST" ["register"] = postRegisterR
-    dispatch "POST" ["login"] = postLoginR
-    dispatch _ _ = notFound
+    dispatch "POST" ["register"] = postRegisterR :: AuthHandler App TypedContent
+    dispatch "POST" ["login"] = postLoginR :: AuthHandler App TypedContent
+    dispatch "GET" ["register"] = getRegisterR >>= sendResponse :: AuthHandler App TypedContent
+    dispatch _ _ = notFound :: AuthHandler App TypedContent
 
 registerR :: Route Auth
 registerR = PluginR pactAuthPluginName ["register"]

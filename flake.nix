@@ -2,7 +2,7 @@
   description = "PACT-code";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
 
     gitignore-hercules-src = {
       url = "github:hercules-ci/gitignore.nix";
@@ -15,7 +15,7 @@
     };
 
     validity-src = {
-      url = "github:NorfairKing/validity/466bb2f140e62cae0d4fe3770681c3d74e99cf40";
+      url = "github:NorfairKing/validity/d88be911a7e2a84f6c089e9269aaed8d10a74acd";
       flake = false;
     };
 
@@ -25,7 +25,7 @@
     };
 
     safe-coloured-text-src = {
-      url = "github:NorfairKing/safe-coloured-text/7f157485e55528648a95edf3508a122b2e55779e";
+      url = "github:NorfairKing/safe-coloured-text";
       flake = false;
     };
 
@@ -40,7 +40,7 @@
     };
 
     yesod-autoreload-src = {
-      url = "github:NorfairKing/yesod-autoreload/7135e864c0d4a48efeae473ee2761f5168946e58";
+      url = "github:NorfairKing/yesod-autoreload";
       flake = false;
     };
 
@@ -67,7 +67,7 @@
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
 
       # The GHC compiler version to use, from haskell.packages.<compiler>
-      compiler = "ghc8104";
+      compiler = "ghc902";
       # A list of files to ignore when gitignoreSource is used like:
       # gitignoreSource ignorance <directory>
       ignorance = [

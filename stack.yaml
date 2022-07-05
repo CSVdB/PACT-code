@@ -1,10 +1,11 @@
-resolver: lts-16.12
+resolver: lts-19.6
 packages:
 - pact-db
 - pact-web-server
 
 extra-deps:
 - yamlparse-applicative-0.1.0.2@sha256:bda91f2818c1b5b124963931cb7f9a4e5758d026c09713e9ae2234534062747d,2133
+- yesod-auth-1.6.11
 - github: supki/envparse
   commit: de5944fb09e9d941fafa35c0f05446af348e7b4d
 
@@ -15,9 +16,10 @@ extra-deps:
     - genvalidity-typed-uuid
 
 - github: NorfairKing/validity
-  commit: 466bb2f140e62cae0d4fe3770681c3d74e99cf40
+  commit: d88be911a7e2a84f6c089e9269aaed8d10a74acd
   subdirs:
   - validity
+  - validity-aeson
   - validity-persistent
   - validity-time
   - genvalidity
@@ -30,13 +32,13 @@ extra-deps:
   - genvalidity-uuid
 
 - github: NorfairKing/safe-coloured-text
-  commit: 7f157485e55528648a95edf3508a122b2e55779e
+  commit: 675cb01fce5f46718416d7746de5b856ed90a63f
   subdirs:
     - safe-coloured-text
     - safe-coloured-text-terminfo
 
 - github: NorfairKing/sydtest
-  commit: 54b5d0bf59e5bdabd3be098780afee63fbbbf158
+  commit: 130de92053c1c3d60a8f45d509210415ffbea530
   subdirs:
     - sydtest
     - sydtest-aeson
@@ -47,10 +49,10 @@ extra-deps:
     - sydtest-yesod
 
 - github: NorfairKing/yesod-autoreload
-  commit: 7135e864c0d4a48efeae473ee2761f5168946e58
+  commit: 796def9af50cd7b053c9fb4a065c55603d4a8399
 
 - github: NorfairKing/autodocodec
-  commit: 9880ec062f1166bdac50b8eb59c6dd010bc9af0c
+  commit: 479390d82e4fb2a404c497d6b9a9fec1505b1e5e
   subdirs:
     - autodocodec
     - autodocodec-yaml

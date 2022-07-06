@@ -480,7 +480,7 @@ workoutToInfo :: MonadIO m => CoachWorkout -> SqlPersistT m (Maybe CoachWorkoutI
 workoutToInfo cw@CoachWorkout {..} =
   getCoachU coachWorkoutCoach >>= \case
     Nothing -> pure Nothing
-    Just (user, Coach {..}) ->
+    Just (user, _) ->
       fmap Just $
         getParticipants cw <&> \participants ->
           CoachWorkoutInfo

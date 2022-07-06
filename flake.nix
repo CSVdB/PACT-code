@@ -136,8 +136,6 @@
         });
 
 
-      devShell = forAllSystems (system: self.devShells.${system}.default);
-
       devShells = forAllSystems (system:
         let
           pkgs = nixpkgsFor."${system}";

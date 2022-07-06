@@ -25,12 +25,11 @@ import Servant.API.Generic
 import Text.Blaze
 import YamlParse.Applicative
 
-data RegisterForm
-  = RegisterForm
-      { registerFormUsername :: Username,
-        registerFormPassword :: Password,
-        registerFormConfirmPassword :: Password
-      }
+data RegisterForm = RegisterForm
+  { registerFormUsername :: Username,
+    registerFormPassword :: Password,
+    registerFormConfirmPassword :: Password
+  }
   deriving (Show, Generic)
 
 instance Validity Password where
@@ -46,19 +45,17 @@ instance Validity RegisterForm where
         declare "ConfirmPassword confirms the password" $ confirmPasswords rf
       ]
 
-data LoginForm
-  = LoginForm
-      { loginFormUsername :: Username,
-        loginFormPassword :: Password
-      }
+data LoginForm = LoginForm
+  { loginFormUsername :: Username,
+    loginFormPassword :: Password
+  }
   deriving (Show, Generic)
 
 instance Validity LoginForm
 
-newtype Username
-  = Username
-      { usernameText :: Text
-      }
+newtype Username = Username
+  { usernameText :: Text
+  }
   deriving (Show, Eq, Ord, Generic)
 
 instance ToMarkup Username where
@@ -94,10 +91,9 @@ parseUsername = mapLeft T.pack . prettyValidate . Username
 parseUsernameOrErr :: Text -> Either String Username
 parseUsernameOrErr = prettyValidate . Username
 
-newtype Coins
-  = Coins
-      { unCoins :: Natural
-      }
+newtype Coins = Coins
+  { unCoins :: Natural
+  }
   deriving newtype (Num)
   deriving (Show, Eq, Ord, Generic)
 

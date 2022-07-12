@@ -17,7 +17,6 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 # To do
 
 Design:
-- Pictures: Cut out a circle
 - Profile page: Split up in clear sections, and turn each section into a nice
   "button"
 - Boxes: Make each reported workout look good, and include a free-form field
@@ -29,8 +28,7 @@ Simple things to start with:
   * Fix bug first (including bug report & regression test)
 - Make "today" the default proposed day when creating a UserWorkout
 
-- Implement Sander's designs together
-- Staging environment
+Larger TODOs:
 - Finish "coins" feature, and call it "experience" (ask Sander a better name)
 - Private profile
   * How much sports did you do? In total, this month..
@@ -40,19 +38,19 @@ Simple things to start with:
   * Private profile minus any editing rights
   * Add button for friendship request & show status of friendship request
 - Make it possible to stop being a coach, unfriend, unfollow..
-- "Like" button for events
+- "Like" button for events???
   * You can see you liked something already, and cancel your like
   * You can see who liked what things, includes links to their public profile
-
 - Coach can see who joined his events, including a link to their public profiles
 - Add a free form "description" to each workout submission
-- When adding a picture, ask to select a circle within the picture to use
-  instead
+- Allow to cut out a circle out of each picture, to be used instead
+  * Then finalize MVP design with Sander
 - Put coming up coach organized workouts at the top of the newsfeed?
 - Replace dropdowns by a separate page with icons
 
 # Later
 
+- Staging environment
 - Switch to Cassius to use variables (e.g. for the primary colors) and type-safe
   URLs
 - Clean up CSS

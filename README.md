@@ -16,6 +16,13 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 
 # To do
 
+Design:
+- Pictures: Cut out a circle
+- Profile page: Split up in clear sections, and turn each section into a nice
+  "button"
+- Boxes: Make each reported workout look good, and include a free-form field
+- Form submission for workouts
+
 Simple things to start with:
 - Show all dates as dd/mm/yyyy
 - Coach confirms whether you went to the event, not you
@@ -46,6 +53,9 @@ Simple things to start with:
 
 # Later
 
+- Switch to Cassius to use variables (e.g. for the primary colors) and type-safe
+  URLs
+- Clean up CSS
 - Put all newsfeed events anti-chronologically? (Talk to Paul first)
 - Add a page with the raking per sport
 - "Community" concept

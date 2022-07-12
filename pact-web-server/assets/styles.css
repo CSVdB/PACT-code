@@ -1,20 +1,20 @@
 html {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-}
-
-body {
-    background-image: url(https://c.neh.tw/thumb/f/720/c284503afe1a48d0a11e.jpg);
-    background-color: #ffffff;
-    background-size: cover;
-    background-repeat: no-repeat;
-    margin: 0;
-    padding: 0;
+    /* -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%; */
+    background: url("bg.png") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    /* margin: 0;
+    padding: 0;
+    height: 100%; */
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat';
+    color: #123253;
 }
 
 article,
@@ -50,6 +50,7 @@ template {
 
 a {
     background-color: transparent;
+    text-decoration: none;
 }
 
 a.active {
@@ -57,6 +58,17 @@ a.active {
 }
 
 /*navigation bar */
+
+.navbar {
+    background-color: #ffffff;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    padding: 1%;
+    position: fixed;
+    top: 0;
+    /* Position the navbar at the top of the page */
+    width: 100%;
+    /* Full width */
+}
 
 .navbar ul {
     margin-top: 0%;
@@ -72,8 +84,9 @@ a.active {
     top: 3%;
     margin-top: 0;
     text-decoration: none;
-    color: black;
+    color: #123253;
     font-size: 100%;
+    font-weight: medium;
 }
 
 .nav-item {
@@ -87,12 +100,10 @@ a.active {
 .nav a {
     display: inline-block;
     padding: 2.5%;
-    color: black;
     text-decoration: none;
 }
 
 .nav a:hover {
-    color: black;
     transform: scale(1.2);
 }
 
@@ -111,76 +122,27 @@ h1 {
     text-align: justify;
     margin-left: 12%;
     margin-top: 7%;
-    z-index: +1;
+    font-style: normal;
     font-size: 200%;
+    font-weight: 900;
+    z-index: +1;
 }
 
 h2 {
     font-size: 100%;
     z-index: +1;
     margin-left: 12%;
-    font-weight: lighter;
+    font-weight: bold;
     font-style: italic;
     text-align: justify;
 }
 
 p {
     font-size: 80%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     z-index: +1;
     margin-left: 12%;
-    font-weight: lighter;
+    font-weight: normal;
     text-align: justify;
-}
-
-/*home page*/
-
-.containerhome {
-    position: absolute;
-    top: 22%;
-    left: 7%;
-    right: 20%;
-    text-align: center;
-    width: 50%;
-    height: 40%;
-    margin: 0% 5% 0% 5%;
-    padding: 2% 0% 2% 0%;
-    background-image: url(https://c.neh.tw/thumb/f/720/c284503afe1a48d0a11e.jpg);
-    background: rgba(255, 255, 255, 0.301);
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37);
-    backdrop-filter: blur( 3.5px);
-    -webkit-backdrop-filter: blur( 3.5px);
-    border-radius: 10px;
-    border: 1px solid rgba( 255, 255, 255, 0.18);
-    z-index: -1;
-}
-
-.containerhome .text-xs-left {
-    font-weight: bolder;
-    text-align: justify;
-    margin-left: 12%;
-    margin-top: 5%;
-    margin-bottom: 0%;
-    z-index: +1;
-    font-size: 200%;
-}
-
-.containerhome .text-xs-left-div {
-    font-weight: lighter;
-    text-align: justify;
-    margin-left: 12%;
-    margin-top: 0%;
-    z-index: +1;
-    font-size: 100%;
-    font-style: italic;
-}
-
-.containerhome h2 {
-    font-weight: lighter;
-    font-style: italic;
-    text-align: justify;
-    margin-left: 15%;
-    z-index: +1;
 }
 
 /*icons homepage*/
@@ -353,30 +315,6 @@ p {
 
 /*login*/
 
-.containerlogin {
-    text-align: center;
-    position: absolute;
-    width: 50%;
-    height: 40%;
-    margin: 10% 25% 0% 25%;
-    padding: 2% 0% 2% 0%;
-    background: rgba(255, 255, 255, 0.301);
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37);
-    backdrop-filter: blur( 3.5px);
-    -webkit-backdrop-filter: blur( 3.5px);
-    border-radius: 10px;
-    border: 1px solid rgba( 255, 255, 255, 0.18);
-    z-index: -1;
-}
-
-.containerlogin .text-xs-center {
-    font-weight: bolder;
-    font-size: 200%;
-    margin-top: 2%;
-    z-index: +1;
-    margin-left: 10%;
-}
-
 .text-xs-center-div h2 {
     font-size: 50%;
     z-index: +1;
@@ -398,35 +336,7 @@ p {
     color: black;
 }
 
-.containerlogin h1 {
-    margin-top: 2%;
-}
-
 /*register*/
-
-.containersignup {
-    text-align: center;
-    position: absolute;
-    width: 50%;
-    height: 50%;
-    margin: 10% 25% 0% 25%;
-    padding: 2% 0% 2% 0%;
-    background: rgba(255, 255, 255, 0.301);
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37);
-    backdrop-filter: blur( 3.5px);
-    -webkit-backdrop-filter: blur( 3.5px);
-    border-radius: 10px;
-    border: 1px solid rgba( 255, 255, 255, 0.18);
-    z-index: -1;
-}
-
-.containersignup .text-xs-center {
-    font-weight: bolder;
-    font-size: 200%;
-    margin-top: 2%;
-    z-index: +1;
-    margin-left: 10%;
-}
 
 .form-group {
     border: 0px;
@@ -465,16 +375,15 @@ p {
 }
 
 .btn {
-    background-color: #219E4B;
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.45);
-    backdrop-filter: blur( 4px);
-    -webkit-backdrop-filter: blur( 4px);
-    border-radius: 20px;
+    background: linear-gradient(252.87deg, #1E84EB 0%, rgba(30, 132, 235, 0.4) 98.34%);
+    box-shadow: 0px 4px 15px rgba(18, 50, 83, 0.15);
+    border-radius: 22px;
     border: 1px solid rgba( 255, 255, 255, 0.1);
-    font-weight: light;
+    font-weight: 500;
     color: white;
-    margin: 2px 30px;
-    transition: transform .2s;
+    margin: 10px 30px;
+    display: inline-block;
+    padding: 5px 13px;
 }
 
 .btn:hover {
@@ -492,19 +401,19 @@ p {
 /*newsfeed*/
 
 .dropdown-button {
-    background-color: #219E4B;
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.45);
-    backdrop-filter: blur( 4px);
-    -webkit-backdrop-filter: blur( 4px);
-    border-radius: 20px;
+    background: linear-gradient(252.87deg, #1E84EB 0%, rgba(30, 132, 235, 0.4) 98.34%);
+    box-shadow: 0px 4px 15px rgba(18, 50, 83, 0.15);
+    border-radius: 22px;
     border: 1px solid rgba( 255, 255, 255, 0.1);
+    letter-spacing: 0.020em;
     height: 40px;
     width: 85%;
-    font-weight: light;
+    font-weight: 700;
     color: white;
-    text-transform: uppercase;
     margin: 10px 30px;
     display: inline-block;
+    padding: 10px 26px;
+    gap: 83px;
 }
 
 .dropdown:hover .dropdown-list {
@@ -519,19 +428,13 @@ p {
 
 .dropdown-list {
     display: none;
-    position: absolute;
-    background-color: #219E4B;
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.45);
-    backdrop-filter: blur( 4px);
-    -webkit-backdrop-filter: blur( 4px);
-    border-radius: 20px;
-    border: 1px solid rgba( 255, 255, 255, 0.1);
-    font-size: 90%;
-    height: 120px;
+    position: relative;
+    background: #86BCF3;
+    box-shadow: 0px 4px 15px rgba(30, 132, 235, 0.15);
+    border-radius: 22px;
     width: 85%;
-    font-weight: lighter;
+    font-weight: 700;
     color: white;
-    text-transform: uppercase;
     margin: 2px 30px;
 }
 
@@ -544,7 +447,7 @@ p {
     padding: 6px 5px;
     text-decoration: none;
     display: block;
-    font-weight: light;
+    font-weight: 300;
 }
 
 .no-click {

@@ -33,16 +33,17 @@ import Yesod.Auth.Message
 import Yesod.AutoReload
 import Yesod.EmbeddedStatic
 
-data App = App
-  { appLogLevel :: !LogLevel,
-    appStatic :: !EmbeddedStatic,
-    appHTTPManager :: !HTTP.Manager,
-    appConnectionPool :: !ConnectionPool,
-    appSessionKeyFile :: !(Path Abs File),
-    appHashDifficulty :: Int,
-    appGoogleAnalyticsTracking :: !(Maybe Text),
-    appGoogleSearchConsoleVerification :: !(Maybe Text)
-  }
+data App
+  = App
+      { appLogLevel :: !LogLevel,
+        appStatic :: !EmbeddedStatic,
+        appHTTPManager :: !HTTP.Manager,
+        appConnectionPool :: !ConnectionPool,
+        appSessionKeyFile :: !(Path Abs File),
+        appHashDifficulty :: Int,
+        appGoogleAnalyticsTracking :: !(Maybe Text),
+        appGoogleSearchConsoleVerification :: !(Maybe Text)
+      }
 
 mkYesodData "App" $(makeRelativeToProject "routes.txt" >>= parseRoutesFile)
 
@@ -168,18 +169,16 @@ navbarRoutesH =
 
 navbarRoutesNobody :: [(Route App, String)]
 navbarRoutesNobody =
-  [ (HomeR, "Home"),
-    (AuthR LoginR, "Log in"),
-    (AuthR registerR, "Sign up")
+  [ (HomeR, "HOME"),
+    (AuthR LoginR, "LOG IN"),
+    (AuthR registerR, "SIGN UP")
   ]
 
 navbarRoutesUser :: [(Route App, String)]
 navbarRoutesUser =
-  [ (HomeR, "Newsfeed"),
-    (ActivitiesR ActivitiesPageR, "Activities"),
-    (ProfileR ProfilePageR, "Profile")
-    -- (ExerciseR ViewAllR, "Exercises"),
-    -- (ExerciseR AddR, "Add exercise"),
+  [ (HomeR, "NEWSFEED"),
+    (ActivitiesR ActivitiesPageR, "ACTIVITIES"),
+    (ProfileR ProfilePageR, "PROFILE")
   ]
 
 navbarRoutesCoach :: [(Route App, String)]

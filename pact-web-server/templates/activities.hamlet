@@ -4,7 +4,7 @@
 
 $maybe _ <- mCoach
   <div .dropdown>
-    <button .dropdown-button>Organize workout</button>
+    <button .dropdown-button>ORGANIZE WORKOUT</button>
     <div .dropdown-list>
       $forall workoutType <- workoutTypes
         <a href=@{ActivitiesR $ AddCoachWorkoutR workoutType}>#{show workoutType}
@@ -50,7 +50,7 @@ $forall info <- myCoachesWorkoutInfos
       <br>
       #Participants: #{show $ length $ participants info}
       <br>
-      <input .btn .btn-lg .btn-primary .pull-xs-right .click
+      <input .btn .click
         type="submit"
         value="Join">
     <br>
@@ -78,7 +78,7 @@ $forall (status, info) <- myPlannedWorkouts
       #Participants: #{show $ length $ participants info}
       <br>
       $if status == WillCome
-        <input .btn .btn-lg .btn-primary .pull-xs-right .click
+        <input .btn .click
           type="submit"
           value="Cancel">
       $else

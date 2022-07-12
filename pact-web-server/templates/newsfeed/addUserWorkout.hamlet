@@ -31,6 +31,6 @@
             <p .help .is-danger>
               #{message}
 
-      <input .btn .btn-lg .btn-primary .pull-xs-right
+      <input .btn
         type="submit"
         value="Add workout">

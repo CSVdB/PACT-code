@@ -3,4 +3,4 @@
 
 killall pact-web-server || true
 
-pact-web-server &
+~/.local/bin/pact-web-server &

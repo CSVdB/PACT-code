@@ -12,12 +12,15 @@ Development:
   `localhost:8080`
 - Generate test coverage report: `stack test --enable-coverage`
 
+Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-id=0%3A1&fbclid=IwAR3RZs0Nbk11MHc2U8LBCPS8uI2FObCMtAYKS4qkkwogWXn39tZcgtBwGPA
+
 # To do
 
 Simple things to start with:
 - Show all dates as dd/mm/yyyy
 - Coach confirms whether you went to the event, not you
   * Fix bug first (including bug report & regression test)
+- Make "today" the default proposed day when creating a UserWorkout
 
 - Implement Sander's designs together
 - Staging environment
@@ -35,12 +38,11 @@ Simple things to start with:
   * You can see who liked what things, includes links to their public profile
 
 - Coach can see who joined his events, including a link to their public profiles
-- Add "how long did you do the sport?" to each workout submission
+- Add a free form "description" to each workout submission
 - When adding a picture, ask to select a circle within the picture to use
   instead
 - Put coming up coach organized workouts at the top of the newsfeed?
-- Add "duration" as optional for each workout type
-- Make "today" the default proposed day when creating a UserWorkout
+- Replace dropdowns by a separate page with icons
 
 # Later
 

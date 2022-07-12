@@ -4,7 +4,7 @@ $if not $ isJust mCoach
     enctype="multipart/form-data"
     method="post"
     action=@{ProfileR BecomeCoachR}>
-    <input .btn .btn-lg .btn-primary .pull-xs-center
+    <input .btn
       type="submit"
       value="Become a coach">
 $else
@@ -35,10 +35,10 @@ $if editProfile == UserEdit
             optional
             type="file">
 
-      <a .btn .btn-lg .btn-primary .pull-xs-right
+      <a .btn
         href=@{ProfileR ProfilePageR}>Cancel
 
-      <input .btn .btn-lg .btn-primary .pull-xs-right
+      <input .btn
         type="submit"
         value="Update profile">
 
@@ -48,7 +48,7 @@ $else
     <textarea .form-control .form-control-lg>#{userAboutMe user}
     <br>
     ^{showPic user}
-    <a .click .btn .btn-lg .btn-primary .pull-xs-right
+    <a .click .btn
       href=@{ProfileR UpdateUserProfileR}>Edit
 
 
@@ -66,17 +66,17 @@ $maybe coach <- mCoach
               name="expertise"
               required>
               #{coachExpertise coach}
-        <a .btn .btn-lg .btn-primary .pull-xs-right
+        <a .btn
           href=@{ProfileR ProfilePageR}>Cancel
         <br>
-        <input .btn .btn-lg .btn-primary .pull-xs-right
+        <input .btn
           type="submit"
           value="Update profile">
   $else
     <button .no-click .Gutton>
       Expertise:
       <textarea .form-control .form-control-lg>#{coachExpertise coach}
-      <a .click .btn .btn-lg .btn-primary .pull-xs-right
+      <a .click .btn
         href=@{ProfileR UpdateCoachProfileR}>Edit
 
 $if not $ null customers
@@ -92,7 +92,7 @@ $if not $ null coaches
     <button .no-click .Gutton>
       #{userName coachUser}
       ^{showPic coachUser}
-<a .btn .btn-lg .btn-primary .pull-xs-right
+<a .btn
   href=@{ProfileR ListCoachesR}>Find coaches
 
 $if not $ null friends
@@ -101,10 +101,10 @@ $if not $ null friends
     <button .no-click .Gutton>
       #{userName friend}
       ^{showPic friend}
-<a .btn .btn-lg .btn-primary .pull-xs-right
+<a .btn
   href=@{ProfileR ListFriendsR}>Add friends
 
 <form method="post" action=@{AuthR LogoutR}>
-  <input .btn .btn-lg .btn-primary .pull-xs-right
+  <input .btn
     type="submit"
     value="Logout">

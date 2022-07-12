@@ -2,7 +2,7 @@
   Newsfeed
 
 <div .dropdown>
-  <button .dropdown-button>I did a workout!</button>
+  <button .dropdown-button>I DID A WORKOUT!</button>
   <div .dropdown-list>
     $forall workoutType <- workoutTypes
       <a href=@{NewsfeedR $ AddUserWorkoutR workoutType}>#{show workoutType}

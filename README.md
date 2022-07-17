@@ -28,8 +28,9 @@ Simple things to start with:
   * Fix bug first (including bug report & regression test)
 - Make "today" the default proposed day when creating a UserWorkout
 
-Larger TODOs:
-- Finish "coins" feature, and call it "experience" (ask Sander a better name)
+Not so simple things:
+- Add a free form "description" to each workout submission
+- Implement Sander's designs together
 - Private profile
   * How much sports did you do? In total, this month..
   * Create a separate page to list your friends and one for coaches
@@ -41,12 +42,15 @@ Larger TODOs:
 - "Like" button for events???
   * You can see you liked something already, and cancel your like
   * You can see who liked what things, includes links to their public profile
-- Coach can see who joined his events, including a link to their public profiles
-- Add a free form "description" to each workout submission
 - Allow to cut out a circle out of each picture, to be used instead
   * Then finalize MVP design with Sander
+- Finish "coins" feature, and call it "experience" (ask Sander a better name)
+- Coach can see who joined his events, including a link to their public profiles
 - Put coming up coach organized workouts at the top of the newsfeed?
 - Replace dropdowns by a separate page with icons
+
+Longer things:
+- Staging environment
 
 # Later
 

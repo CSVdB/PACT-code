@@ -69,6 +69,7 @@ data WorkoutType
   | Calisthenics
   | Climbing
   | Cycling
+  | Fighting
   | Gym
   | HIIT
   | Jog
@@ -103,6 +104,7 @@ unitType Jog = Kilometers
 unitType Calisthenics = Minutes
 unitType Climbing = Minutes
 unitType Cycling = Kilometers
+unitType Fighting = Minutes
 unitType HIIT = Minutes
 unitType Gym = Minutes
 unitType Swim = Meters

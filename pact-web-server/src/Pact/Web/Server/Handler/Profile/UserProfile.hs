@@ -8,9 +8,10 @@ module Pact.Web.Server.Handler.Profile.UserProfile where
 import qualified Data.Text as T
 import Pact.Web.Server.Handler.Prelude
 
-newtype UserProfileForm = UserProfileForm
-  { aboutMeUPF :: Textarea
-  }
+newtype UserProfileForm
+  = UserProfileForm
+      { aboutMeUPF :: Textarea
+      }
   deriving (Show, Eq, Ord, Generic)
 
 instance Validity UserProfileForm where
@@ -48,19 +49,7 @@ updateUserProfile UserProfileForm {..} mImageInfo = do
     runDB (getBy $ UniqueUser userUuid) >>= \case
       Nothing -> notFound
       Just (Entity key _) -> pure key
-  mImageUuid <- forM mImageInfo $ \fileInfo -> do
-    imageUuid <- liftIO nextRandomUUID
-    -- Don't collect the contents within runDB, throwing exceptions could cause
-    -- serious problems
-    imageContents <- fileSourceByteString fileInfo
-    let image =
-          Image
-            { imageUuid = imageUuid,
-              imageContents = imageContents,
-              imageTyp = fileContentType fileInfo
-            }
-    void . runDB $ upsert image [] -- Just insert if it doesn't exist yet
-    pure imageUuid
+  mImageUuid <- forM mImageInfo addImage
   let imageUuid = overrideMaybe mImageUuid userPic
       aboutMe =
         if aboutMeUPF /= ""

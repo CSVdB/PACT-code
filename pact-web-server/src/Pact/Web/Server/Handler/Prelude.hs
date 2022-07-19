@@ -22,6 +22,7 @@ module Pact.Web.Server.Handler.Prelude
     showTime,
     ioptTextarea,
     isEmptyTextarea,
+    addImage,
   )
 where
 
@@ -38,6 +39,7 @@ import Data.Time.LocalTime as X
 import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity as X
 import Data.Validity.Time as X ()
+import Database.Persist.Sql
 import GHC.Generics (Generic)
 import Pact.DB as X
 import Pact.Data as X
@@ -111,3 +113,18 @@ ioptTextarea = fmap (fromMaybe "") . iopt textareaField
 
 isEmptyTextarea :: Textarea -> Bool
 isEmptyTextarea (Textarea t) = t == ""
+
+addImage :: FileInfo -> Handler ImageUUID
+addImage fileInfo = do
+  uuid <- liftIO nextRandomUUID
+  -- Don't collect the contents within runDB, throwing exceptions could cause
+  -- serious problems
+  contents <- fileSourceByteString fileInfo
+  let image =
+        Image
+          { imageUuid = uuid,
+            imageContents = contents,
+            imageTyp = fileContentType fileInfo
+          }
+  void . runDB $ upsert image [] -- Just insert if it doesn't exist yet
+  pure uuid

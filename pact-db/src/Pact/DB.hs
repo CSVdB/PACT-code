@@ -163,6 +163,7 @@ UserWorkout
   day Day
   amount WorkoutAmount
   description Textarea default=''
+  image ImageUUID Maybe
 
   deriving Show Eq Ord Generic
 
@@ -350,7 +351,8 @@ data Workout
         workoutAmountW :: WorkoutAmount,
         dayW :: Day,
         coachOrganized :: CoachOrganized,
-        descriptionW :: Textarea
+        descriptionW :: Textarea,
+        imageW :: Maybe ImageUUID
       }
   deriving (Show, Eq, Ord, Generic)
 
@@ -361,16 +363,16 @@ getLastWeeksWorkouts today currentUser = do
   let allUsers = uniq $ currentUser : friends ++ (fst <$> coaches)
       usersMap = Map.fromList $ allUsers <&> \user -> (userUuid user, user)
   userWorkouts <- selectListVals (userConditions allUsers) []
-  let userWorkouts' =
-        userWorkouts <&> \workout ->
-          Workout
-            { organizerW = getUser usersMap $ userWorkoutUser workout,
-              workoutTypeW = userWorkoutType workout,
-              workoutAmountW = userWorkoutAmount workout,
-              dayW = userWorkoutDay workout,
-              coachOrganized = UserOrganized,
-              descriptionW = userWorkoutDescription workout
-            }
+  let userWorkouts' = userWorkouts <&> \workout ->
+        Workout
+          { organizerW = getUser usersMap $ userWorkoutUser workout,
+            workoutTypeW = userWorkoutType workout,
+            workoutAmountW = userWorkoutAmount workout,
+            dayW = userWorkoutDay workout,
+            coachOrganized = UserOrganized,
+            descriptionW = userWorkoutDescription workout,
+            imageW = userWorkoutImage workout
+          }
   coachWorkouts <- selectListVals (coachConditions $ snd <$> coaches) []
   let coachWorkouts' =
         catMaybes $
@@ -382,7 +384,8 @@ getLastWeeksWorkouts today currentUser = do
                   workoutAmountW = coachWorkoutAmount workout,
                   dayW = coachWorkoutDay workout,
                   coachOrganized = CoachOrganized,
-                  descriptionW = ""
+                  descriptionW = "",
+                  imageW = Nothing
                 }
   pure $ userWorkouts' ++ coachWorkouts'
   where

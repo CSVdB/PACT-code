@@ -44,20 +44,22 @@ addWorkoutForm =
 
 postAddUserWorkoutR :: WorkoutType -> Handler Html
 postAddUserWorkoutR workoutType =
-  runInputPostResult addWorkoutForm >>= \case
-    FormSuccess form -> addWorkout form workoutType
-    FormMissing -> do
-      addMessage "is-danger" "No form was filled in"
-      redirect . NewsfeedR $ AddUserWorkoutR workoutType
-    FormFailure errors -> do
-      forM_ errors $ addMessage "is-danger" . toHtml
-      redirect . NewsfeedR $ AddUserWorkoutR workoutType
+  runInputPostResult ((,) <$> addWorkoutForm <*> iopt fileField "image")
+    >>= \case
+      FormSuccess (form, mImageInfo) -> addWorkout form mImageInfo workoutType
+      FormMissing -> do
+        addMessage "is-danger" "No form was filled in"
+        redirect . NewsfeedR $ AddUserWorkoutR workoutType
+      FormFailure errors -> do
+        forM_ errors $ addMessage "is-danger" . toHtml
+        redirect . NewsfeedR $ AddUserWorkoutR workoutType
 
 -- TODO: Think whether this should fail if `amountAWF` isn't almost exactly
 -- equal to a positive integer multiple of the stepsize.
-addWorkout :: AddUserWorkoutForm -> WorkoutType -> Handler Html
-addWorkout AddUserWorkoutForm {..} workoutType = do
+addWorkout :: AddUserWorkoutForm -> Maybe FileInfo -> WorkoutType -> Handler Html
+addWorkout AddUserWorkoutForm {..} mImageInfo workoutType = do
   User {..} <- getUser
+  mImageUuid <- forM mImageInfo addImage
   runDB $
     insert_
       UserWorkout
@@ -65,7 +67,8 @@ addWorkout AddUserWorkoutForm {..} workoutType = do
           userWorkoutType = workoutType,
           userWorkoutDay = dayAWF,
           userWorkoutAmount = amount,
-          userWorkoutDescription = descriptionAWF
+          userWorkoutDescription = descriptionAWF,
+          userWorkoutImage = mImageUuid
         }
   addMessage "is-success" "Congratz, you did a workout!"
   redirect HomeR

@@ -27,6 +27,11 @@
           name="description"
           placeholder="Share your experience">
 
+      <fieldset .form-group>
+        <input .form-control .form-control-lg
+          name="image"
+          type="file">
+
       ^{token}
 
       $if not (null messages)

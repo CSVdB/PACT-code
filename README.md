@@ -23,11 +23,17 @@ Design:
 - Form submission for workouts
 
 First goal: More interaction between the founders.
-- Add a free form "description" to each workout submission
 - Add pictures to workouts
-- Add workout-free pictures: Food, (healthy) fun
+- Add comments on other people's posts
+
+Discuss with founders:
+- Add workout-free pictures: Food, (healthy) fun???
+- "Like" button for UserWorkouts???
+  * You can see you liked something already, and cancel your like
+  * You can see who liked what things, includes links to their public profile
 
 MVP (with customers):
+- Speed up the tests
 - Allow to cut out a circle out of each picture, to be used instead
   * Then finalize MVP design with Sander
 - Implement Sander's designs together
@@ -39,9 +45,6 @@ MVP (with customers):
   * Private profile minus any editing rights
   * Add button for friendship request & show status of friendship request
 - Make it possible to stop being a coach, unfriend, unfollow..
-- "Like" button for events???
-  * You can see you liked something already, and cancel your like
-  * You can see who liked what things, includes links to their public profile
 - Finish "coins" feature, and call it "experience" (ask Sander a better name)
 - Coach can see who joined his events, including a link to their public profiles
 - Put coming up coach organized workouts at the top of the newsfeed?

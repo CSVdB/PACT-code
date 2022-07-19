@@ -75,6 +75,9 @@ $forall Workout {..} <- workouts
       <br>
       <br>
       #{descriptionW}
+    $maybe image <- imageW
+      <br>
+      <img src=@{ImageR image}>
     $if coachOrganized == CoachOrganized
       <br>
       (Coach organized)

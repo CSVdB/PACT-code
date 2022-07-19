@@ -147,11 +147,12 @@ testCannotReach route = do
   statusIs 303
   locationShouldBe $ AuthR LoginR
 
-data TestFile = TestFile
-  { testFilePath :: !FilePath,
-    testFileContents :: !ByteString,
-    testFileType :: !(Maybe Text)
-  }
+data TestFile
+  = TestFile
+      { testFilePath :: !FilePath,
+        testFileContents :: !ByteString,
+        testFileType :: !(Maybe Text)
+      }
   deriving (Show, Eq, Generic)
 
 readTestFile :: MonadIO m => FilePath -> m TestFile
@@ -235,13 +236,23 @@ updateUserProfile form mImageFile = do
   _ <- followRedirect
   statusIs 200
 
+getMImageFile :: YesodExample App (Maybe TestFile)
+getMImageFile = do
+  number <- liftIO $ randomRIO (0 :: Double, 1)
+  if number > 0.5
+    then Just <$> readTestFile "test-resources/coach/paul.jpg"
+    else pure Nothing
+
+getMWorkoutPicFile :: YesodExample App (Maybe TestFile)
+getMWorkoutPicFile = do
+  number <- liftIO $ randomRIO (0 :: Double, 1)
+  if number > 0.5
+    then Just <$> readTestFile "test-resources/exercise/image/workout-pic.jpeg"
+    else pure Nothing
+
 testUpdateUserProfile :: UserProfileForm -> YesodExample App ()
 testUpdateUserProfile form = do
-  number <- liftIO $ randomRIO (0 :: Double, 1)
-  mImageFile <-
-    if number > 0.5
-      then Just <$> readTestFile "test-resources/coach/paul.jpg"
-      else pure Nothing
+  mImageFile <- getMImageFile
   updateUserProfile form mImageFile
 
 updateCoachProfileR :: CoachProfileForm -> YesodExample App ()
@@ -307,18 +318,22 @@ testFriendResponse uuid response = do
   _ <- followRedirect
   statusIs 200
 
-addUserWorkoutRequest :: AddUserWorkoutForm -> WorkoutType -> YesodExample App ()
-addUserWorkoutRequest AddUserWorkoutForm {..} workoutType = request $ do
+addUserWorkoutRequest ::
+  AddUserWorkoutForm -> Maybe TestFile -> WorkoutType -> YesodExample App ()
+addUserWorkoutRequest AddUserWorkoutForm {..} mImageFile workoutType = request $ do
   setMethod methodPost
   setUrl . NewsfeedR $ AddUserWorkoutR workoutType
   addToken
   addPostParam "amount" . T.pack $ show amountAWF
   addPostParam "day" . T.pack $ show dayAWF
+  addPostParam "description" $ unTextarea descriptionAWF
+  forM_ mImageFile $ addTestFileWith "image"
 
 submitUserWorkout :: AddUserWorkoutForm -> WorkoutType -> YesodExample App ()
 submitUserWorkout form workoutType = do
   testCanReach . NewsfeedR $ AddUserWorkoutR workoutType
-  addUserWorkoutRequest form workoutType
+  mWorkoutPic <- getMWorkoutPicFile
+  addUserWorkoutRequest form mWorkoutPic workoutType
   statusIs 303
   locationShouldBe HomeR
   _ <- followRedirect
@@ -395,10 +410,8 @@ testRequiresLogin routeString route = do
     forAllValid $ \testUser -> runYesodClientM yc $ do
       testRegisterUser testUser
       testCanReach route
-
   it "GETs 303 redirect to Login if not logged in" $ \yc ->
     runYesodClientM yc $ testCannotReach route
-
   it ("GET without logged in, then follow the redirect, ends up at " <> routeString) $
     \yc -> forAllValid $ \testUser -> runYesodClientM yc $ do
       testRegisterUser testUser
@@ -418,16 +431,13 @@ testRequiresCoach routeString route = do
       testRegisterUser testUser
       get route
       statusIs 403
-
   it "GETs 200 if logged in coach" $ \yc -> do
     forAllValid $ \testCoach -> runYesodClientM yc $ do
       testRegisterUser testCoach
       becomeCoach
       testCanReach route
-
   it "GETs 303 redirect to Login if not logged in" $ \yc ->
     runYesodClientM yc $ testCannotReach route
-
   it ("GET without logged in, then follow the redirect, ends up at " <> routeString) $
     \yc -> forAllValid $ \testCoach -> runYesodClientM yc $ do
       testRegisterUser testCoach

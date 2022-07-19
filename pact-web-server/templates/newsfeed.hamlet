@@ -70,7 +70,7 @@ $forall Workout {..} <- workouts
     <br>
     Amount: #{showWorkoutAmount workoutTypeW workoutAmountW}
     <br>
-    Day: #{show dayW}
+    Day: #{showDay dayW}
     $if coachOrganized == CoachOrganized
       <br>
       (Coach organized)

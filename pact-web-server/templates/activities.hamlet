@@ -69,7 +69,7 @@ $forall (status, info) <- myPlannedWorkouts
       <br>
       Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
       <br>
-      When: #{show $ timeCWI info}
+      When: #{showTime $ timeCWI info}
       <br>
       Address: <textarea>#{addressCWI info}</textarea>
       <br>

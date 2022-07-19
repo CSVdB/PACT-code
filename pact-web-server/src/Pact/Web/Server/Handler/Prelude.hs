@@ -16,6 +16,8 @@ module Pact.Web.Server.Handler.Prelude
     Edit (..),
     getCurrentDay,
     getLocalNow,
+    showDay,
+    showTime,
   )
 where
 
@@ -27,6 +29,7 @@ import Data.Maybe as X
 import Data.Ord as X (Down (..))
 import Data.Text as X (Text)
 import Data.Time.Calendar as X
+import Data.Time.Format
 import Data.Time.LocalTime as X
 import Data.UUID.Typed (nextRandomUUID)
 import Data.Validity as X
@@ -86,3 +89,14 @@ getCurrentDay = localDay . zonedTimeToLocalTime <$> liftIO getZonedTime
 
 getLocalNow :: MonadIO m => m LocalTime
 getLocalNow = liftIO $ zonedTimeToLocalTime <$> getZonedTime
+
+formatStringDay :: String
+formatStringDay = "%d/%m/%Y"
+
+showDay :: Day -> String
+showDay = formatTime defaultTimeLocale formatStringDay
+
+showTime :: LocalTime -> String
+showTime = formatTime defaultTimeLocale formatString
+  where
+    formatString = formatStringDay <> " %R"

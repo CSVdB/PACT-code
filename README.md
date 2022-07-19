@@ -23,10 +23,8 @@ Design:
 - Form submission for workouts
 
 Simple things to start with:
-- Show all dates as dd/mm/yyyy
 - Coach confirms whether you went to the event, not you
   * Fix bug first (including bug report & regression test)
-- Make "today" the default proposed day when creating a UserWorkout
 
 Not so simple things:
 - Add a free form "description" to each workout submission

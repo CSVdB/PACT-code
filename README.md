@@ -22,12 +22,12 @@ Design:
 - Boxes: Make each reported workout look good, and include a free-form field
 - Form submission for workouts
 
-Simple things to start with:
-- Coach confirms whether you went to the event, not you
-  * Fix bug first (including bug report & regression test)
-
-Not so simple things:
+First goal: More interaction between the founders.
 - Add a free form "description" to each workout submission
+- Add pictures to workouts
+- Add workout-free pictures: Food, (healthy) fun
+
+Pure software:
 - Implement Sander's designs together
 - Private profile
   * How much sports did you do? In total, this month..
@@ -47,22 +47,19 @@ Not so simple things:
 - Put coming up coach organized workouts at the top of the newsfeed?
 - Replace dropdowns by a separate page with icons
 
-Longer things:
-- Staging environment
-
 # Later
 
+- Coach confirms whether you went to the event, not you
+  * Fix bug first (including bug report & regression test)
 - Staging environment
 - Switch to Cassius to use variables (e.g. for the primary colors) and type-safe
   URLs
 - Clean up CSS
 - Put all newsfeed events anti-chronologically? (Talk to Paul first)
-- Add a page with the raking per sport
+- Leaderboard + ranking per sport
 - "Community" concept
   * New type of user = community leaders. People can follow communities, put
     together a news feed..
-- Allow people to post text and pictures with motivational and positive things
-  related to positive lifestyles: Sports pics, nice meal, friendship..
 - Build an app: https://cordova.apache.org/
 - sydtest-webdriver: Selenium tests
 

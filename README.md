@@ -27,7 +27,9 @@ First goal: More interaction between the founders.
 - Add pictures to workouts
 - Add workout-free pictures: Food, (healthy) fun
 
-Pure software:
+MVP (with customers):
+- Allow to cut out a circle out of each picture, to be used instead
+  * Then finalize MVP design with Sander
 - Implement Sander's designs together
 - Private profile
   * How much sports did you do? In total, this month..
@@ -40,8 +42,6 @@ Pure software:
 - "Like" button for events???
   * You can see you liked something already, and cancel your like
   * You can see who liked what things, includes links to their public profile
-- Allow to cut out a circle out of each picture, to be used instead
-  * Then finalize MVP design with Sander
 - Finish "coins" feature, and call it "experience" (ask Sander a better name)
 - Coach can see who joined his events, including a link to their public profiles
 - Put coming up coach organized workouts at the top of the newsfeed?

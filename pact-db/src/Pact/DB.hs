@@ -162,6 +162,7 @@ UserWorkout
   type WorkoutType
   day Day
   amount WorkoutAmount
+  description Textarea default=''
 
   deriving Show Eq Ord Generic
 
@@ -246,12 +247,13 @@ instance Validity AlternativeName where
         declare "Name is not empty" . not . T.null $ unAlternative name
       ]
 
-data CompleteExercise = CompleteExercise
-  { exerciseCE :: Exercise,
-    musclesCE :: [Muscle],
-    materialsCE :: [Material],
-    altNamesCE :: [AlternativeName]
-  }
+data CompleteExercise
+  = CompleteExercise
+      { exerciseCE :: Exercise,
+        musclesCE :: [Muscle],
+        materialsCE :: [Material],
+        altNamesCE :: [AlternativeName]
+      }
   deriving (Show, Eq, Ord, Generic)
 
 collectExercise ::
@@ -341,13 +343,15 @@ respondToFriendRequest user currentUser response =
 data CoachOrganized = CoachOrganized | UserOrganized
   deriving (Show, Eq, Ord, Generic)
 
-data Workout = Workout
-  { organizerW :: User, -- User/coach who 'organized' the workout
-    workoutTypeW :: WorkoutType,
-    workoutAmountW :: WorkoutAmount,
-    dayW :: Day,
-    coachOrganized :: CoachOrganized
-  }
+data Workout
+  = Workout
+      { organizerW :: User, -- User/coach who 'organized' the workout
+        workoutTypeW :: WorkoutType,
+        workoutAmountW :: WorkoutAmount,
+        dayW :: Day,
+        coachOrganized :: CoachOrganized,
+        descriptionW :: Textarea
+      }
   deriving (Show, Eq, Ord, Generic)
 
 getLastWeeksWorkouts :: MonadIO m => Day -> User -> SqlPersistT m [Workout]
@@ -364,7 +368,8 @@ getLastWeeksWorkouts today currentUser = do
               workoutTypeW = userWorkoutType workout,
               workoutAmountW = userWorkoutAmount workout,
               dayW = userWorkoutDay workout,
-              coachOrganized = UserOrganized
+              coachOrganized = UserOrganized,
+              descriptionW = userWorkoutDescription workout
             }
   coachWorkouts <- selectListVals (coachConditions $ snd <$> coaches) []
   let coachWorkouts' =
@@ -376,7 +381,8 @@ getLastWeeksWorkouts today currentUser = do
                   workoutTypeW = coachWorkoutType workout,
                   workoutAmountW = coachWorkoutAmount workout,
                   dayW = coachWorkoutDay workout,
-                  coachOrganized = CoachOrganized
+                  coachOrganized = CoachOrganized,
+                  descriptionW = ""
                 }
   pure $ userWorkouts' ++ coachWorkouts'
   where
@@ -404,10 +410,10 @@ getCoachWorkouts Coach {..} = selectListVals [CoachWorkoutCoach ==. coachUuid] [
 getParticipants :: MonadIO m => CoachWorkout -> SqlPersistT m [User]
 getParticipants CoachWorkout {..} = do
   workoutJoins <- selectListVals conditions []
-  fmap catMaybes $
-    forM workoutJoins $
-      \WorkoutJoin {..} ->
-        fmap entityVal <$> getBy (UniqueUser workoutJoinCustomer)
+  fmap catMaybes
+    $ forM workoutJoins
+    $ \WorkoutJoin {..} ->
+      fmap entityVal <$> getBy (UniqueUser workoutJoinCustomer)
   where
     conditions =
       [ WorkoutJoinWorkout ==. coachWorkoutUuid,
@@ -417,10 +423,10 @@ getParticipants CoachWorkout {..} = do
 collectCoaches :: MonadIO m => User -> SqlPersistT m [Coach]
 collectCoaches User {..} = do
   relations <- selectListVals conditions []
-  fmap catMaybes $
-    forM relations $
-      \CustomerCoachRelation {..} ->
-        fmap entityVal <$> getBy (UniqueCoach customerCoachRelationCoach)
+  fmap catMaybes
+    $ forM relations
+    $ \CustomerCoachRelation {..} ->
+      fmap entityVal <$> getBy (UniqueCoach customerCoachRelationCoach)
   where
     conditions =
       [ CustomerCoachRelationCustomer ==. userUuid,
@@ -430,34 +436,35 @@ collectCoaches User {..} = do
 collectCoachesAndUser :: MonadIO m => User -> SqlPersistT m [(User, Coach)]
 collectCoachesAndUser user = do
   coaches <- collectCoaches user
-  fmap catMaybes $
-    forM coaches $
-      \coach ->
-        fmap ((,coach) . entityVal) <$> getBy (UniqueUser $ coachUser coach)
+  fmap catMaybes
+    $ forM coaches
+    $ \coach ->
+      fmap ((,coach) . entityVal) <$> getBy (UniqueUser $ coachUser coach)
 
 collectCustomers :: MonadIO m => Coach -> SqlPersistT m [User]
 collectCustomers Coach {..} = do
   relations <- selectListVals conditions []
-  fmap catMaybes $
-    forM relations $
-      \relation ->
-        fmap entityVal <$> getBy (UniqueUser $ customerCoachRelationCustomer relation)
+  fmap catMaybes
+    $ forM relations
+    $ \relation ->
+      fmap entityVal <$> getBy (UniqueUser $ customerCoachRelationCustomer relation)
   where
     conditions =
       [ CustomerCoachRelationCoach ==. coachUuid,
         CustomerCoachRelationResponse ==. Just AcceptProposal
       ]
 
-data CoachWorkoutInfo = CoachWorkoutInfo
-  { uuidCWI :: CoachWorkoutUUID,
-    coachCWI :: User,
-    typeCWI :: WorkoutType,
-    timeCWI :: LocalTime,
-    amountCWI :: WorkoutAmount,
-    addressCWI :: Textarea,
-    notesCWI :: Textarea,
-    participants :: [User]
-  }
+data CoachWorkoutInfo
+  = CoachWorkoutInfo
+      { uuidCWI :: CoachWorkoutUUID,
+        coachCWI :: User,
+        typeCWI :: WorkoutType,
+        timeCWI :: LocalTime,
+        amountCWI :: WorkoutAmount,
+        addressCWI :: Textarea,
+        notesCWI :: Textarea,
+        participants :: [User]
+      }
   deriving (Show, Eq, Ord, Generic)
 
 getCoachWorkoutInfos :: MonadIO m => Coach -> SqlPersistT m [CoachWorkoutInfo]
@@ -502,21 +509,22 @@ getMyCoachesWorkoutInfos user = do
 userPlannedWorkouts :: MonadIO m => User -> SqlPersistT m [(JoinStatus, CoachWorkoutInfo)]
 userPlannedWorkouts User {..} = do
   workoutJoins <- selectListVals conditions []
-  fmap catMaybes $
-    forM workoutJoins $
-      \WorkoutJoin {..} ->
-        getBy (UniqueCoachWorkout workoutJoinWorkout) >>= \case
-          Nothing -> pure Nothing
-          Just (Entity _ workout) ->
-            (workoutJoinStatus,) <$$> workoutToInfo workout
+  fmap catMaybes
+    $ forM workoutJoins
+    $ \WorkoutJoin {..} ->
+      getBy (UniqueCoachWorkout workoutJoinWorkout) >>= \case
+        Nothing -> pure Nothing
+        Just (Entity _ workout) ->
+          (workoutJoinStatus,) <$$> workoutToInfo workout
   where
     conditions = [WorkoutJoinCustomer ==. userUuid]
 
-data FriendRequestInfo = FriendRequestInfo
-  { friendFRI :: User,
-    friendTypeFRI :: FriendType,
-    responseFRI :: Maybe FriendRequestResponse
-  }
+data FriendRequestInfo
+  = FriendRequestInfo
+      { friendFRI :: User,
+        friendTypeFRI :: FriendType,
+        responseFRI :: Maybe FriendRequestResponse
+      }
   deriving (Show, Eq, Ord, Generic)
 
 friendUuid :: FriendRelation -> UserUUID -> UserUUID
@@ -554,15 +562,15 @@ countCoins :: MonadIO m => UserUUID -> TimeInterval -> SqlPersistT m Coins
 countCoins userId (start, end) = fmap (Coins . fromIntegral) $ do
   userWorkouts <- selectList userWorkoutConditions []
   workoutJoins <- selectListVals [WorkoutJoinCustomer ==. userId] []
-  coachPoints <- fmap sum $
-    forM workoutJoins $
-      \workoutJoin ->
-        getBy (UniqueCoachWorkout $ workoutJoinWorkout workoutJoin) <&> \case
-          Nothing -> 0 :: Int
-          Just (Entity _ CoachWorkout {..}) ->
-            if not $ inInterval coachWorkoutDay
-              then 0
-              else if workoutJoinStatus workoutJoin == WasPresent then 5 else 1
+  coachPoints <- fmap sum
+    $ forM workoutJoins
+    $ \workoutJoin ->
+      getBy (UniqueCoachWorkout $ workoutJoinWorkout workoutJoin) <&> \case
+        Nothing -> 0 :: Int
+        Just (Entity _ CoachWorkout {..}) ->
+          if not $ inInterval coachWorkoutDay
+            then 0
+            else if workoutJoinStatus workoutJoin == WasPresent then 5 else 1
   pure $ 3 * length userWorkouts + coachPoints
   where
     userWorkoutConditions =

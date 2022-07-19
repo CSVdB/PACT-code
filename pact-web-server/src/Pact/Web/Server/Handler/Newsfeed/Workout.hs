@@ -18,10 +18,12 @@ getAddUserWorkoutR wType = defaultLayout $ do
   setTitleI ("Workout" :: Text)
   $(widgetFile "newsfeed/addUserWorkout")
 
-data AddUserWorkoutForm = AddUserWorkoutForm
-  { amountAWF :: Double,
-    dayAWF :: Day
-  }
+data AddUserWorkoutForm
+  = AddUserWorkoutForm
+      { amountAWF :: Double,
+        dayAWF :: Day,
+        descriptionAWF :: Textarea
+      }
   deriving (Show, Eq, Ord, Generic)
 
 instance Validity AddUserWorkoutForm where
@@ -38,6 +40,7 @@ addWorkoutForm =
   AddUserWorkoutForm
     <$> ireq doubleField "amount"
     <*> ireq dayField "day"
+    <*> (fromMaybe "" <$> iopt textareaField "description")
 
 postAddUserWorkoutR :: WorkoutType -> Handler Html
 postAddUserWorkoutR workoutType =
@@ -61,7 +64,8 @@ addWorkout AddUserWorkoutForm {..} workoutType = do
         { userWorkoutUser = userUuid,
           userWorkoutType = workoutType,
           userWorkoutDay = dayAWF,
-          userWorkoutAmount = amount
+          userWorkoutAmount = amount,
+          userWorkoutDescription = descriptionAWF
         }
   addMessage "is-success" "Congratz, you did a workout!"
   redirect HomeR

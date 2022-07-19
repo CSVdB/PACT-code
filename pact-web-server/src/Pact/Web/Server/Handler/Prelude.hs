@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
@@ -18,13 +20,15 @@ module Pact.Web.Server.Handler.Prelude
     getLocalNow,
     showDay,
     showTime,
+    ioptTextarea,
+    isEmptyTextarea,
   )
 where
 
 import Control.Monad as X
 import Data.Containers.ListUtils (nubOrd)
 import Data.Functor as X ((<&>))
-import Data.List as X (sortOn, (\\))
+import Data.List as X ((\\), sortOn)
 import Data.Maybe as X
 import Data.Ord as X (Down (..))
 import Data.Text as X (Text)
@@ -100,3 +104,10 @@ showTime :: LocalTime -> String
 showTime = formatTime defaultTimeLocale formatString
   where
     formatString = formatStringDay <> " %R"
+
+ioptTextarea ::
+  (Monad m, RenderMessage (HandlerSite m) FormMessage) => Text -> FormInput m Textarea
+ioptTextarea = fmap (fromMaybe "") . iopt textareaField
+
+isEmptyTextarea :: Textarea -> Bool
+isEmptyTextarea (Textarea t) = t == ""

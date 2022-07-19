@@ -22,6 +22,11 @@
           required
           type="date">
 
+      <fieldset .form-group>
+        <textarea .form-control .form-control-lg
+          name="description"
+          placeholder="Share your experience">
+
       ^{token}
 
       $if not (null messages)

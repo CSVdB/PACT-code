@@ -35,3 +35,8 @@ setInitialExerciseMaterials = do
         { exerciseMaterialUuid = uuid,
           exerciseMaterialName = name
         }
+
+-- Database migration necessary if the dB was set up before July 19 2022.
+giveUserWorkoutsNullDescriptions :: SqlPersistT IO ()
+giveUserWorkoutsNullDescriptions =
+  rawExecute "ALTER TABLE user_workout ADD Description VARCHAR(100) NULL" []

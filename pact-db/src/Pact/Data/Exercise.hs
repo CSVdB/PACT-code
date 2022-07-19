@@ -73,6 +73,7 @@ data WorkoutType
   | Gym
   | HIIT
   | Jog
+  | Mobility
   | Swim
   | Walking
   deriving (Show, Eq, Ord, Generic, Read, Enum, Bounded)
@@ -107,6 +108,7 @@ unitType Cycling = Kilometers
 unitType Fighting = Minutes
 unitType HIIT = Minutes
 unitType Gym = Minutes
+unitType Mobility = Minutes
 unitType Swim = Meters
 unitType Walking = Kilometers
 

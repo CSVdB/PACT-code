@@ -5,8 +5,6 @@
     method="post"
     action=@{ActivitiesR $ AddCoachWorkoutR workoutType}>
     <div>
-      This is the workout type.
-      <br>
       <fieldset .form-group>
         <input .form-control .form-control-lg
           name="amount"
@@ -20,6 +18,7 @@
         <input .form-control .form-control-lg
           name="day"
           placeholder=#{show today}
+          value=#{show today}
           required
           type="date">
 

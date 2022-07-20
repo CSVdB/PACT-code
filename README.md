@@ -23,7 +23,6 @@ Design:
 - Form submission for workouts
 
 First goal: More interaction between the founders.
-- Add pictures to workouts
 - Add comments on other people's posts
 
 Discuss with founders:

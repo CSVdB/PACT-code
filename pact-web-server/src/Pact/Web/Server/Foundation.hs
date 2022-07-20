@@ -68,6 +68,7 @@ instance Yesod App where
   maximumContentLength _ route = case route of
     -- Remove any limit for routes which add images or videos.
     Just (ExerciseR AddR) -> Just $ 20 * 1024 * 1024 -- 20MB
+    Just (NewsfeedR _) -> Just $ 20 * 1024 * 1024 -- 20MB
     _ -> Just $ 2 * 1024 * 1024 -- 2MB
 
   authRoute _ = Just $ AuthR LoginR

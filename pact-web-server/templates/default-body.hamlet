@@ -1,4 +1,4 @@
-<div .navbar .navbar-light>
+<div .navbar>
   ^{pageBody navbarPC}
 
 <div .container .page>

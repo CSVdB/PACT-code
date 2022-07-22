@@ -17,6 +17,10 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 # To do
 
 Design:
+- Navigation bar on mobile
+- Pictures
+  * Max width & height
+  * Position: <pic> <text> <pic>
 - Profile page: Split up in clear sections, and turn each section into a nice
   "button"
 - Boxes: Make each reported workout look good, and include a free-form field
@@ -48,6 +52,8 @@ MVP (with customers):
 - Coach can see who joined his events, including a link to their public profiles
 - Put coming up coach organized workouts at the top of the newsfeed?
 - Replace dropdowns by a separate page with icons
+- Replace "amount" by "duration" in CoachWorkout, remove past CoachWorkouts, and
+  title with difficulty level (beginner-intermediary-expert-`all_levels`)
 
 # Later
 

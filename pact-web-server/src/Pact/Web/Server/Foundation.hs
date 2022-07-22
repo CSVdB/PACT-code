@@ -159,7 +159,8 @@ getUserType = do
         Just (Entity _ coach) -> pure $ LoggedInCoach user coach
 
 -- TODO: Once admin user is created, add that options here
-navbarRoutesH :: Handler [(Route App, String)]
+-- The `Widget` shows how a link to a given `Route App` should be shown.
+navbarRoutesH :: Handler [(Route App, Widget)]
 navbarRoutesH =
   getUserType <&> \userType -> specificNavbarRoutes userType
   where
@@ -168,21 +169,21 @@ navbarRoutesH =
       LoggedInUser _ -> navbarRoutesUser
       LoggedInCoach _ _ -> navbarRoutesCoach
 
-navbarRoutesNobody :: [(Route App, String)]
+navbarRoutesNobody :: [(Route App, Widget)]
 navbarRoutesNobody =
-  [ (HomeR, "HOME"),
-    (AuthR LoginR, "LOG IN"),
-    (AuthR registerR, "SIGN UP")
+  [ (HomeR, toWidget [hamlet| HOME |]),
+    (AuthR LoginR, toWidget [hamlet| LOG IN |]),
+    (AuthR registerR, toWidget [hamlet| SIGN UP |])
   ]
 
-navbarRoutesUser :: [(Route App, String)]
+navbarRoutesUser :: [(Route App, Widget)]
 navbarRoutesUser =
-  [ (HomeR, "NEWSFEED"),
-    (ActivitiesR ActivitiesPageR, "ACTIVITIES"),
-    (ProfileR ProfilePageR, "PROFILE")
+  [ (HomeR, toWidget [hamlet| NEWSFEED |]),
+    (ActivitiesR ActivitiesPageR, toWidget [hamlet| ACTIVITIES |]),
+    (ProfileR ProfilePageR, toWidget [hamlet| <img src=@{StaticR person_svg} height=15> |])
   ]
 
-navbarRoutesCoach :: [(Route App, String)]
+navbarRoutesCoach :: [(Route App, Widget)]
 navbarRoutesCoach = navbarRoutesUser
 
 getReloadR :: Handler ()

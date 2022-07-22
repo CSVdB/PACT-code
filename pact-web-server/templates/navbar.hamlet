@@ -1,12 +1,12 @@
 <a .navbar-brand href=@{HomeR}>
-  <img src=@{StaticR logo_dark_png} height=40>
+  <img src=@{StaticR logo_dark_png} height=30>
 
 <ul .nav .navbar-nav .pull-xs-right>
-  $forall (link, msg) <- navbarRoutes
-    <li .nav-item>
+  $forall (link, widget) <- navbarRoutes
+    <li>
       $if Just link == currentRoute
-        <a .nav-link .active href=@{link}>
-          #{msg}
+        <a .active href=@{link}>
+          ^{widget}
       $else
-        <a .nav-link href=@{link}>
-          #{msg}
+        <a href=@{link}>
+          ^{widget}

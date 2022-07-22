@@ -31,11 +31,15 @@ First goal: More interaction between the founders.
 
 Discuss with founders:
 - Add workout-free pictures: Food, (healthy) fun???
-- "Like" button for UserWorkouts???
-  * You can see you liked something already, and cancel your like
-  * You can see who liked what things, includes links to their public profile
 
 MVP (with customers):
+- "Like" button for UserWorkouts
+  * You can see you liked something already, and cancel your like
+  * You can see how many people liked your post in ranges: 0 likes, 1-10 etc.
+    Based on which range you're in, some icon on the workout changes.
+  * You can max give out X likes per day. X increases with your PACT experience.
+  * Likes are called "giving imPACT"
+  * When you receive a like, you get PACT coins
 - Speed up the tests
 - Allow to cut out a circle out of each picture, to be used instead
   * Then finalize MVP design with Sander
@@ -54,6 +58,12 @@ MVP (with customers):
 - Replace dropdowns by a separate page with icons
 - Replace "amount" by "duration" in CoachWorkout, remove past CoachWorkouts, and
   title with difficulty level (beginner-intermediary-expert-`all_levels`)
+
+Notes:
+- Differences with Strava:
+  * Focus on habit formation: Add goals and streaks
+  * Set up challenges, e.g. jog 2x/w for 4 weeks in a row. We can define one
+    challenge each month to be central, app-wide.
 
 # Later
 

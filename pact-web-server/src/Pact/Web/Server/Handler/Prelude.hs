@@ -81,7 +81,7 @@ getPic user = case userPic user of
 showPic :: User -> Widget
 showPic user =
   [whamlet|
-    <img src=@{getPic user}>
+    <img align="left" hspace="10" vspace="10" .profile src=@{getPic user}>
   |]
 
 data Edit

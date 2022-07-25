@@ -71,6 +71,7 @@ $forall Workout {..} <- workouts
     Amount: #{showWorkoutAmount workoutTypeW workoutAmountW}
     <br>
     Day: #{showDay dayW}
+
     $if not (isEmptyTextarea descriptionW)
       <br>
       <br>

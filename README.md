@@ -17,7 +17,6 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 # To do
 
 Design:
-- Navigation bar on mobile
 - Pictures
   * Max width & height
   * Position: <pic> <text> <pic>

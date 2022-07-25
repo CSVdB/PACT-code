@@ -56,6 +56,13 @@ a.active {
     font-weight: bold;
 }
 
+.img .profile {
+    max-height: 100px;
+    max-weight: 100px;
+    height: auto;
+    width: auto
+}
+
 /*navigation bar */
 
 .navbar {
@@ -466,7 +473,9 @@ p {
 }
 
 .Gutton img {
-    width: 20%;
+    max-height: 200px;
+    max-width: 200px;
+    width: auto;
     height: auto;
 }
 

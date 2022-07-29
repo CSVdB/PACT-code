@@ -3,7 +3,7 @@
 
 <div .container .page>
   <div .row>
-    <div .col-md-6 .offset-md-3 .col-xs12>
+    <div .general>
       $forall (classes, message) <- messages
         <article class="message #{classes}">
           <div .message-header>

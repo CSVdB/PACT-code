@@ -110,9 +110,15 @@ a.active {
 
 /* general text */
 
-.col-md-6.offset-md-3.col-xs12 {
+.general {
     text-align: center;
     border: none;
+}
+
+.centeredText {
+    vertical-align: middle;
+    text-align: center;
+    border: 1px;
 }
 
 h1 {

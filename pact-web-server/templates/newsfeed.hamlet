@@ -64,21 +64,21 @@ $if not $ null workoutsToConfirm
 $forall Workout {..} <- workouts
   <button .Gutton .no-click>
     ^{showPic organizerW}
-    User: #{userName organizerW}
-    <br>
-    Activity: #{show workoutTypeW}
-    <br>
-    Amount: #{showWorkoutAmount workoutTypeW workoutAmountW}
-    <br>
-    Day: #{showDay dayW}
 
-    $if not (isEmptyTextarea descriptionW)
-      <br>
-      <br>
-      #{descriptionW}
     $maybe image <- imageW
+      <img style="float: right" src=@{ImageR image}>
+
+    <div .centeredText>
+      User: #{userName organizerW}
       <br>
-      <img src=@{ImageR image}>
-    $if coachOrganized == CoachOrganized
+      Activity: #{show workoutTypeW}
       <br>
-      (Coach organized)
+      Amount: #{showWorkoutAmount workoutTypeW workoutAmountW}
+      <br>
+      Day: #{showDay dayW}
+      $if not (isEmptyTextarea descriptionW)
+        <br>
+        #{descriptionW}
+      $if coachOrganized == CoachOrganized
+        <br>
+        (Coach organized)

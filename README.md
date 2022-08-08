@@ -17,28 +17,29 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 # To do
 
 Design:
-- Pictures
-  * Max width & height
-  * Position: <pic> <text> <pic>
+https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-id=0%3A1&fbclid=IwAR3cTgTz2rM6j_sjW7vdmkyfTK-jQ4bOxJCDW62zN_GSXw-W7z1-iFNPRdY
 - Profile page: Split up in clear sections, and turn each section into a nice
   "button"
-- Boxes: Make each reported workout look good, and include a free-form field
 - Form submission for workouts
 
 First goal: More interaction between the founders.
-- Add comments on other people's posts
-
-Discuss with founders:
-- Add workout-free pictures: Food, (healthy) fun???
-
-MVP (with customers):
+- Fix Newsfeed boxes design
 - "Like" button for UserWorkouts
   * You can see you liked something already, and cancel your like
-  * You can see how many people liked your post in ranges: 0 likes, 1-10 etc.
-    Based on which range you're in, some icon on the workout changes.
+  * You can see how many people liked your post
+  * The #likes is displayed in ranges: 0 likes, 1-10 etc. Based on which range
+    you're in, some icon on the workout changes.
   * You can max give out X likes per day. X increases with your PACT experience.
   * Likes are called "giving imPACT"
   * When you receive a like, you get PACT coins
+- Add comments on other people's posts
+
+Discuss with founders:
+- What can we actually do to make $1? How could the website assist in actually
+  making $1?
+- Add workout-free pictures: Food, (healthy) fun???
+
+MVP (with customers):
 - Speed up the tests
 - Allow to cut out a circle out of each picture, to be used instead
   * Then finalize MVP design with Sander

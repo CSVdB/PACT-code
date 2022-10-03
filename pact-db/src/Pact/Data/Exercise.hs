@@ -66,6 +66,7 @@ instance PersistFieldSql Muscle where
 
 data WorkoutType
   = Acrogym
+  | Basketball
   | Calisthenics
   | Climbing
   | Cycling
@@ -102,13 +103,14 @@ data UnitType = Minutes | Kilometers | Meters
 
 unitType :: WorkoutType -> UnitType
 unitType Acrogym = Minutes
-unitType Jog = Kilometers
+unitType Basketball = Minutes
 unitType Calisthenics = Minutes
 unitType Climbing = Minutes
 unitType Cycling = Kilometers
 unitType Fighting = Minutes
 unitType HIIT = Minutes
 unitType Gym = Minutes
+unitType Jog = Kilometers
 unitType Mobility = Minutes
 unitType Surfing = Minutes
 unitType Swim = Meters
@@ -140,7 +142,7 @@ myPrettyCfg n = PrettyCfg n (Just '\'') '.'
 
 showWorkoutAmount :: WorkoutType -> WorkoutAmount -> Text
 showWorkoutAmount workoutType (WorkoutAmount n) =
-  prettyF (myPrettyCfg i) (fromIntegral n * stepSize workoutType) <> stepSizeText
+  prettyF (myPrettyCfg i) (fromIntegral n * stepSize workoutType) <> " " <> stepSizeText
   where
     i = unitDecimals $ unitType workoutType
     stepSizeText = amountMessage workoutType

@@ -16,14 +16,19 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 
 # To do
 
-Design:
-https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-id=0%3A1&fbclid=IwAR3cTgTz2rM6j_sjW7vdmkyfTK-jQ4bOxJCDW62zN_GSXw-W7z1-iFNPRdY
-- Profile page: Split up in clear sections, and turn each section into a nice
-  "button"
-- Form submission for workouts
+October: Coach can see who joined his events, including a link to their public
+profiles.
 
-First goal: More interaction between the founders.
-- Fix Newsfeed boxes design
+November:
+- Fix showing friends on profile page: Show max 3 friends, and a button to see
+  all, that goes to a separate page.
+- Make sure CoachWorkout confirmations (i.e. "did you actually go") show up, and
+  show up for the coach instead of the user
+
+## Later
+
+- Add Basketbal to the workout types
+- Finish "coins" feature, and call it "experience" (ask Sander a better name)
 - "Like" button for UserWorkouts
   * You can see you liked something already, and cancel your like
   * You can see how many people liked your post
@@ -33,17 +38,20 @@ First goal: More interaction between the founders.
   * Likes are called "giving imPACT"
   * When you receive a like, you get PACT coins
 - Add comments on other people's posts
+- Ask people after they did a CoachWorkout, what they think thought of the
+  workout
 
-Discuss with founders:
-- What can we actually do to make $1? How could the website assist in actually
-  making $1?
-- Add workout-free pictures: Food, (healthy) fun???
+Design: (Paul)
+https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-id=0%3A1&fbclid=IwAR3cTgTz2rM6j_sjW7vdmkyfTK-jQ4bOxJCDW62zN_GSXw-W7z1-iFNPRdY
+- Fix Newsfeed boxes
+- Profile page: Split up in clear sections, and turn each section into a nice
+  "button"
+- Form submission for workouts
 
 MVP (with customers):
 - Speed up the tests
 - Allow to cut out a circle out of each picture, to be used instead
   * Then finalize MVP design with Sander
-- Implement Sander's designs together
 - Private profile
   * How much sports did you do? In total, this month..
   * Create a separate page to list your friends and one for coaches
@@ -52,8 +60,6 @@ MVP (with customers):
   * Private profile minus any editing rights
   * Add button for friendship request & show status of friendship request
 - Make it possible to stop being a coach, unfriend, unfollow..
-- Finish "coins" feature, and call it "experience" (ask Sander a better name)
-- Coach can see who joined his events, including a link to their public profiles
 - Put coming up coach organized workouts at the top of the newsfeed?
 - Replace dropdowns by a separate page with icons
 - Replace "amount" by "duration" in CoachWorkout, remove past CoachWorkouts, and

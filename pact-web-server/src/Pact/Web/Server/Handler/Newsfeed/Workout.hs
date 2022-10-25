@@ -18,12 +18,11 @@ getAddUserWorkoutR wType = defaultLayout $ do
   setTitleI ("Workout" :: Text)
   $(widgetFile "newsfeed/addUserWorkout")
 
-data AddUserWorkoutForm
-  = AddUserWorkoutForm
-      { amountAWF :: Double,
-        dayAWF :: Day,
-        descriptionAWF :: Textarea
-      }
+data AddUserWorkoutForm = AddUserWorkoutForm
+  { amountAWF :: Double,
+    dayAWF :: Day,
+    descriptionAWF :: Textarea
+  }
   deriving (Show, Eq, Ord, Generic)
 
 instance Validity AddUserWorkoutForm where

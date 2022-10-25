@@ -8,10 +8,9 @@ module Pact.Web.Server.Handler.Profile.UserProfile where
 import qualified Data.Text as T
 import Pact.Web.Server.Handler.Prelude
 
-newtype UserProfileForm
-  = UserProfileForm
-      { aboutMeUPF :: Textarea
-      }
+newtype UserProfileForm = UserProfileForm
+  { aboutMeUPF :: Textarea
+  }
   deriving (Show, Eq, Ord, Generic)
 
 instance Validity UserProfileForm where

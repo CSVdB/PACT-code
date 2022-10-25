@@ -27,7 +27,6 @@ November:
 
 ## Later
 
-- Add Basketbal to the workout types
 - Finish "coins" feature, and call it "experience" (ask Sander a better name)
 - "Like" button for UserWorkouts
   * You can see you liked something already, and cancel your like

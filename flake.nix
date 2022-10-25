@@ -64,7 +64,7 @@
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
 
       # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlays.default ]; });
 
       # The GHC compiler version to use, from haskell.packages.<compiler>
       compiler = "ghc902";
@@ -79,9 +79,22 @@
         "*.yml"
       ];
 
+      ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
+        flake = self;
+        systems = [ "x86_64-linux" ];
+      };
+
+      linters = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor."${system}";
+        in
+        {
+          haskell = import ./nix/linters.nix { inherit pkgs; };
+        });
+
     in
     {
-      overlay = final: prev:
+      overlays.default = final: prev:
         let
           gitignoreSource = (final.callPackage gitignore-src { }).gitignoreSource;
         in
@@ -94,8 +107,6 @@
           };
 
         };
-
-      defaultPackage = forAllSystems (system: self.packages.${system}.pact-web-server);
 
       packages = forAllSystems (system:
         let
@@ -130,6 +141,7 @@
 
         in
         rec {
+          default = pact-web-server;
           inherit (haskellPackages)
             pact-web-server
             pact-db;
@@ -165,11 +177,6 @@
           };
         });
 
-      ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
-        flake = self;
-        systems = [ "x86_64-linux" ];
-      };
-
       apps = forAllSystems (system:
         let
           pkgs = nixpkgsFor."${system}";
@@ -177,22 +184,14 @@
         {
           lint-haskell = {
             type = "app";
-            program = "${self.linters.${system}.haskell.lintScript}/bin/lint";
+            program = "${linters.${system}.haskell.lintScript}/bin/lint";
           };
-        });
-
-      linters = forAllSystems (system:
-        let
-          pkgs = nixpkgsFor."${system}";
-        in
-        {
-          haskell = import ./nix/linters.nix { inherit pkgs; };
         });
 
       checks = forAllSystems (system:
         with nixpkgsFor.${system};
         lib.optionalAttrs stdenv.isLinux {
-          haskellLint = self.linters.${system}.haskell.lintDerivation ./.;
+          haskellLint = linters.${system}.haskell.lintDerivation ./.;
         });
 
       nixosModules.pact-web-server = { pkgs, lib, config, ... }:
@@ -250,7 +249,7 @@
               };
             in
             lib.mkIf cfg.enable {
-              nixpkgs.overlays = [ self.overlay ];
+              nixpkgs.overlays = [ self.overlays.default ];
 
               services.nginx.virtualHosts =
                 mergeListRecursively [

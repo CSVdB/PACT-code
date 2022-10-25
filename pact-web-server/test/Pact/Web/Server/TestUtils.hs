@@ -147,12 +147,11 @@ testCannotReach route = do
   statusIs 303
   locationShouldBe $ AuthR LoginR
 
-data TestFile
-  = TestFile
-      { testFilePath :: !FilePath,
-        testFileContents :: !ByteString,
-        testFileType :: !(Maybe Text)
-      }
+data TestFile = TestFile
+  { testFilePath :: !FilePath,
+    testFileContents :: !ByteString,
+    testFileType :: !(Maybe Text)
+  }
   deriving (Show, Eq, Generic)
 
 readTestFile :: MonadIO m => FilePath -> m TestFile

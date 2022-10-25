@@ -14,6 +14,7 @@
   /workout/#WorkoutType AddCoachWorkoutR GET POST
   /join/#CoachWorkoutUUID JoinCoachWorkoutR POST
   /update-join/#CoachWorkoutUUID/#JoinStatus UpdateCoachWorkoutJoinR POST
+  /participants/#CoachWorkoutUUID ListParticipantsCoachWorkoutR GET
 
 /profile ProfileR:
   / ProfilePageR GET

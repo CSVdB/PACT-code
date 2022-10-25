@@ -26,6 +26,10 @@ $maybe _ <- mCoach
       <br>
       #Participants: #{show $ length $ participants info}
       <br>
+      <a>
+        $forall user <- take 3 (participants info)
+          ^{showPic' 75 user}
+      <br>
       <br>
 
 <h2 .text-xs-center>My coaches' events
@@ -49,6 +53,10 @@ $forall info <- myCoachesWorkoutInfos
       Notes: <textarea>#{notesCWI info} </textarea>
       <br>
       #Participants: #{show $ length $ participants info}
+      <br>
+      <a>
+        $forall user <- take 3 (participants info)
+          ^{showPic' 75 user}
       <br>
       <input .btn .click
         type="submit"
@@ -76,6 +84,10 @@ $forall (status, info) <- myPlannedWorkouts
       Notes: <textarea>#{notesCWI info} </textarea>
       <br>
       #Participants: #{show $ length $ participants info}
+      <br>
+      <a>
+        $forall user <- take 3 (participants info)
+          ^{showPic' 75 user}
       <br>
       $if status == WillCome
         <input .btn .click

@@ -15,6 +15,7 @@ module Pact.Web.Server.Handler.Prelude
     hasDuplicates,
     getPic,
     showPic,
+    showPic',
     Edit (..),
     getCurrentDay,
     getLocalNow,
@@ -29,7 +30,7 @@ where
 import Control.Monad as X
 import Data.Containers.ListUtils (nubOrd)
 import Data.Functor as X ((<&>))
-import Data.List as X (sortOn, (\\))
+import Data.List as X ((\\), sortOn)
 import Data.Maybe as X
 import Data.Ord as X (Down (..))
 import Data.Text as X (Text)
@@ -83,6 +84,19 @@ showPic user =
   [whamlet|
     <img style="float: left" hspace="10" vspace="10" .profile src=@{getPic user}>
   |]
+
+showPic' :: Int -> User -> Widget
+showPic' maxSize user =
+  [whamlet|
+    <img style=#{cssStyle} hspace="10" vspace="10" .profile src=@{getPic user}>
+  |]
+  where
+    cssStyle :: String
+    cssStyle =
+      "float: left;" <> "max-height: " <> show maxSize <> "px;"
+        <> "max-width: "
+        <> show maxSize
+        <> "px;"
 
 data Edit
   = NoEdit

@@ -9,12 +9,14 @@ module Pact.Web.Server.Handler.Activities
     postUpdateCoachWorkoutJoinR,
     postJoinCoachWorkoutR,
     getAddCoachWorkoutR,
+    getListParticipantsCoachWorkoutR,
     postAddCoachWorkoutR,
     AddCoachWorkoutForm (..),
   )
 where
 
 import Pact.Web.Server.Handler.Activities.Join
+import Pact.Web.Server.Handler.Activities.ListParticipants
 import Pact.Web.Server.Handler.Activities.UpdateJoin
 import Pact.Web.Server.Handler.Activities.Workout
 import Pact.Web.Server.Handler.Prelude

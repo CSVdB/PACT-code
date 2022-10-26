@@ -30,7 +30,7 @@ where
 import Control.Monad as X
 import Data.Containers.ListUtils (nubOrd)
 import Data.Functor as X ((<&>))
-import Data.List as X ((\\), sortOn)
+import Data.List as X (sortOn, (\\))
 import Data.Maybe as X
 import Data.Ord as X (Down (..))
 import Data.Text as X (Text)

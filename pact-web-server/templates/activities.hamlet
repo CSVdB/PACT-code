@@ -10,7 +10,8 @@ $maybe _ <- mCoach
         <a href=@{ActivitiesR $ AddCoachWorkoutR workoutType}>#{show workoutType}
   <br>
 
-  <h2 .text-xs-center>My organized events
+  $if (not $ null coachWorkoutInfos)
+    <h2 .text-xs-center>My organized events
 
   $forall info <- coachWorkoutInfos
     <button .Gutton .text-xs-left .no-click>
@@ -30,69 +31,68 @@ $maybe _ <- mCoach
         $forall user <- take 3 (participants info)
           ^{showPic' 75 user}
       <br>
-      <br>
+      <a .btn .click
+        href=@{ActivitiesR $ ListParticipantsCoachWorkoutR $ uuidCWI info}>
+        Show participants
 
 <h2 .text-xs-center>My coaches' events
 $forall info <- myCoachesWorkoutInfos
-  <form
-    enctype="multipart/form-data"
-    method="post"
-    action=@{ActivitiesR $ JoinCoachWorkoutR $ uuidCWI info}>
-    <button .Gutton .text-xs-left .no-click>
-      ^{showPic $ coachCWI info}
-      Coach: #{userName $ coachCWI info}
-      <br>
-      Activity: #{show $ typeCWI info}
-      <br>
-      Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
-      <br>
-      When: #{show $ timeCWI info}
-      <br>
-      Address: <textarea>#{addressCWI info}</textarea>
-      <br>
-      Notes: <textarea>#{notesCWI info} </textarea>
-      <br>
-      #Participants: #{show $ length $ participants info}
-      <br>
-      <a>
-        $forall user <- take 3 (participants info)
-          ^{showPic' 75 user}
-      <br>
-      <input .btn .click
-        type="submit"
-        value="Join">
+  <button .Gutton .text-xs-left .no-click>
+    ^{showPic $ coachCWI info}
+    Coach: #{userName $ coachCWI info}
     <br>
+    Activity: #{show $ typeCWI info}
+    <br>
+    Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
+    <br>
+    When: #{show $ timeCWI info}
+    <br>
+    Address: <textarea>#{addressCWI info}</textarea>
+    <br>
+    Notes: <textarea>#{notesCWI info} </textarea>
+    <br>
+    #Participants: #{show $ length $ participants info}
+    <br>
+    <a>
+      $forall user <- take 3 (participants info)
+        ^{showPic' 75 user}
+    <br>
+    <a .btn .click
+      href=@{ActivitiesR $ JoinCoachWorkoutR $ uuidCWI info}>
+      Join
+    <br>
+    <a .btn .click
+      href=@{ActivitiesR $ ListParticipantsCoachWorkoutR $ uuidCWI info}>
+      Show participants
 
 <h2 .text-xs-center>My events
 $forall (status, info) <- myPlannedWorkouts
-  <form
-    enctype="multipart/form-data"
-    method="post"
-    action=@{ActivitiesR $ UpdateCoachWorkoutJoinR (uuidCWI info) Cancelled}>
-    <button .Gutton .text-xs-left .no-click>
-      ^{showPic $ coachCWI info}
-      Coach: #{userName $ coachCWI info}
-      <br>
-      Activity: #{show $ typeCWI info}
-      <br>
-      Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
-      <br>
-      When: #{showTime $ timeCWI info}
-      <br>
-      Address: <textarea>#{addressCWI info}</textarea>
-      <br>
-      Notes: <textarea>#{notesCWI info} </textarea>
-      <br>
-      #Participants: #{show $ length $ participants info}
-      <br>
-      <a>
-        $forall user <- take 3 (participants info)
-          ^{showPic' 75 user}
-      <br>
-      $if status == WillCome
-        <input .btn .click
-          type="submit"
-          value="Cancel">
-      $else
-        (#{show status})
+  <button .Gutton .text-xs-left .no-click>
+    ^{showPic $ coachCWI info}
+    Coach: #{userName $ coachCWI info}
     <br>
+    Activity: #{show $ typeCWI info}
+    <br>
+    Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
+    <br>
+    When: #{showTime $ timeCWI info}
+    <br>
+    Address: <textarea>#{addressCWI info}</textarea>
+    <br>
+    Notes: <textarea>#{notesCWI info} </textarea>
+    <br>
+    #Participants: #{show $ length $ participants info}
+    <br>
+    <a>
+      $forall user <- take 3 (participants info)
+        ^{showPic' 75 user}
+    <br>
+    $if status == WillCome
+      <a .btn .click
+        href=@{ActivitiesR $ UpdateCoachWorkoutJoinR (uuidCWI info) Cancelled}>
+        Cancel
+    $else
+      (#{show status})
+    <a .btn .click
+      href=@{ActivitiesR $ ListParticipantsCoachWorkoutR $ uuidCWI info}>
+      Show participants

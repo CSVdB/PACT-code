@@ -1,5 +1,6 @@
 module Pact.Web.Server.Handler.TestImport (module X, genNewJoinStatus) where
 
+import Control.Monad as X
 import Pact.DB as X
 import Pact.Data as X
 import Pact.Web.Server.Foundation as X

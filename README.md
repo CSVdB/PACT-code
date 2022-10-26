@@ -24,6 +24,7 @@ November:
   all, that goes to a separate page.
 - Make sure CoachWorkout confirmations (i.e. "did you actually go") show up, and
   show up for the coach instead of the user
+  * They seem to show up too late. Might be a timezone issue?
 
 ## Later
 

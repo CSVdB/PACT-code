@@ -379,6 +379,14 @@ updateJoinWorkout uuid status = do
   _ <- followRedirect
   statusIs 200
 
+listParticipants :: CoachWorkoutUUID -> YesodExample App ()
+listParticipants =
+  testCanReach . ActivitiesR . ListParticipantsCoachWorkoutR
+
+cannotListParticipants :: CoachWorkoutUUID -> YesodExample App ()
+cannotListParticipants =
+  testCannotReach . ActivitiesR . ListParticipantsCoachWorkoutR
+
 getSingleUser :: YesodExample App User
 getSingleUser =
   testDB (selectList [] []) >>= \case

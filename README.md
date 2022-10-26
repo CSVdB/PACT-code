@@ -16,9 +16,6 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 
 # To do
 
-October: Coach can see who joined his events, including a link to their public
-profiles.
-
 November:
 - Fix showing friends on profile page: Show max 3 friends, and a button to see
   all, that goes to a separate page.
@@ -59,6 +56,8 @@ MVP (with customers):
 - Public profile
   * Private profile minus any editing rights
   * Add button for friendship request & show status of friendship request
+  * ListParticipants page links to everyone's public profile, including the
+    coach
 - Make it possible to stop being a coach, unfriend, unfollow..
 - Put coming up coach organized workouts at the top of the newsfeed?
 - Replace dropdowns by a separate page with icons

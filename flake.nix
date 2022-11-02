@@ -2,7 +2,7 @@
   description = "PACT-code";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     gitignore-hercules-src = {
       url = "github:hercules-ci/gitignore.nix";

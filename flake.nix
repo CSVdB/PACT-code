@@ -61,7 +61,7 @@
       supportedSystems =
         [
           "x86_64-linux"
-          # "aarch64-darwin"
+          "aarch64-darwin"
         ];
 
       # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.

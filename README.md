@@ -7,10 +7,14 @@ Development:
   * `stack build --file-watch`
   * `stack test --file-watch --ghc-options="-freverse-errors -j4 +RTS -A128M
     -n2m -RTS`
-- For frontend development/design: `./scripts/devel-pact-web-server.sh`
+- For frontend development/design: `./scripts/devel-pact-web-server.sh`, then
+  check `localhost:8000`
 - Set up local hoogle server: `hoogle serve --local`, then check
   `localhost:8080`
 - Generate test coverage report: `stack test --enable-coverage`
+
+Before creating a PR: In the root of the repository, run `cp assets/*
+pact-web-server/assets/`.
 
 Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-id=0%3A1&fbclid=IwAR3RZs0Nbk11MHc2U8LBCPS8uI2FObCMtAYKS4qkkwogWXn39tZcgtBwGPA
 

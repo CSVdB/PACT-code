@@ -1,0 +1,8 @@
+<h1>Customers
+
+^{token}
+
+$forall customer <- customers
+  <div .Gutton>
+    #{userName customer}
+    ^{showPic customer}

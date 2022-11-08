@@ -9,7 +9,10 @@ module Pact.Web.Server.Handler.Profile
     postBecomeCoachR,
     postConnectCoachR,
     getListCoachesR,
+    getListCurrentCoachesR,
+    getListCurrentCustomersR,
     getListFriendsR,
+    getListCurrentFriendsR,
     CoachProfileForm (..),
     UserProfileForm (..),
     getUpdateCoachProfileR,
@@ -26,6 +29,9 @@ import Pact.Web.Server.Handler.Profile.CoachConnect
 import Pact.Web.Server.Handler.Profile.CoachProfile
 import Pact.Web.Server.Handler.Profile.FriendConnect
 import Pact.Web.Server.Handler.Profile.ListCoaches
+import Pact.Web.Server.Handler.Profile.ListCurrentCoaches
+import Pact.Web.Server.Handler.Profile.ListCurrentCustomers
+import Pact.Web.Server.Handler.Profile.ListCurrentFriends
 import Pact.Web.Server.Handler.Profile.ListFriends
 import Pact.Web.Server.Handler.Profile.UserProfile
 
@@ -34,12 +40,16 @@ getProfilePage editProfile = do
   (user, mCoach) <- getCoachM
   -- You must be a coach to edit your coach profile
   when (editProfile == CoachEdit && isNothing mCoach) notFound
-
   customers <- fmap (fromMaybe []) $ forM mCoach $ runDB . collectCustomers
   coaches <- runDB $ collectCoachesAndUser user
   friendInfos <- runDB $ collectFriendInfos user
   let friends = friendFRI <$> filter isFriend friendInfos
   token <- genToken
+  today <- liftIO getCurrentDay
+  let (year, month, _) = toGregorian today
+      firstOfTheMonth = fromGregorian year month 1
+      thisMonth = (firstOfTheMonth, today)
+  coins <- runDB $ countCoins (userUuid user) thisMonth
   defaultLayout $ do
     setTitle "Profile"
     $(widgetFile "profile")

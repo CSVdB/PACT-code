@@ -1,27 +1,23 @@
 <h1 .text-xs-center>Coaches
 
-<div .text-xs-center>
-  ^{token}
+^{token}
 
-  $forall (coachUser, coach) <- coachInfos
-    $if coachUser /= user
-      $maybe relationText <- getRelationTextIfExists user coach relations
-        <a>
-          ^{showPic coachUser}
+$forall (coachUser, coach) <- coachInfos
+  $if coachUser /= user
+    $maybe relationText <- getRelationTextIfExists user coach relations
+      $if relationText /= "Accepted"
+        <div .Gutton>
           #{userName coachUser}
-          <textarea>
-            #{userAboutMe coachUser}
-          <textarea>
-            #{coachExpertise coach}
-          <br> (#{relationText})
-      $nothing
-        <form method="post" action=@{ProfileR $ ConnectCoachR $ coachUuid coach}>
-          <button type="submit">
-            <a>
-              ^{showPic coachUser}
-              #{userName coachUser}
-              <textarea>
-                #{userAboutMe coachUser}
-              <textarea>
-                #{coachExpertise coach}
-      <br>
+          ^{showPic coachUser}
+          <br> About me: #{userAboutMe coachUser}
+          <br> Expertise: #{coachExpertise coach}
+          <br> #{relationText}
+    $nothing
+      <form method="post" action=@{ProfileR $ ConnectCoachR $ coachUuid coach}>
+        <button type="submit" .Gutton .click>
+          #{userName coachUser}
+          ^{showPic coachUser}
+          <br>
+          About me: #{userAboutMe coachUser}
+          <br>
+          Expertise: #{coachExpertise coach}

@@ -5,22 +5,15 @@
 <div .Gutton .text-xs-left>
   ^{showPic $ coachCWI info}
   Coach: #{userName $ coachCWI info}
-  <br>
-  Activity: #{show $ typeCWI info}
-  <br>
-  Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
-  <br>
-  When: #{show $ timeCWI info}
-  <br>
-  Address: <textarea>#{addressCWI info}</textarea>
-  <br>
-  Notes: <textarea>#{notesCWI info} </textarea>
-  <br>
-  #Participants: #{show $ length $ participants info}
+  <br> Activity: #{show $ typeCWI info}
+  <br> Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
+  <br> When: #{show $ timeCWI info}
+  <br> Address: #{addressCWI info}
+  <br> Notes: #{notesCWI info}
+  <br> #Participants: #{show $ length $ participants info}
 <br>
 
 $forall user <- participants info
   <div .Gutton>
     #{userName user}
     ^{showPic' 75 user}
-  <br>

@@ -22,18 +22,11 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 
 ## November
 
-Nick:
-- Fix showing friends on profile page: Show max 3 friends, and a button to see
-  all, that goes to a separate page.
-- Make sure CoachWorkout confirmations (i.e. "did you actually go") show up, and
-  show up for the coach instead of the user
-  * They seem to show up too late. Might be a timezone issue?
-
 Paul:
 - List all atoms & molecules from the website
 - Set up storeboard: Pencil and paper, can be very ugly but should have all the
   web pages and how they connect
-- Implement the atoms & molecules in HTML & CSS
+- Implement the atoms & the first molecule in HTML & CSS
 
 Sander:
 - Design all atoms & molecules from the website
@@ -45,10 +38,15 @@ Nick:
 - Integrate new atoms & molecules into website
 - Set up Selenium tests
   * Include clicking the "JoinWorkout" button
+- Make sure CoachWorkout confirmations (i.e. "did you actually go") show up, and
+  show up for the coach instead of the user
+  * They seem to show up too late. Might be a timezone issue?
+
+Paul:
+- Implement the other molecules in HTML & CSS
 
 ## Later
 
-- Finish "coins" feature, and call it "experience" (ask Sander a better name)
 - "Like" button for UserWorkouts
   * You can see you liked something already, and cancel your like
   * You can see how many people liked your post

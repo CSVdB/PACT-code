@@ -1,0 +1,8 @@
+<h1>Coaches
+
+^{token}
+
+$forall (coachUser, _) <- coachInfos
+  <div .Gutton>
+    #{userName coachUser}
+    ^{showPic coachUser}

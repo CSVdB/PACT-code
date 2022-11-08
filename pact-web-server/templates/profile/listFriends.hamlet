@@ -1,24 +1,18 @@
 <h1 .text-xs-center>Friends
 
-<div .text-xs-center>
-  ^{token}
+^{token}
 
-  $forall notFriend <- notProposedUsers
-    $if notFriend /= user
-      <form method="post" action=@{ProfileR $ ConnectFriendR $ userUuid notFriend}>
-        <button type="submit">
-          <a>
-            ^{showPic notFriend}
-            #{userName notFriend}
-            <textarea>
-              #{userAboutMe notFriend}
-      <br>
+$forall notFriend <- notProposedUsers
+  $if notFriend /= user
+    <form method="post" action=@{ProfileR $ ConnectFriendR $ userUuid notFriend}>
+      <button type="submit" .Gutton>
+        ^{showPic notFriend}
+        #{userName notFriend}
+        About me: #{userAboutMe notFriend}
 
-  $forall FriendRequestInfo friend _ response <- relations
-      <a>
-        ^{showPic friend}
-        #{userName friend}
-        <textarea>
-          #{userAboutMe friend}
-        (#{prettyPrintFriendRequestResponse response})
-        <br>
+$forall FriendRequestInfo friend _ response <- relations
+  <div .Gutton>
+    ^{showPic friend}
+    #{userName friend}
+    About me: #{userAboutMe friend}
+    (#{prettyPrintFriendRequestResponse response})

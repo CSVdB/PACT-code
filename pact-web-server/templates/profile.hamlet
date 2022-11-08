@@ -1,5 +1,5 @@
 $if not $ isJust mCoach
-  <h1 .text-xs-center>Profile #{userName user}
+  <h1>Profile #{userName user}
   <form
     enctype="multipart/form-data"
     method="post"
@@ -8,7 +8,9 @@ $if not $ isJust mCoach
       type="submit"
       value="Become a coach">
 $else
-  <h1 .text-xs-center>Profile coach #{userName user}
+  <h1>Profile coach #{userName user}
+
+#{show $ unCoins coins} coins earned so far this month!
 
 ^{token}
 
@@ -44,9 +46,7 @@ $if editProfile == UserEdit
 
 $else
   <div .Gutton>
-    About me:
-    <textarea .form-control .form-control-lg>#{userAboutMe user}
-    <br>
+    About me: #{userAboutMe user}
     ^{showPic user}
     <a .click .btn
       href=@{ProfileR UpdateUserProfileR}>Edit
@@ -74,33 +74,38 @@ $maybe coach <- mCoach
           value="Update profile">
   $else
     <div .Gutton>
-      Expertise:
-      <textarea .form-control .form-control-lg>#{coachExpertise coach}
+      Expertise: #{coachExpertise coach}
       <a .click .btn
         href=@{ProfileR UpdateCoachProfileR}>Edit
 
 $if not $ null customers
-  <h2 .text-xs-center>Your customers
-  $forall customer <- customers
+  <h2>Your customers
+  $forall customer <- take 5 customers
     <div .Gutton>
       #{userName customer}
       ^{showPic customer}
+  <a .btn
+    href=@{ProfileR ListCurrentCustomersR}>Show customers
 
 $if not $ null coaches
-  <h2 .text-xs-center>Your coaches
-  $forall (coachUser, _) <- coaches
+  <h2>Your coaches
+  $forall (coachUser, _) <- take 5 coaches
     <div .Gutton>
       #{userName coachUser}
       ^{showPic coachUser}
+  <a .btn
+    href=@{ProfileR ListCurrentCoachesR}>Show coaches
 <a .btn
   href=@{ProfileR ListCoachesR}>Find coaches
 
 $if not $ null friends
-  <h2 .text-xs-center>Your friends
-  $forall friend <- friends
+  <h2>Your friends
+  $forall friend <- take 5 friends
     <div .Gutton>
       #{userName friend}
       ^{showPic friend}
+  <a .btn
+    href=@{ProfileR ListCurrentFriendsR}>Show friends
 <a .btn
   href=@{ProfileR ListFriendsR}>Add friends
 

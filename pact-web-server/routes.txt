@@ -19,11 +19,14 @@
 /profile ProfileR:
   / ProfilePageR GET
   /list-coaches ListCoachesR GET
+  /list-current-coaches ListCurrentCoachesR GET
+  /list-current-customers ListCurrentCustomersR GET
   /coach-connect/#CoachUUID ConnectCoachR POST
   /become-coach BecomeCoachR POST
   /user-profile UpdateUserProfileR GET POST
   /coach-profile UpdateCoachProfileR GET POST
   /list-friends ListFriendsR GET
+  /list-current-friends ListCurrentFriendsR GET
   /friend-connect/#UserUUID ConnectFriendR POST
 
 /exercise ExerciseR:

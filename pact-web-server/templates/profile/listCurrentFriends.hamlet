@@ -1,0 +1,8 @@
+<h1>Friends
+
+^{token}
+
+$forall FriendRequestInfo friend _ _ <- friends
+  <div .Gutton>
+    #{userName friend}
+    ^{showPic friend}

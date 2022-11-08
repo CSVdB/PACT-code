@@ -21,9 +21,9 @@ $maybe _ <- mCoach
       <br>
       When: #{show $ timeCWI info}
       <br>
-      Address: #{addressCWI info}</textarea>
+      Address: #{addressCWI info}
       <br>
-      Notes: #{notesCWI info} </textarea>
+      Notes: #{notesCWI info}
       <br>
       #Participants: #{show $ length $ participants info}
       <br>
@@ -40,18 +40,12 @@ $forall info <- myCoachesWorkoutInfos
   <div .Gutton .text-xs-left>
     ^{showPic $ coachCWI info}
     Coach: #{userName $ coachCWI info}
-    <br>
-    Activity: #{show $ typeCWI info}
-    <br>
-    Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
-    <br>
-    When: #{show $ timeCWI info}
-    <br>
-    Address: #{addressCWI info}</textarea>
-    <br>
-    Notes: #{notesCWI info} </textarea>
-    <br>
-    #Participants: #{show $ length $ participants info}
+    <br> Activity: #{show $ typeCWI info}
+    <br> Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
+    <br> When: #{show $ timeCWI info}
+    <br> Address: #{addressCWI info}
+    <br> Notes: #{notesCWI info}
+    <br> #Participants: #{show $ length $ participants info}
     <br>
     <a>
       $forall user <- take 3 (participants info)
@@ -74,18 +68,12 @@ $forall (status, info) <- myPlannedWorkouts
   <div .Gutton .text-xs-left>
     ^{showPic $ coachCWI info}
     Coach: #{userName $ coachCWI info}
-    <br>
-    Activity: #{show $ typeCWI info}
-    <br>
-    Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
-    <br>
-    When: #{showTime $ timeCWI info}
-    <br>
-    Address: #{addressCWI info}</textarea>
-    <br>
-    Notes: #{notesCWI info} </textarea>
-    <br>
-    #Participants: #{show $ length $ participants info}
+    <br> Activity: #{show $ typeCWI info}
+    <br> Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}
+    <br> When: #{showTime $ timeCWI info}
+    <br> Address: #{addressCWI info}
+    <br> Notes: #{notesCWI info}
+    <br> #Participants: #{show $ length $ participants info}
     <br>
     <a>
       $forall user <- take 3 (participants info)

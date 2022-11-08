@@ -15,6 +15,9 @@ spec :: Spec
 spec = pactWebServerSpec . describe "ProfileR" $ do
   testRequiresLogin "ProfileR ProfilePageR" $ ProfileR ProfilePageR
   testRequiresLogin "ProfileR ListCoachesR" $ ProfileR ListCoachesR
+  testRequiresLogin "ProfileR ListCurrentCoachesR" $ ProfileR ListCurrentCoachesR
+  testRequiresLogin "ProfileR ListCurrentCustomersR" $ ProfileR ListCurrentCustomersR
+  testRequiresLogin "ProfileR ListCurrentFriendsR" $ ProfileR ListCurrentFriendsR
   describe "ConnectCoachR" $ do
     it "POST creates the correct connection request" $ \yc -> do
       forAllValid $ \testCoach -> forAllValid $ \user -> runYesodClientM yc $ do

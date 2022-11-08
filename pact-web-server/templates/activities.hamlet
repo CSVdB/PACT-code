@@ -21,9 +21,9 @@ $maybe _ <- mCoach
       <br>
       When: #{show $ timeCWI info}
       <br>
-      Address: <textarea>#{addressCWI info}</textarea>
+      Address: #{addressCWI info}</textarea>
       <br>
-      Notes: <textarea>#{notesCWI info} </textarea>
+      Notes: #{notesCWI info} </textarea>
       <br>
       #Participants: #{show $ length $ participants info}
       <br>
@@ -37,7 +37,7 @@ $maybe _ <- mCoach
 
 <h2 .text-xs-center>My coaches' events
 $forall info <- myCoachesWorkoutInfos
-  <button .Gutton .text-xs-left .no-click>
+  <div .Gutton .text-xs-left>
     ^{showPic $ coachCWI info}
     Coach: #{userName $ coachCWI info}
     <br>
@@ -47,9 +47,9 @@ $forall info <- myCoachesWorkoutInfos
     <br>
     When: #{show $ timeCWI info}
     <br>
-    Address: <textarea>#{addressCWI info}</textarea>
+    Address: #{addressCWI info}</textarea>
     <br>
-    Notes: <textarea>#{notesCWI info} </textarea>
+    Notes: #{notesCWI info} </textarea>
     <br>
     #Participants: #{show $ length $ participants info}
     <br>
@@ -57,9 +57,13 @@ $forall info <- myCoachesWorkoutInfos
       $forall user <- take 3 (participants info)
         ^{showPic' 75 user}
     <br>
-    <a .btn .click
-      href=@{ActivitiesR $ JoinCoachWorkoutR $ uuidCWI info}>
-      Join
+    <form
+      enctype="multipart-form-data"
+      method="post"
+      action=@{ActivitiesR $ JoinCoachWorkoutR $ uuidCWI info}>
+      <input .btn .click
+        type="submit"
+        value="Join">
     <br>
     <a .btn .click
       href=@{ActivitiesR $ ListParticipantsCoachWorkoutR $ uuidCWI info}>
@@ -67,7 +71,7 @@ $forall info <- myCoachesWorkoutInfos
 
 <h2 .text-xs-center>My events
 $forall (status, info) <- myPlannedWorkouts
-  <button .Gutton .text-xs-left .no-click>
+  <div .Gutton .text-xs-left>
     ^{showPic $ coachCWI info}
     Coach: #{userName $ coachCWI info}
     <br>
@@ -77,9 +81,9 @@ $forall (status, info) <- myPlannedWorkouts
     <br>
     When: #{showTime $ timeCWI info}
     <br>
-    Address: <textarea>#{addressCWI info}</textarea>
+    Address: #{addressCWI info}</textarea>
     <br>
-    Notes: <textarea>#{notesCWI info} </textarea>
+    Notes: #{notesCWI info} </textarea>
     <br>
     #Participants: #{show $ length $ participants info}
     <br>
@@ -88,9 +92,13 @@ $forall (status, info) <- myPlannedWorkouts
         ^{showPic' 75 user}
     <br>
     $if status == WillCome
-      <a .btn .click
-        href=@{ActivitiesR $ UpdateCoachWorkoutJoinR (uuidCWI info) Cancelled}>
-        Cancel
+      <form
+        enctype="multipart-form-data"
+        method="post"
+        action=@{ActivitiesR $ UpdateCoachWorkoutJoinR (uuidCWI info) Cancelled}>
+        <input .btn .click
+          type="submit"
+          value="Cancel">
     $else
       (#{show status})
     <a .btn .click

@@ -20,12 +20,32 @@ Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-i
 
 # To do
 
-November:
+## November
+
+Nick:
+- Fix JoinWorkout bug
 - Fix showing friends on profile page: Show max 3 friends, and a button to see
   all, that goes to a separate page.
 - Make sure CoachWorkout confirmations (i.e. "did you actually go") show up, and
   show up for the coach instead of the user
   * They seem to show up too late. Might be a timezone issue?
+- Ask Kai: Could you help us implement the website for a couple grand?
+
+Paul:
+- List all atoms & molecules from the website
+- Set up storeboard: Pencil and paper, can be very ugly but should have all the
+  web pages and how they connect
+- Implement the atoms & molecules in HTML & CSS
+
+Sander:
+- Design all atoms & molecules from the website
+
+## December
+
+Nick:
+- Integrate new atoms & molecules into website
+- Set up Selenium tests
+  * Include clicking the "JoinWorkout" button
 
 ## Later
 

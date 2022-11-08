@@ -472,6 +472,7 @@ p {
     font-size: 80%;
     transition: transform .2s;
     overflow: hidden;
+    display: inline-block;
 }
 
 .Gutton img {

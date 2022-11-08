@@ -62,7 +62,7 @@ $if not $ null workoutsToConfirm
 <br>
 
 $forall Workout {..} <- workouts
-  <button .Gutton .no-click>
+  <div .Gutton>
     ^{showPic organizerW}
 
     $maybe image <- imageW

@@ -2,7 +2,7 @@
 
 ^{token}
 
-<button .Gutton .text-xs-left .no-click>
+<div .Gutton .text-xs-left>
   ^{showPic $ coachCWI info}
   Coach: #{userName $ coachCWI info}
   <br>
@@ -20,7 +20,7 @@
 <br>
 
 $forall user <- participants info
-  <button .Gutton .no-click>
+  <div .Gutton>
     #{userName user}
     ^{showPic' 75 user}
   <br>

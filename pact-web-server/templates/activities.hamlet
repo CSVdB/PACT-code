@@ -14,7 +14,7 @@ $maybe _ <- mCoach
     <h2 .text-xs-center>My organized events
 
   $forall info <- coachWorkoutInfos
-    <button .Gutton .text-xs-left .no-click>
+    <div .Gutton .text-xs-left>
       Activity: #{show $ typeCWI info}
       <br>
       Amount: #{showWorkoutAmount (typeCWI info) $ amountCWI info}

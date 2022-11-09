@@ -48,8 +48,9 @@ getProfilePage editProfile = do
   today <- liftIO getCurrentDay
   let (year, month, _) = toGregorian today
       firstOfTheMonth = fromGregorian year month 1
-      thisMonth = (firstOfTheMonth, today)
-  coins <- runDB $ countCoins (userUuid user) thisMonth
+      beginningOfTime = fromGregorian 2022 1 1
+  coinsThisMonth <- runDB $ countCoins (userUuid user) (firstOfTheMonth, today)
+  coinsTotal <- runDB $ countCoins (userUuid user) (beginningOfTime, today)
   defaultLayout $ do
     setTitle "Profile"
     $(widgetFile "profile")

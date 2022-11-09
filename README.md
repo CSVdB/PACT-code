@@ -63,15 +63,11 @@ Nick:
 - Add comments on other people's posts
 - Ask people after they did a CoachWorkout, what they think thought of the
   workout
-
-MVP (with customers):
 - Speed up the tests
 - Allow to cut out a circle out of each picture, to be used instead
   * Then finalize MVP design with Sander
 - Private profile
   * How much sports did you do? In total, this month..
-  * Create a separate page to list your friends and one for coaches
-  * Current friends shouldn't be in "add friends" page. Same for coaches.
 - Public profile
   * Private profile minus any editing rights
   * Add button for friendship request & show status of friendship request

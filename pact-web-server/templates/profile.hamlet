@@ -10,7 +10,8 @@ $if not $ isJust mCoach
 $else
   <h1>Profile coach #{userName user}
 
-#{show $ unCoins coins} coins earned so far this month!
+#{show $ unCoins coinsThisMonth} coins earned so far this month,
+#{show $ unCoins coinsTotal} coins earned in total!
 
 ^{token}
 

@@ -13,6 +13,8 @@ $else
 #{show $ unCoins coinsThisMonth} coins earned so far this month,
 #{show $ unCoins coinsTotal} coins earned in total!
 
+<br>
+
 ^{token}
 
 $if editProfile == UserEdit

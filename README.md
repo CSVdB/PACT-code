@@ -35,7 +35,7 @@ Sander:
 
 Nick:
 - Ask Kai: Could you help us implement the website for a couple grand?
-- Integrate new atoms & molecules into website
+- Integrate atoms & first molecule into website
 - Set up Selenium tests
   * Include clicking the "JoinWorkout" button
 - Make sure CoachWorkout confirmations (i.e. "did you actually go") show up, and
@@ -44,6 +44,11 @@ Nick:
 
 Paul:
 - Implement the other molecules in HTML & CSS
+
+## January
+
+Nick:
+- Integrate the remaining molecules in the website
 
 ## Later
 
@@ -58,13 +63,6 @@ Paul:
 - Add comments on other people's posts
 - Ask people after they did a CoachWorkout, what they think thought of the
   workout
-
-Design: (Paul)
-https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-id=0%3A1&fbclid=IwAR3cTgTz2rM6j_sjW7vdmkyfTK-jQ4bOxJCDW62zN_GSXw-W7z1-iFNPRdY
-- Fix Newsfeed boxes
-- Profile page: Split up in clear sections, and turn each section into a nice
-  "button"
-- Form submission for workouts
 
 MVP (with customers):
 - Speed up the tests

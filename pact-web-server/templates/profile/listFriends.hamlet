@@ -8,11 +8,11 @@ $forall notFriend <- notProposedUsers
       <button type="submit" .Gutton>
         ^{showPic notFriend}
         #{userName notFriend}
-        About me: #{userAboutMe notFriend}
+        <br> About me: #{userAboutMe notFriend}
 
 $forall FriendRequestInfo friend _ response <- relations
   <div .Gutton>
     ^{showPic friend}
     #{userName friend}
-    About me: #{userAboutMe friend}
+    <br> About me: #{userAboutMe friend}
     (#{prettyPrintFriendRequestResponse response})

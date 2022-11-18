@@ -49,9 +49,18 @@ Paul:
 
 Nick:
 - Integrate the remaining molecules in the website
+- Replace "amount" by "duration" in CoachWorkout, remove past CoachWorkouts, and
+  title with difficulty level (beginner-intermediary-expert-`all_levels`)
 
 ## Later
 
+- Private profile
+  * How much sports did you do? In total, this month..
+- Public profile
+  * Private profile minus any editing rights
+  * Add button for friendship request & show status of friendship request
+  * ListParticipants page links to everyone's public profile, including the
+    coach
 - "Like" button for UserWorkouts
   * You can see you liked something already, and cancel your like
   * You can see how many people liked your post
@@ -61,23 +70,16 @@ Nick:
   * Likes are called "giving imPACT"
   * When you receive a like, you get PACT coins
 - Add comments on other people's posts
-- Ask people after they did a CoachWorkout, what they think thought of the
-  workout
 - Speed up the tests
 - Allow to cut out a circle out of each picture, to be used instead
   * Then finalize MVP design with Sander
-- Private profile
-  * How much sports did you do? In total, this month..
-- Public profile
-  * Private profile minus any editing rights
-  * Add button for friendship request & show status of friendship request
-  * ListParticipants page links to everyone's public profile, including the
-    coach
 - Make it possible to stop being a coach, unfriend, unfollow..
-- Put coming up coach organized workouts at the top of the newsfeed?
 - Replace dropdowns by a separate page with icons
-- Replace "amount" by "duration" in CoachWorkout, remove past CoachWorkouts, and
-  title with difficulty level (beginner-intermediary-expert-`all_levels`)
+
+Maybe:
+- Ask people after they did a CoachWorkout, what they think thought of the
+  workout
+- Put coming up coach organized workouts at the top of the newsfeed?
 
 Notes:
 - Differences with Strava:

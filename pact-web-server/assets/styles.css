@@ -47,6 +47,13 @@ template {
     display: none
 }
 
+* {
+    padding: 0;
+    margin: 0;
+    font-size: 10px;
+    font-family: 'Montserrat', sans-serif;
+}
+
 a {
     background-color: transparent;
     text-decoration-line: none;
@@ -514,4 +521,156 @@ p {
     font-weight: lighter;
     overflow: hidden;
     resize: none;
+}
+
+.box-one {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 60px;
+    padding: 40px;
+    height: 400px;
+    width: 800px;
+    border-radius: 20px;
+    background: linear-gradient(95.91deg, rgba(255, 255, 255, 0.91) -39.37%, rgba(255, 255, 255, 0) 118.9%), linear-gradient(251.59deg, #FFFFFF -6.73%, rgba(255, 255, 255, 0) 45.8%);
+    border: 1.5px solid;
+    border-image-source: linear-gradient(251.59deg, #FFFFFF -6.73%, rgba(255, 255, 255, 0) 45.8%);
+    box-shadow: 0px 4px 15px 0px #12325326;
+}
+
+.profile-img {
+    max-height: 100px;
+    min-height: 100px;
+    max-width: 100px;
+    min-width: 100px;
+    border-radius: 50px;
+    box-shadow: 0px 4.109679222106934px 15.411297798156738px 0px #12325326;
+}
+
+article .profile-img {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+
+.activity-img {
+    position: absolute;
+    height: 0px;
+    width: 0px;
+    left: 50px;
+    top: 40px;
+}
+
+.activitypic {
+    max-height: 320px;
+    min-height: 320px;
+    max-width: 280px;
+    min-width: 280px;
+    border-radius: 20px;
+    box-shadow: 0px 4px 15px 0px #12325326;
+}
+
+.header-workout {
+    list-style: none;
+    display: flex;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #13305B4A;
+    ;
+}
+
+.date {
+    font-family: Montserrat;
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: center;
+}
+
+.description {
+    position: absolute;
+    padding: 1%;
+    background: #f7f2f2;
+    max-height: 100px;
+    min-height: 100px;
+    max-width: 400px;
+    min-width: 400px;
+    bottom: 40px;
+    right: 50px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px 0px #12325326;
+}
+
+.description_details {
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: bold;
+    font-weight: 900;
+    line-height: 23px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #3F3F3F;
+}
+
+.activity {
+    position: absolute;
+    max-height: 200px;
+    min-height: 200px;
+    max-width: 400px;
+    min-width: 400px;
+    top: 40px;
+    right: 50px;
+}
+
+.name {
+    height: 29px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 29px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #123253;
+}
+
+.activity_description {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #123253;
+}
+
+.activity_details {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: 0em;
+    text-align: left;
+}
+
+.join {
+    position: absolute;
+    right: 320px;
+    bottom: 150px;
+    max-height: 35px;
+    min-height: 35px;
+    max-width: 130px;
+    min-width: 130px;
+    border-radius: 50px;
+    background: linear-gradient(0deg, rgba(30, 132, 235, 0.34), rgba(30, 132, 235, 0.34)), linear-gradient(253.84deg, #FFFFFF -13.96%, rgba(255, 255, 255, 0) 61.23%);
+    border: 1px solid;
+    border-image-source: linear-gradient(253.84deg, #FFFFFF -13.96%, rgba(255, 255, 255, 0) 61.23%);
+}
+
+.join_txt {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
+    border-radius: nullpx;
+    color: #FFFFFF;
 }

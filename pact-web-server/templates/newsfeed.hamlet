@@ -62,23 +62,33 @@ $if not $ null workoutsToConfirm
 <br>
 
 $forall Workout {..} <- workouts
-  <div .Gutton>
-    ^{showPic organizerW}
+  <article .newsfeed_workout_coach>
+    <div .box-one>
+      <header>
+        <ul .header-workout>
+          <li>
+            <span .date>#{showDay dayW}
+      <div .activity-img>
+        $maybe image <- imageW
+          <img .activitypic src=@{ImageR image}>
 
-    $maybe image <- imageW
-      <img style="float: right" src=@{ImageR image}>
+      <div .profile-img>
+        ^{showPic organizerW}
 
-    <div .centeredText>
-      User: #{userName organizerW}
-      <br>
-      Activity: #{show workoutTypeW}
-      <br>
-      Amount: #{showWorkoutAmount workoutTypeW workoutAmountW}
-      <br>
-      Day: #{showDay dayW}
-      $if not (isEmptyTextarea descriptionW)
+      <p .activity>
+        <span .name>User: #{userName organizerW}
         <br>
-        #{descriptionW}
-      $if coachOrganized == CoachOrganized
         <br>
-        (Coach organized)
+        <span .activity_details>Activity: #{show workoutTypeW}
+        <br>
+        <br>
+        $if not (isEmptyTextarea descriptionW)
+          <span .activity_description>#{descriptionW}
+          <br>
+          <br>
+        <span .activity_details>
+          Amount: #{showWorkoutAmount workoutTypeW workoutAmountW}
+          <br>
+          <br>
+        $if coachOrganized == CoachOrganized
+          <span .activity_details>(Coach organized)

@@ -54,6 +54,7 @@ Nick:
 
 ## Later
 
+- Show users joining coach workouts on Newsfeed
 - Private profile
   * How much sports did you do? In total, this month..
 - Public profile

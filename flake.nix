@@ -2,7 +2,7 @@
   description = "PACT-code";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     gitignore-hercules-src = {
       url = "github:hercules-ci/gitignore.nix";
@@ -44,7 +44,10 @@
       flake = false;
     };
 
-    flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
+    flake-compat-ci = {
+      url = "github:hercules-ci/flake-compat-ci";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     flake-compat = {
       url = "github:edolstra/flake-compat";

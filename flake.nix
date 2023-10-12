@@ -45,25 +45,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
-
-    # Doesn't depend on nixpkgs
-    flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
-
-    # Doesn't depend on nixpkgs
-    # TODO van syd: dit hebt ge _waarschijnlijk_ niemeer nodig nu dat ge een
-    # flake gebruikt en geen nix-build meer. YMMV
-    flake-compat.url = "github:edolstra/flake-compat";
   };
 
-  outputs = { self, nixpkgs, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload, flake-compat-ci, flake-compat }@inputs:
+  outputs = { self, nixpkgs, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }@inputs:
     let
       # Generate a user-friendly version number.
       version = builtins.substring 0 8 self.lastModifiedDate;
 
       # System types to support.
       supportedSystems = [ "x86_64-linux" ];
-      # TODO van syd: alsge toch maar één system support gebruikt ge beter geen
-      # forAllSystems denkik. da's dan simpeler
 
       # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
       forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
@@ -71,28 +61,15 @@
       # Nixpkgs instantiated for supported system types.
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlays.default ]; });
 
-      # The GHC compiler version to use, from haskell.packages.<compiler>
-      # TODO van syd: Ik gebruik liever 'haskellPackages' direct ipv zelf een compiler te kiezen.
-      compiler = "ghc902";
-
-      ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
-        flake = self;
-        systems = [ "x86_64-linux" ];
-      };
-
-      linters = forAllSystems (system:
-        let
-          pkgs = nixpkgsFor."${system}";
-        in
-        {
-          haskell = import ./nix/linters.nix { inherit pkgs; };
-        });
+      linters = forAllSystems (system: {
+        haskell = import ./nix/linters.nix { pkgs = nixpkgsFor.${system}; };
+      });
 
     in
     {
       overlays.default = final: prev:
         {
-          haskellPackages = prev.haskellPackages // {
+          haskellPackages = prev.haskell.packages.ghc902 // {
             inherit (self.packages.x86_64-linux)
               yesod-autoreload
               pact-web-server
@@ -107,12 +84,18 @@
             overlays =
               [
                 (final: prev: {
-                  haskellPackages = final.haskell.packages.${compiler}.override {
-                    overrides = hself: hsuper: {
-                      yesod-autoreload = (hself.callCabal2nix "yesod-autoreload" yesod-autoreload { });
-                      pact-web-server = (hself.callCabal2nix "pact-web-server" ./pact-web-server { });
-                      pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
-                    };
+                  haskellPackages = final.haskell.packages.ghc902.override {
+                    overrides = hself: hsuper:
+                    let
+                      pactPackages = {
+                        yesod-autoreload = hself.callCabal2nix "yesod-autoreload" yesod-autoreload { };
+                        pact-web-server = hself.callCabal2nix "pact-web-server" ./pact-web-server { };
+                        pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
+                      };
+                    in 
+                    {
+                      inherit pactPackages;
+                    } // pactPackages;
                   };
                 })
 
@@ -142,22 +125,11 @@
         let
           pkgs = nixpkgsFor.${system};
 
-          # dit kan dan weg met withHoogle=true below
-          hoogle = pkgs.buildEnv {
-            name = "hoogle";
-            paths = [ (pkgs.haskellPackages.ghcWithHoogle (_: pkgs.lib.attrValues self.packages.${system})) ];
-          };
-
         in
         rec
         {
-          default = pkgs.haskell.packages.${compiler}.shellFor {
-            # packages = _: with pkgs.haskell.pkgs.${system}; [ ];
-            # TODO van syd:
-            # Hier zou ge dit moeten kunnen doen:
-            # packages = p: builtins.attrValues p.pactPackages;
-            packages = _: with self.packages.${system}; [ ];
-            # Dan kuntge voor hoogle:
+          default = pkgs.haskellPackages.shellFor {
+            packages = p: builtins.attrValues p.pactPackages;
             withHoogle = true;
             doBenchmark = true; # Ook benchmark suites bouwen
             buildInputs = with pkgs; [
@@ -170,7 +142,6 @@
               haskellPackages.autoexporter
               zlib
             ];
-            COMPILER = compiler;
           };
         });
 
@@ -233,13 +204,6 @@
                     forceSSL = true;
                     locations."/" = {
                       proxyPass = "http://localhost:${builtins.toString port}";
-                      # TODO van syd: do you use websockets?
-                      # Zonee: wegdoen
-                      # To make the websockets api work
-                      proxyWebsockets = true;
-                      # TODO van syd: do you have big uploads?
-                      # Zonee: wegdoen
-                      # Just to make sure we don't run into 413 errors on big syncs
                       extraConfig = ''
                         client_max_body_size 0;
                       '';
@@ -267,7 +231,7 @@
                     ''
                       ${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
                     '';
-                  PrivateTmp = true; # Da's lelek :p warrant een comment.
+                  # PrivateTmp = true; # This is probably not necessary.
                   Restart = "always";
                 };
               };

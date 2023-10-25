@@ -168,25 +168,25 @@
             enable = lib.mkEnableOption "Enable PACT server";
             package = lib.mkOption {
               default = pkgs.pact-web-server;
-              defaultText = "pkgs.pact-web-server";
-              type = lib.types.package;
+              # defaultText = "pkgs.pact-web-server";
+              # type = lib.types.package;
               description = "PACT web server package to use";
             };
             port = lib.mkOption {
               default = 8080;
-              defaultText = "8080";
-              type = lib.types.port;
+              # defaultText = "8080";
+              # type = lib.types.port;
               description = "Port to run on";
             };
             artifacts_dir = lib.mkOption {
               default = "./";
-              defaultText = "./";
-              type = lib.types.path;
+              # defaultText = "./";
+              # type = lib.types.path;
               description = "path where the SQLite dB and session key file are stored";
             };
             hosts = lib.mkOption {
-              type = lib.types.listOf lib.types.str;
-              example = [ "pactcommunity.be" ];
+              # type = lib.types.listOf lib.types.str;
+              # example = [ "pactcommunity.be" ];
               default = [ ];
               description = "The host to serve web requests on";
             };
@@ -195,25 +195,20 @@
             let
               cfg = config.services.pact-web-server;
 
-              mergeListRecursively = pkgs.callPackage ./nix/merge-lists-recursively.nix { };
-
               web-server-host = with cfg; {
                 "${builtins.head hosts}" =
                   {
                     enableACME = true;
                     forceSSL = true;
                     locations."/".proxyPass = "http://localhost:${builtins.toString port}";
-                    serverAliases = tail hosts;
+                    serverAliases = builtins.tail hosts;
                   };
               };
             in
             lib.mkIf cfg.enable {
               nixpkgs.overlays = [ self.overlays.default ];
 
-              services.nginx.virtualHosts =
-                mergeListRecursively [
-                  web-server-host
-                ];
+              services.nginx.virtualHosts = web-server-host;
 
               # Only open this port if you don't use a reverse proxy in the deployment.
               # networking.firewall.allowedTCPPorts = [ cfg.port ];

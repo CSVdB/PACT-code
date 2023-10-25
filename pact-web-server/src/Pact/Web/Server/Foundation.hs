@@ -47,6 +47,7 @@ data App = App
 mkYesodData "App" $(makeRelativeToProject "routes.txt" >>= parseRoutesFile)
 
 instance Yesod App where
+  approot = ApprootRelative
   defaultLayout widget = do
     app <- getYesod
     messages <- getMessages

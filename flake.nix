@@ -84,6 +84,9 @@
             overlays =
               [
                 (final: prev: {
+                  # We want to build the pact-web-server both as library (into haskellPackages) and as the executable. The executable doesn't need all the libraries and ghc itself to be available, only its output. This is what the next line does.
+                  pact-web-server = final.haskell.lib.justStaticExecutables final.haskellPackages.pact-web-server;
+
                   haskellPackages = final.haskell.packages.ghc902.override {
                     overrides = hself: hsuper:
                     let
@@ -113,12 +116,9 @@
           };
           haskellPackages = pkgs.haskellPackages;
 
-        in
-        rec {
-          default = pact-web-server;
-          inherit (haskellPackages)
-            pact-web-server
-            pact-db;
+        in {
+          default = pkgs.pact-web-server;
+          inherit (pkgs) pact-web-server;
         });
 
       devShells = forAllSystems (system:
@@ -167,8 +167,8 @@
           options.services.pact-web-server = {
             enable = lib.mkEnableOption "Enable PACT server";
             package = lib.mkOption {
-              default = pkgs.haskellPackages.pact-web-server;
-              defaultText = "pkgs.haskellPackages.pact-web-server";
+              default = pkgs.pact-web-server;
+              defaultText = "pkgs.pact-web-server";
               type = lib.types.package;
               description = "PACT web server package to use";
             };

@@ -198,7 +198,7 @@
               mergeListRecursively = pkgs.callPackage ./nix/merge-lists-recursively.nix { };
 
               web-server-host = with cfg; {
-                "${head hosts}" =
+                "${builtins.head hosts}" =
                   {
                     enableACME = true;
                     forceSSL = true;
@@ -215,7 +215,8 @@
                   web-server-host
                 ];
 
-              networking.firewall.allowedTCPPorts = [ cfg.port ];
+              # Only open this port if you don't use a reverse proxy in the deployment.
+              # networking.firewall.allowedTCPPorts = [ cfg.port ];
 
               systemd.services.pact-web-server = {
                 description = "The PACT web server service";

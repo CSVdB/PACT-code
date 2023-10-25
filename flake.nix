@@ -185,8 +185,8 @@
               description = "path where the SQLite dB and session key file are stored";
             };
             hosts = lib.mkOption {
-              type = lib.types.listOf (lib.types.str);
-              example = "pactcommunity.be";
+              type = lib.types.listOf lib.types.str;
+              example = [ "pactcommunity.be" ];
               default = [ ];
               description = "The host to serve web requests on";
             };
@@ -202,12 +202,7 @@
                   {
                     enableACME = true;
                     forceSSL = true;
-                    locations."/" = {
-                      proxyPass = "http://localhost:${builtins.toString port}";
-                      extraConfig = ''
-                        client_max_body_size 0;
-                      '';
-                    };
+                    locations."/".proxyPass = "http://localhost:${builtins.toString port}";
                     serverAliases = tail hosts;
                   };
               };

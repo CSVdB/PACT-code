@@ -6,4 +6,4 @@ where
 import Oura.TestImport
 
 spec :: Spec
-spec = undefined
+spec = pure ()

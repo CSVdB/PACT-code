@@ -1,7 +1,7 @@
 module Oura where
 
-import Servant.API
 import Data.Time.Calendar (Day)
+import Servant.API
 
 -- TODO:
 -- - Implement ActivityData, SleepData and ReadinessData: Day & Score
@@ -12,11 +12,11 @@ import Data.Time.Calendar (Day)
 
 type OuraAccessToken = Text
 
-type ActivityData
+type ActivityData = Text
 
-type SleepData
+type SleepData = Text
 
-type ReadinessData
+type ReadinessData = Text
 
 type OuraAPI = "v2" :> "usercollection" :> (ActivityEndpoint :<|> SleepEndpoint :<|> ReadinessEndpoint)
 

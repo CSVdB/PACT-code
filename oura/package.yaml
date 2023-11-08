@@ -13,13 +13,21 @@ library:
   source-dirs: src
   build-tools: autoexporter
   dependencies:
+  - aeson
+  - containers
+  - http-client
+  - http-client-tls
   - servant
+  - servant-client
+  - text
+  - time
+  - vector
   ghc-options:
   - -Wall
   - -Werror
 
 executables:
-  pact-web-server:
+  oura:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -29,7 +37,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - pact-web-server
+    - oura
 
 tests:
   oura-test:
@@ -42,4 +50,5 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-      # dependencies:
+    dependencies:
+    - sydtest

@@ -1,5 +1,6 @@
-{ mkDerivation, autoexporter, base, lib, pact-web-server, servant
-, sydtest-discover
+{ mkDerivation, aeson, autoexporter, base, containers, http-client
+, http-client-tls, lib, servant, servant-client, sydtest
+, sydtest-discover, text, time, vector
 }:
 mkDerivation {
   pname = "oura";
@@ -7,13 +8,16 @@ mkDerivation {
   src = ./.;
   isLibrary = true;
   isExecutable = true;
-  libraryHaskellDepends = [ base servant ];
+  libraryHaskellDepends = [
+    aeson base containers http-client http-client-tls servant
+    servant-client text time vector
+  ];
   libraryToolDepends = [ autoexporter ];
-  executableHaskellDepends = [ base pact-web-server ];
-  testHaskellDepends = [ base ];
+  executableHaskellDepends = [ base ];
+  testHaskellDepends = [ base sydtest ];
   testToolDepends = [ sydtest-discover ];
   homepage = "https://github.com/CSVdB/pact-code#readme";
   license = lib.licenses.unfree;
   hydraPlatforms = lib.platforms.none;
-  mainProgram = "pact-web-server";
+  mainProgram = "oura";
 }

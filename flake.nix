@@ -45,11 +45,11 @@
   outputs = { self, nixpkgs, pre-commit-hooks, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }:
     let
       system = "x86_64-linux";
+
       overlay = final: prev: {
         # We want to build the pact-web-server both as library (into haskellPackages) and as the executable. The executable doesn't need all the libraries and ghc itself to be available, only its output. This is what the next line does.
-        # oura = final.haskell.lib.justStaticExecutables final.haskellPackages.oura;
+        oura = final.haskell.lib.justStaticExecutables final.haskellPackages.oura;
         pact-web-server = final.haskell.lib.justStaticExecutables final.haskellPackages.pact-web-server;
-
         haskellPackages = prev.haskellPackages.override (old: {
           overrides = final.lib.composeExtensions (old.overrides or (_: _: { }))
             (self: _:
@@ -59,7 +59,7 @@
                   # packages through the `callCabal2nix` in the
                   # pre-commit-hooks.
                   yesod-autoreload = self.callPackage yesod-autoreload { };
-                  # oura = self.callPackage ./oura { };
+                  oura = self.callPackage ./oura { };
                   pact-web-server = self.callPackage ./pact-web-server { };
                   pact-db = self.callPackage ./pact-db { };
                 };
@@ -92,7 +92,7 @@
     {
       packages.${system} = {
         default = pkgs.pact-web-server;
-        inherit (pkgs) pact-web-server; # oura
+        inherit (pkgs) pact-web-server oura;
       };
 
       devShells.${system} =
@@ -129,7 +129,7 @@
               nixpkgs-fmt.enable = true;
               nixpkgs-fmt.excludes = [ ".*/default.nix" ];
               deadnix.enable = true;
-              cabal2nix.enable = true;
+              cabal2nix.enable = true; # Generate default.nix for your packages, to avoid IFD
             };
           };
         };
@@ -140,25 +140,17 @@
             enable = lib.mkEnableOption "Enable PACT server";
             package = lib.mkOption {
               default = pkgs.pact-web-server;
-              # defaultText = "pkgs.pact-web-server";
-              # type = lib.types.package;
               description = "PACT web server package to use";
             };
             port = lib.mkOption {
               default = 8080;
-              # defaultText = "8080";
-              # type = lib.types.port;
               description = "Port to run on";
             };
             artifacts_dir = lib.mkOption {
               default = "./";
-              # defaultText = "./";
-              # type = lib.types.path;
               description = "path where the SQLite dB and session key file are stored";
             };
             hosts = lib.mkOption {
-              # type = lib.types.listOf lib.types.str;
-              # example = [ "pactcommunity.be" ];
               default = [ ];
               description = "The host to serve web requests on";
             };
@@ -192,12 +184,10 @@
                     ''
                       ${pkgs.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
                     '';
-                  # PrivateTmp = true; # This is probably not necessary.
                   Restart = "always";
                 };
               };
             };
         };
-
     };
 }

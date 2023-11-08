@@ -1,5 +1,6 @@
 resolver: lts-19.6
 packages:
+- oura
 - pact-db
 - pact-web-server
 

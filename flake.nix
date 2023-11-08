@@ -85,6 +85,7 @@
               [
                 (final: prev: {
                   # We want to build the pact-web-server both as library (into haskellPackages) and as the executable. The executable doesn't need all the libraries and ghc itself to be available, only its output. This is what the next line does.
+                  # oura = final.haskell.lib.justStaticExecutables final.haskellPackages.oura;
                   pact-web-server = final.haskell.lib.justStaticExecutables final.haskellPackages.pact-web-server;
 
                   haskellPackages = final.haskell.packages.ghc902.override {
@@ -92,6 +93,7 @@
                     let
                       pactPackages = {
                         yesod-autoreload = hself.callCabal2nix "yesod-autoreload" yesod-autoreload { };
+                        # oura = hself.callCabal2nix "oura" ./oura { };
                         pact-web-server = hself.callCabal2nix "pact-web-server" ./pact-web-server { };
                         pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
                       };
@@ -118,7 +120,7 @@
 
         in {
           default = pkgs.pact-web-server;
-          inherit (pkgs) pact-web-server;
+          inherit (pkgs) pact-web-server; # oura
         });
 
       devShells = forAllSystems (system:
@@ -129,7 +131,10 @@
         rec
         {
           default = pkgs.haskellPackages.shellFor {
-            packages = p: builtins.attrValues p.pactPackages;
+            packages = _: [
+              self.packages.${system}.pact-web-server
+              # self.packages.${system}.oura
+            ];
             withHoogle = true;
             doBenchmark = true; # Ook benchmark suites bouwen
             buildInputs = with pkgs; [
@@ -138,7 +143,7 @@
               haskellPackages.hpc
               nixpkgs-fmt # Deze wilt ge liever uit uw pre-commit-hooks halen alsge die gebruikt
               shellcheck
-              hoogle
+              haskellPackages.hoogle
               haskellPackages.autoexporter
               zlib
             ];

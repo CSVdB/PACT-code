@@ -1,0 +1,45 @@
+name:                oura
+version:             0.0.0.0
+github:              "CSVdB/pact-code"
+license:             AllRightsReserved
+author:              "Nick Van den Broeck"
+maintainer:          "vandenbroeck@cs-vdb.com"
+copyright:           "Copyright (c) 2023 PACT"
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  build-tools: autoexporter
+  dependencies:
+  - servant
+  ghc-options:
+  - -Wall
+  - -Werror
+
+executables:
+  pact-web-server:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -Wall
+    - -Werror
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - pact-web-server
+
+tests:
+  oura-test:
+    main: Spec.hs
+    source-dirs: test
+    build-tools: sydtest-discover
+    ghc-options:
+    - -Wall
+    - -Werror
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+      # dependencies:

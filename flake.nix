@@ -55,11 +55,13 @@
             (self: _:
               let
                 pactPackages = {
-                  # TODO get rid of IFD
-                  yesod-autoreload = self.callCabal2nix "yesod-autoreload" yesod-autoreload { };
-                  # oura = self.callCabal2nix "oura" ./oura { };
-                  pact-web-server = self.callCabal2nix "pact-web-server" ./pact-web-server { };
-                  pact-db = self.callCabal2nix "pact-db" ./pact-db { };
+                  # callPackage uses default.nix, which is derived from the
+                  # packages through the `callCabal2nix` in the
+                  # pre-commit-hooks.
+                  yesod-autoreload = self.callPackage yesod-autoreload { };
+                  # oura = self.callPackage ./oura { };
+                  pact-web-server = self.callPackage ./pact-web-server { };
+                  pact-db = self.callPackage ./pact-db { };
                 };
               in
               {
@@ -97,10 +99,8 @@
         rec
         {
           default = pkgs.haskellPackages.shellFor {
-            packages = p: [
-              p.pact-web-server
-              # p.oura
-            ];
+            # Create a shell with all the dependencies of the pactPackages, but not the pactPackages themselves.
+            packages = p: builtins.attrValues p.pactPackages;
             withHoogle = true;
             doBenchmark = true; # Ook benchmark suites bouwen
             buildInputs = (with pkgs; [
@@ -127,7 +127,9 @@
               hpack.enable = true;
               ormolu.enable = true;
               nixpkgs-fmt.enable = true;
+              nixpkgs-fmt.excludes = [ ".*/default.nix" ];
               deadnix.enable = true;
+              cabal2nix.enable = true;
             };
           };
         };

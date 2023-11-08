@@ -60,11 +60,6 @@
 
       # Nixpkgs instantiated for supported system types.
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlays.default ]; });
-
-      linters = forAllSystems (system: {
-        haskell = import ./nix/linters.nix { pkgs = nixpkgsFor.${system}; };
-      });
-
     in
     {
       overlays.default = final: prev:
@@ -138,33 +133,16 @@
             withHoogle = true;
             doBenchmark = true; # Ook benchmark suites bouwen
             buildInputs = with pkgs; [
-              ormolu
-              haskellPackages.hlint
               haskellPackages.hpc
-              nixpkgs-fmt # Deze wilt ge liever uit uw pre-commit-hooks halen alsge die gebruikt
-              shellcheck
-              haskellPackages.hoogle
               haskellPackages.autoexporter
               zlib
             ];
           };
         });
 
-      apps = forAllSystems (system:
-        let
-          pkgs = nixpkgsFor."${system}";
-        in
-        {
-          lint-haskell = {
-            type = "app";
-            program = "${linters.${system}.haskell.lintScript}/bin/lint";
-          };
-        });
-
       checks = forAllSystems (system:
         with nixpkgsFor.${system};
         lib.optionalAttrs stdenv.isLinux {
-          haskellLint = linters.${system}.haskell.lintDerivation ./.;
         });
 
       nixosModules.pact-web-server = { pkgs, lib, config, ... }:

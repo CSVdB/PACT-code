@@ -44,17 +44,10 @@
 
   outputs = { self, nixpkgs, pre-commit-hooks, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }@inputs:
     let
-      # Generate a user-friendly version number.
-      version = builtins.substring 0 8 self.lastModifiedDate;
-
-      # System types to support.
-      supportedSystems = [ "x86_64-linux" ];
-
-      # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
-      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f system);
+      system = "x86_64-linux";
 
       # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlays.default ]; });
+      pkgs = import nixpkgs { inherit system; overlays = [ self.overlays.default ]; };
     in
     {
       overlays.default = final: prev:
@@ -67,7 +60,7 @@
           };
         };
 
-      packages = forAllSystems (system:
+      packages.${system} =
         let
           pkgs = import nixpkgs {
             inherit system; config.allowUnfree = true;
@@ -112,12 +105,9 @@
         {
           default = pkgs.pact-web-server;
           inherit (pkgs) pact-web-server; # oura
-        });
+        };
 
-      devShells = forAllSystems (system:
-        let
-          pkgs = nixpkgsFor.${system};
-        in
+      devShells.${system} =
         rec
         {
           default = pkgs.haskellPackages.shellFor {
@@ -142,10 +132,10 @@
               ]);
             shellHook = self.checks.${system}.pre-commit.shellHook;
           };
-        });
+        };
 
-      checks = forAllSystems (system:
-        with nixpkgsFor.${system};
+      checks.${system} =
+        with pkgs;
         lib.optionalAttrs stdenv.isLinux {
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
@@ -156,7 +146,7 @@
               nixpkgs-fmt.enable = true;
             };
           };
-        });
+        };
 
       nixosModules.pact-web-server = { pkgs, lib, config, ... }:
         {

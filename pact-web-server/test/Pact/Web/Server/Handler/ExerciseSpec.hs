@@ -76,4 +76,5 @@ spec = pactWebServerSpec . describe "Exercise" $ do
               testCannotReach . ExerciseR . ViewR $ exerciseUuid exercise
 
   describe "ViewAllR" $
-    testRequiresLogin "ExerciseR ViewAllR" $ ExerciseR ViewAllR
+    testRequiresLogin "ExerciseR ViewAllR" $
+      ExerciseR ViewAllR

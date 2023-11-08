@@ -33,7 +33,8 @@ spec = pactWebServerSpec . describe "ProfileR" $ do
             liftIO $ customerCoachRelationCoach `shouldBe` coachUuid coach
           xs ->
             fail $
-              "Found " <> show (length xs)
+              "Found "
+                <> show (length xs)
                 <> " customer coach relations instead of 1"
     it "Trying to connect to the same coach twice gives notFound" $ \yc -> do
       forAllValid $ \testCoach -> forAllValid $ \user -> runYesodClientM yc $ do

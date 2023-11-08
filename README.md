@@ -1,5 +1,7 @@
 # PACT codebase
 
+Run `pre-commit run -a` to run the pre-commit hooks.
+
 Development:
 - `nix develop` to set up a development environment, where all necessary
   packages are available

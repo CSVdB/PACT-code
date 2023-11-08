@@ -76,9 +76,13 @@ instance GenValid AlternativeName where
 genAddExerciseFormInitial :: Gen AddExerciseForm
 genAddExerciseFormInitial =
   AddExerciseForm
-    <$> genValid <*> genValid <*> genValid <*> genValid <*> (nubOrd <$> genValid)
-      <*> (nubOrd <$> listOf genExerciseMaterialName)
-      <*> (nubOrd <$> genValid)
+    <$> genValid
+    <*> genValid
+    <*> genValid
+    <*> genValid
+    <*> (nubOrd <$> genValid)
+    <*> (nubOrd <$> listOf genExerciseMaterialName)
+    <*> (nubOrd <$> genValid)
 
 instance GenValid AddExerciseForm where
   genValid = genAddExerciseFormInitial `suchThat` isValid

@@ -93,7 +93,10 @@ showPic' maxSize user =
   where
     cssStyle :: String
     cssStyle =
-      "float: left;" <> "max-height: " <> show maxSize <> "px;"
+      "float: left;"
+        <> "max-height: "
+        <> show maxSize
+        <> "px;"
         <> "max-width: "
         <> show maxSize
         <> "px;"

@@ -1,0 +1,62 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           oura
+version:        0.0.0.0
+homepage:       https://github.com/CSVdB/pact-code#readme
+bug-reports:    https://github.com/CSVdB/pact-code/issues
+author:         Nick Van den Broeck
+maintainer:     vandenbroeck@cs-vdb.com
+copyright:      Copyright (c) 2023 PACT
+license:        AllRightsReserved
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/CSVdB/pact-code
+
+library
+  exposed-modules:
+      Oura
+  other-modules:
+      Paths_oura
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Werror
+  build-tool-depends:
+      autoexporter:autoexporter
+  build-depends:
+      base >=4.7 && <5
+    , servant
+  default-language: Haskell2010
+
+executable pact-web-server
+  main-is: Main.hs
+  other-modules:
+      Paths_oura
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , pact-web-server
+  default-language: Haskell2010
+
+test-suite oura-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Oura.SyncSpec
+      Oura.TestImport
+      Paths_oura
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Werror -threaded -rtsopts -with-rtsopts=-N
+  build-tool-depends:
+      sydtest-discover:sydtest-discover
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010

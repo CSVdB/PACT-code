@@ -4,6 +4,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
 
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+
     fast-myers-diff = {
       url = "github:NorfairKing/fast-myers-diff";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -47,7 +49,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }@inputs:
+  outputs = { self, nixpkgs, pre-commit-hooks, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }@inputs:
     let
       # Generate a user-friendly version number.
       version = builtins.substring 0 8 self.lastModifiedDate;
@@ -85,17 +87,17 @@
 
                   haskellPackages = final.haskell.packages.ghc902.override {
                     overrides = hself: hsuper:
-                    let
-                      pactPackages = {
-                        yesod-autoreload = hself.callCabal2nix "yesod-autoreload" yesod-autoreload { };
-                        # oura = hself.callCabal2nix "oura" ./oura { };
-                        pact-web-server = hself.callCabal2nix "pact-web-server" ./pact-web-server { };
-                        pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
-                      };
-                    in 
-                    {
-                      inherit pactPackages;
-                    } // pactPackages;
+                      let
+                        pactPackages = {
+                          yesod-autoreload = hself.callCabal2nix "yesod-autoreload" yesod-autoreload { };
+                          # oura = hself.callCabal2nix "oura" ./oura { };
+                          pact-web-server = hself.callCabal2nix "pact-web-server" ./pact-web-server { };
+                          pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
+                        };
+                      in
+                      {
+                        inherit pactPackages;
+                      } // pactPackages;
                   };
                 })
 
@@ -113,7 +115,8 @@
           };
           haskellPackages = pkgs.haskellPackages;
 
-        in {
+        in
+        {
           default = pkgs.pact-web-server;
           inherit (pkgs) pact-web-server; # oura
         });
@@ -121,28 +124,45 @@
       devShells = forAllSystems (system:
         let
           pkgs = nixpkgsFor.${system};
-
         in
         rec
         {
           default = pkgs.haskellPackages.shellFor {
             packages = _: [
+              # TODO: Use the argument
               self.packages.${system}.pact-web-server
               # self.packages.${system}.oura
             ];
             withHoogle = true;
             doBenchmark = true; # Ook benchmark suites bouwen
-            buildInputs = with pkgs; [
-              haskellPackages.hpc
-              haskellPackages.autoexporter
+            buildInputs = (with pkgs; [
+              haskellPackages.hpc # TODO  Try removing this
+              haskellPackages.autoexporter # TODO Try removing this
               zlib
-            ];
+            ]) ++ (with pre-commit-hooks.packages.${system};
+              [
+                hlint
+                hpack
+                nixpkgs-fmt
+                ormolu
+                cabal2nix
+              ]);
+            shellHook = self.checks.${system}.pre-commit.shellHook;
           };
         });
 
       checks = forAllSystems (system:
         with nixpkgsFor.${system};
         lib.optionalAttrs stdenv.isLinux {
+          pre-commit = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              hlint.enable = true;
+              hpack.enable = true;
+              ormolu.enable = true;
+              nixpkgs-fmt.enable = true;
+            };
+          };
         });
 
       nixosModules.pact-web-server = { pkgs, lib, config, ... }:

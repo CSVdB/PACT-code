@@ -31,7 +31,8 @@ pathPieceSpecOnGen gen genname s =
   parallel $ do
     describe ("PathPieceField " ++ name ++ " (" ++ genname ++ ")") $ do
       describe ("fromPathPiece :: Text -> Maybe " ++ name) $
-        it testDescription $ pathPieceTest gen s
+        it testDescription $
+          pathPieceTest gen s
   where
     name = nameOf @a
     testDescription =

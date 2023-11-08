@@ -61,7 +61,8 @@ addExerciseForm allMaterials =
         }
     materialsField =
       checkboxesField . pure $
-        mkOptionList $ matToOption <$> allMaterials
+        mkOptionList $
+          matToOption <$> allMaterials
     altNamesInput = altNames . fromMaybe "" <$> iopt textField "alternativeNames"
 
 postAddR :: Handler Html

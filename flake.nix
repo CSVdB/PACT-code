@@ -45,75 +45,60 @@
   outputs = { self, nixpkgs, pre-commit-hooks, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }@inputs:
     let
       system = "x86_64-linux";
+      overlay =
+        final: prev: {
+          # We want to build the pact-web-server both as library (into haskellPackages) and as the executable. The executable doesn't need all the libraries and ghc itself to be available, only its output. This is what the next line does.
+          # oura = final.haskell.lib.justStaticExecutables final.haskellPackages.oura;
+          pact-web-server = final.haskell.lib.justStaticExecutables final.haskellPackages.pact-web-server;
 
-      # Nixpkgs instantiated for supported system types.
-      pkgs = import nixpkgs { inherit system; overlays = [ self.overlays.default ]; };
+          haskellPackages = final.haskell.packages.ghc902.override {
+            overrides = hself: hsuper:
+              let
+                pactPackages = {
+                  yesod-autoreload = hself.callCabal2nix "yesod-autoreload" yesod-autoreload { };
+                  # oura = hself.callCabal2nix "oura" ./oura { };
+                  pact-web-server = hself.callCabal2nix "pact-web-server" ./pact-web-server { };
+                  pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
+                };
+              in
+              {
+                inherit pactPackages;
+              } // pactPackages;
+          };
+        };
+      pkgs = import nixpkgs {
+        inherit system; config.allowUnfree = true;
+        overlays =
+          [
+            overlay
+
+            # Syd's overlay assumes that it will be given haskellPackages
+            # overrides already in place. These nor haskellPackages can be
+            # overriden afterwards without threading Syd's changes.
+            # https://github.com/NorfairKing/sydtest/blob/5b0eee208753e3554d9b158a6e48b1760514aed0/nix/overlay.nix#L89
+            (import (fast-myers-diff + "/nix/overlay.nix"))
+            (import (sydtest + "/nix/overlay.nix"))
+            (import (validity + "/nix/overlay.nix"))
+            (import (safe-coloured-text + "/nix/overlay.nix"))
+            (import (autodocodec + "/nix/overlay.nix"))
+            (import (typed-uuid + "/nix/overlay.nix"))
+          ];
+      };
+      haskellPackages = pkgs.haskellPackages;
+
     in
     {
-      overlays.default = final: prev:
-        {
-          haskellPackages = prev.haskell.packages.ghc902 // {
-            inherit (self.packages.x86_64-linux)
-              yesod-autoreload
-              pact-web-server
-              pact-db;
-          };
-        };
-
-      packages.${system} =
-        let
-          pkgs = import nixpkgs {
-            inherit system; config.allowUnfree = true;
-            overlays =
-              [
-                (final: prev: {
-                  # We want to build the pact-web-server both as library (into haskellPackages) and as the executable. The executable doesn't need all the libraries and ghc itself to be available, only its output. This is what the next line does.
-                  # oura = final.haskell.lib.justStaticExecutables final.haskellPackages.oura;
-                  pact-web-server = final.haskell.lib.justStaticExecutables final.haskellPackages.pact-web-server;
-
-                  haskellPackages = final.haskell.packages.ghc902.override {
-                    overrides = hself: hsuper:
-                      let
-                        pactPackages = {
-                          yesod-autoreload = hself.callCabal2nix "yesod-autoreload" yesod-autoreload { };
-                          # oura = hself.callCabal2nix "oura" ./oura { };
-                          pact-web-server = hself.callCabal2nix "pact-web-server" ./pact-web-server { };
-                          pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
-                        };
-                      in
-                      {
-                        inherit pactPackages;
-                      } // pactPackages;
-                  };
-                })
-
-                # Syd's overlay assumes that it will be given haskellPackages
-                # overrides already in place. These nor haskellPackages can be
-                # overriden afterwards without threading Syd's changes.
-                # https://github.com/NorfairKing/sydtest/blob/5b0eee208753e3554d9b158a6e48b1760514aed0/nix/overlay.nix#L89
-                (import (fast-myers-diff + "/nix/overlay.nix"))
-                (import (sydtest + "/nix/overlay.nix"))
-                (import (validity + "/nix/overlay.nix"))
-                (import (safe-coloured-text + "/nix/overlay.nix"))
-                (import (autodocodec + "/nix/overlay.nix"))
-                (import (typed-uuid + "/nix/overlay.nix"))
-              ];
-          };
-          haskellPackages = pkgs.haskellPackages;
-
-        in
-        {
-          default = pkgs.pact-web-server;
-          inherit (pkgs) pact-web-server; # oura
-        };
+      packages.${system} = {
+        default = pkgs.pact-web-server;
+        inherit (pkgs) pact-web-server; # oura
+      };
 
       devShells.${system} =
         rec
         {
           default = pkgs.haskellPackages.shellFor {
-            packages = _: [
-              # TODO: Use the argument
-              self.packages.${system}.pact-web-server
+            packages = p: [
+              p.pact-web-server
               # self.packages.${system}.oura
             ];
             withHoogle = true;
@@ -192,8 +177,6 @@
               };
             in
             lib.mkIf cfg.enable {
-              nixpkgs.overlays = [ self.overlays.default ];
-
               services.nginx.virtualHosts = web-server-host;
 
               # Only open this port if you don't use a reverse proxy in the deployment.
@@ -206,7 +189,7 @@
                 serviceConfig = {
                   ExecStart =
                     ''
-                      ${pkgs.haskellPackages.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
+                      ${pkgs.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
                     '';
                   # PrivateTmp = true; # This is probably not necessary.
                   Restart = "always";

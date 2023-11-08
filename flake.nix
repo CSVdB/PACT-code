@@ -45,27 +45,29 @@
   outputs = { self, nixpkgs, pre-commit-hooks, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }:
     let
       system = "x86_64-linux";
-      overlay =
-        final: prev: {
-          # We want to build the pact-web-server both as library (into haskellPackages) and as the executable. The executable doesn't need all the libraries and ghc itself to be available, only its output. This is what the next line does.
-          # oura = final.haskell.lib.justStaticExecutables final.haskellPackages.oura;
-          pact-web-server = final.haskell.lib.justStaticExecutables final.haskellPackages.pact-web-server;
+      overlay = final: prev: {
+        # We want to build the pact-web-server both as library (into haskellPackages) and as the executable. The executable doesn't need all the libraries and ghc itself to be available, only its output. This is what the next line does.
+        # oura = final.haskell.lib.justStaticExecutables final.haskellPackages.oura;
+        pact-web-server = final.haskell.lib.justStaticExecutables final.haskellPackages.pact-web-server;
 
-          haskellPackages = final.haskell.packages.ghc902.override {
-            overrides = hself: hsuper:
+        haskellPackages = prev.haskellPackages.override (old: {
+          overrides = final.lib.composeExtensions (old.overrides or (_: _: { }))
+            (self: super:
               let
                 pactPackages = {
-                  yesod-autoreload = hself.callCabal2nix "yesod-autoreload" yesod-autoreload { };
-                  # oura = hself.callCabal2nix "oura" ./oura { };
-                  pact-web-server = hself.callCabal2nix "pact-web-server" ./pact-web-server { };
-                  pact-db = hself.callCabal2nix "pact-db" ./pact-db { };
+                  # TODO get rid of IFD
+                  yesod-autoreload = self.callCabal2nix "yesod-autoreload" yesod-autoreload { };
+                  # oura = self.callCabal2nix "oura" ./oura { };
+                  pact-web-server = self.callCabal2nix "pact-web-server" ./pact-web-server { };
+                  pact-db = self.callCabal2nix "pact-db" ./pact-db { };
                 };
               in
               {
                 inherit pactPackages;
-              } // pactPackages;
-          };
-        };
+              } // pactPackages
+            );
+        });
+      };
       pkgs = import nixpkgs {
         inherit system; config.allowUnfree = true;
         overlays =

@@ -8,43 +8,36 @@
 
     fast-myers-diff = {
       url = "github:NorfairKing/fast-myers-diff";
-      inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
 
     validity = {
       url = "github:NorfairKing/validity";
-      inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
 
     sydtest = {
       url = "github:NorfairKing/sydtest";
-      inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
 
     safe-coloured-text = {
       url = "github:NorfairKing/safe-coloured-text";
-      inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
 
     autodocodec = {
       url = "github:NorfairKing/autodocodec";
-      inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
 
     typed-uuid = {
       url = "github:NorfairKing/typed-uuid";
-      inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
 
     yesod-autoreload = {
       url = "github:NorfairKing/yesod-autoreload";
-      inputs.nixpkgs.follows = "nixpkgs";
       flake = false;
     };
   };

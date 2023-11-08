@@ -42,7 +42,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, pre-commit-hooks, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }@inputs:
+  outputs = { self, nixpkgs, pre-commit-hooks, fast-myers-diff, validity, sydtest, safe-coloured-text, autodocodec, typed-uuid, yesod-autoreload }:
     let
       system = "x86_64-linux";
       overlay =
@@ -84,8 +84,6 @@
             (import (typed-uuid + "/nix/overlay.nix"))
           ];
       };
-      haskellPackages = pkgs.haskellPackages;
-
     in
     {
       packages.${system} = {
@@ -99,13 +97,11 @@
           default = pkgs.haskellPackages.shellFor {
             packages = p: [
               p.pact-web-server
-              # self.packages.${system}.oura
+              # p.oura
             ];
             withHoogle = true;
             doBenchmark = true; # Ook benchmark suites bouwen
             buildInputs = (with pkgs; [
-              haskellPackages.hpc # TODO  Try removing this
-              haskellPackages.autoexporter # TODO Try removing this
               zlib
             ]) ++ (with pre-commit-hooks.packages.${system};
               [
@@ -129,6 +125,8 @@
               hpack.enable = true;
               ormolu.enable = true;
               nixpkgs-fmt.enable = true;
+              # TODO: Use deadnix
+              # deadnix.enable = true;
             };
           };
         };

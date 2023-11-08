@@ -57,7 +57,7 @@ extra-deps:
     - autodocodec-yaml
     - autodocodec-schema
 
+system-ghc: true
 nix:
-  enable: true
-  pure: false # Stack builds its own nix shell. This avoids that shell being
-    # pure, rather putting all the `devShell` environment in it.
+  enable: false
+with-hpack: hpack

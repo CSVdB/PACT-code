@@ -4,7 +4,10 @@ rec {
     # Lint and modify the files in place.
     HS_FILES=$(find . -type f -name '*.hs' ! -path './dist-newstyle/*')
     HPACK_FILES=$(find . -type f -name 'package.yaml' ! -path './dist-newstyle/*')
-    ${pkgs.ormolu}/bin/ormolu -m inplace $HS_FILES
+    for hs_file in $HS_FILES
+    do
+      ${pkgs.ormolu}/bin/ormolu -m inplace $hs_file
+    done
 
     for hpack_file in $HPACK_FILES
     do

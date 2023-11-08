@@ -138,7 +138,6 @@
             withHoogle = true;
             doBenchmark = true; # Ook benchmark suites bouwen
             buildInputs = with pkgs; [
-              haskellPackages.ormolu
               haskellPackages.hlint
               haskellPackages.hpc
               nixpkgs-fmt # Deze wilt ge liever uit uw pre-commit-hooks halen alsge die gebruikt

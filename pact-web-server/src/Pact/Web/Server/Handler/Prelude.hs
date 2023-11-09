@@ -43,6 +43,7 @@ import Data.Validity.Time as X ()
 import Database.Persist.Sql
 import GHC.Generics (Generic)
 import Pact.DB as X
+import Pact.DB.Oura as X
 import Pact.Data as X
 import Pact.Web.Server.Foundation as X
 import Pact.Web.Server.Static as X

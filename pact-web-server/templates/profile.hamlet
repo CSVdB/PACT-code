@@ -81,6 +81,16 @@ $maybe coach <- mCoach
       <a .click .btn
         href=@{ProfileR UpdateCoachProfileR}>Edit
 
+
+$maybe scores <- mScores
+  <br>
+  Yesterday's scores:
+  Activity:  #{dailyScoreActivity scores}
+  Sleep:     #{dailyScoreSleep scores}
+  Readiness: #{dailyScoreReadiness scores}
+  <br>
+
+
 $if not $ null customers
   <h2>Your customers
   $forall customer <- take 5 customers

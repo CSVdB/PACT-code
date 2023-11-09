@@ -40,8 +40,10 @@ collectOuraTokens = do
 insertScores :: MonadIO m => OverallScores -> SqlPersistT m ()
 insertScores = mapM_ insert_
 
-fetchYesterdaysScore :: MonadIO m => UserUUID -> SqlPersistT m (Maybe DailyScore)
-fetchYesterdaysScore userId = do
+fetchScores :: MonadIO m => UserUUID -> Day -> SqlPersistT m (Maybe DailyScore)
+fetchScores userId day = entityVal <$$> selectFirst [DailyScoreUser ==. userId, DailyScoreDay ==. day] []
+
+fetchYesterdaysScores :: MonadIO m => UserUUID -> SqlPersistT m (Maybe DailyScore)
+fetchYesterdaysScores userId = do
   today <- liftIO $ utctDay <$> getCurrentTime
-  let yesterday = addDays (-1) today
-  entityVal <$$> selectFirst [DailyScoreUser ==. userId, DailyScoreDay ==. yesterday] []
+  fetchScores userId $ addDays (-1) today

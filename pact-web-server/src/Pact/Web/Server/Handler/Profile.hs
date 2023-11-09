@@ -51,6 +51,7 @@ getProfilePage editProfile = do
       beginningOfTime = fromGregorian 2022 1 1
   coinsThisMonth <- runDB $ countCoins (userUuid user) (firstOfTheMonth, today)
   coinsTotal <- runDB $ countCoins (userUuid user) (beginningOfTime, today)
+  mScores <- runDB $ fetchYesterdaysScores $ userUuid user
   defaultLayout $ do
     setTitle "Profile"
     $(widgetFile "profile")

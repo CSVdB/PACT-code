@@ -197,6 +197,9 @@ DailyScore
   readiness Score
   day Day
   user UserUUID
+
+  UniqueScore day user
+
   deriving Show Generic
 |]
 

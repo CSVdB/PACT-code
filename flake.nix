@@ -166,7 +166,7 @@
                   timers.oura = {
                     wantedBy = [ "timers.target" ];
                     partOf = [ "oura.service" ];
-                    timerConfig.OnCalendar = [ "*-*-* *:0:00" ];
+                    timerConfig.OnCalendar = [ "*-*-* *:00:00" ];
                   };
                 };
               };

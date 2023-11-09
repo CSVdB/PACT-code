@@ -9,6 +9,7 @@ import qualified Data.Map as Map
 import Data.Maybe
 import Data.Time.Calendar
 import Data.Time.Clock
+import Database.Persist.Class
 import Database.Persist.Sqlite
 import Pact.DB
 import Pact.Data
@@ -38,7 +39,7 @@ collectOuraTokens = do
   pure $ catMaybes maybeUsers
 
 insertScores :: MonadIO m => OverallScores -> SqlPersistT m ()
-insertScores = mapM_ insert_
+insertScores = mapM_ insertUnique
 
 fetchScores :: MonadIO m => UserUUID -> Day -> SqlPersistT m (Maybe DailyScore)
 fetchScores userId day = entityVal <$$> selectFirst [DailyScoreUser ==. userId, DailyScoreDay ==. day] []

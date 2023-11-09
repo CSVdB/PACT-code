@@ -183,7 +183,7 @@
                 serviceConfig = {
                   ExecStart =
                     ''
-                      ${pkgs.pact-web-server}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
+                      ${self.packages.${system}.default}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
                     '';
                   Restart = "always";
                 };

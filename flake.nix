@@ -135,60 +135,97 @@
           };
         };
 
-      nixosModules.pact-web-server = { pkgs, lib, config, ... }:
-        {
-          options.services.pact-web-server = {
-            enable = lib.mkEnableOption "Enable PACT server";
-            package = lib.mkOption {
-              default = pkgs.pact-web-server;
-              description = "PACT web server package to use";
-            };
-            port = lib.mkOption {
-              default = 8080;
-              description = "Port to run on";
-            };
-            artifacts_dir = lib.mkOption {
-              default = "./";
-              description = "path where the SQLite dB and session key file are stored";
-            };
-            hosts = lib.mkOption {
-              default = [ ];
-              description = "The host to serve web requests on";
-            };
-          };
-          config =
-            let
-              cfg = config.services.pact-web-server;
-
-              web-server-host = with cfg; {
-                "${builtins.head hosts}" =
-                  {
-                    enableACME = true;
-                    forceSSL = true;
-                    locations."/".proxyPass = "http://localhost:${builtins.toString port}";
-                    serverAliases = builtins.tail hosts;
-                  };
+      nixosModules = {
+        oura = { lib, config, ... }:
+          {
+            options.services.oura = {
+              enable = lib.mkEnableOption "Enable daily Oura data syncing";
+              db_path = lib.mkOption {
+                default = "./pact.sqlite3";
+                description = "Path to the SQLite database";
               };
-            in
-            lib.mkIf cfg.enable {
-              services.nginx.virtualHosts = web-server-host;
+            };
+            config =
+              let
+                cfg = config.services.oura;
+              in
+              lib.mkIf cfg.enable {
+                systemd = {
+                  services.oura = {
+                    description = "Oura data syncing";
+                    wantedBy = [ "multi-user.target" ];
+                    after = [ "networking.target" ];
+                    serviceConfig = {
+                      ExecStart = ''
+                        ${self.packages.${system}.oura}/bin/oura --db-path ${cfg.db_path}
+                      '';
+                      Type = "oneshot";
+                    };
+                  };
 
-              # Only open this port if you don't use a reverse proxy in the deployment.
-              # networking.firewall.allowedTCPPorts = [ cfg.port ];
-
-              systemd.services.pact-web-server = {
-                description = "The PACT web server service";
-                wantedBy = [ "multi-user.target" ];
-                after = [ "networking.target" ];
-                serviceConfig = {
-                  ExecStart =
-                    ''
-                      ${self.packages.${system}.default}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
-                    '';
-                  Restart = "always";
+                  timers.oura = {
+                    wantedBy = [ "timers.target" ];
+                    partOf = [ "oura.service" ];
+                    timerConfig.OnCalendar = [ "*-*-* *:0:00" ];
+                  };
                 };
               };
+          };
+
+        pact-web-server = { lib, config, ... }:
+          {
+            options.services.pact-web-server = {
+              enable = lib.mkEnableOption "Enable PACT server";
+              port = lib.mkOption {
+                default = 8080;
+                description = "Port to run on";
+              };
+              artifacts_dir = lib.mkOption {
+                default = "./";
+                description = "path where the SQLite dB and session key file are stored";
+              };
+              hosts = lib.mkOption {
+                default = [ ];
+                description = "The host to serve web requests on";
+              };
             };
-        };
+            config =
+              let
+                cfg = config.services.pact-web-server;
+
+                web-server-host = with cfg; {
+                  "${builtins.head hosts}" =
+                    {
+                      enableACME = true;
+                      forceSSL = true;
+                      locations."/".proxyPass = "http://localhost:${builtins.toString port}";
+                      serverAliases = builtins.tail hosts;
+                    };
+                };
+              in
+              lib.mkIf cfg.enable {
+                services.nginx.virtualHosts = web-server-host;
+
+                # Only open this port if you don't use a reverse proxy in the
+                # deployment, i.e. if you want customers to call this port
+                # explicitly. Otherwise, we don't need to allow this port's
+                # access through the firewall.
+                # networking.firewall.allowedTCPPorts = [ cfg.port ];
+
+                systemd.services.pact-web-server = {
+                  description = "The PACT web server service";
+                  wantedBy = [ "multi-user.target" ];
+                  after = [ "networking.target" ];
+                  serviceConfig = {
+                    ExecStart =
+                      ''
+                        ${self.packages.${system}.default}/bin/pact-web-server --port ${toString cfg.port} --artifacts_dir ${cfg.artifacts_dir}
+                      '';
+                    Restart = "always";
+                  };
+                };
+              };
+          };
+      };
     };
 }

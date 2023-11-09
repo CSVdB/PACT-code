@@ -20,7 +20,7 @@ parseFlags =
     <$> optional
       ( strOption
           ( mconcat
-              [ long "db-file",
+              [ long "db-path",
                 help "Path to the database file",
                 metavar "FILEPATH"
               ]

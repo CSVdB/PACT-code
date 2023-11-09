@@ -20,6 +20,18 @@ pact-web-server/assets/`.
 
 Designs: https://www.figma.com/file/PwiAes2EP56eGAinXodw4H/PACT-VERSION-1?node-id=0%3A1&fbclid=IwAR3RZs0Nbk11MHc2U8LBCPS8uI2FObCMtAYKS4qkkwogWXn39tZcgtBwGPA
 
+# Adding an Oura token
+
+Navigate to your database and run
+`sqlite3 pact.sqlite3`
+
+Within the interactive SQLite, run
+```sql
+UPDATE user
+SET oura_token = "<ouraToken>"
+WHERE name = "<userName>";
+```
+
 # To do
 
 ## November

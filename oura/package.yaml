@@ -15,11 +15,15 @@ library:
   dependencies:
   - aeson
   - containers
+  - envparse
   - http-client
   - http-client-tls
   - microlens
   - monad-logger
+  - optparse-applicative
   - pact-db
+  - path
+  - path-io
   - persistent
   - persistent-sqlite
   - servant

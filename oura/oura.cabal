@@ -20,6 +20,7 @@ source-repository head
 
 library
   exposed-modules:
+      OptParse
       Oura
   other-modules:
       Paths_oura
@@ -32,11 +33,15 @@ library
       aeson
     , base >=4.7 && <5
     , containers
+    , envparse
     , http-client
     , http-client-tls
     , microlens
     , monad-logger
+    , optparse-applicative
     , pact-db
+    , path
+    , path-io
     , persistent
     , persistent-sqlite
     , servant

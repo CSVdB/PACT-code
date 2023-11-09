@@ -1,6 +1,7 @@
-{ mkDerivation, aeson, autoexporter, base, containers, http-client
-, http-client-tls, lib, microlens, monad-logger, pact-db
-, persistent, persistent-sqlite, servant, servant-client, sydtest
+{ mkDerivation, aeson, autoexporter, base, containers, envparse
+, http-client, http-client-tls, lib, microlens, monad-logger
+, optparse-applicative, pact-db, path, path-io, persistent
+, persistent-sqlite, servant, servant-client, sydtest
 , sydtest-discover, text, time, vector
 }:
 mkDerivation {
@@ -10,9 +11,10 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    aeson base containers http-client http-client-tls microlens
-    monad-logger pact-db persistent persistent-sqlite servant
-    servant-client text time vector
+    aeson base containers envparse http-client http-client-tls
+    microlens monad-logger optparse-applicative pact-db path path-io
+    persistent persistent-sqlite servant servant-client text time
+    vector
   ];
   libraryToolDepends = [ autoexporter ];
   executableHaskellDepends = [ base ];

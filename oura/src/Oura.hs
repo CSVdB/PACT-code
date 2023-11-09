@@ -17,8 +17,10 @@ import Database.Persist.Sqlite
 import Lens.Micro ((.~))
 import Network.HTTP.Client hiding (Proxy)
 import Network.HTTP.Client.TLS
+import OptParse
 import Pact.DB.Oura
 import Pact.Data
+import Path
 import Servant.API
 import Servant.Client
 import System.Exit (die)
@@ -68,6 +70,12 @@ collectScores start end userId token = do
 
 ouraSync :: IO ()
 ouraSync = do
+  sets <- getSettings
+  print sets
+  let info =
+        mkSqliteConnectionInfo (T.pack . toFilePath $ settingsDbPath sets)
+          & walEnabled .~ False
+          & fkEnabled .~ False
   man <- newManager tlsManagerSettings
   url <- parseBaseUrl "https://api.ouraring.com"
   let clientEnv = mkClientEnv man url
@@ -79,8 +87,4 @@ ouraSync = do
       scores <- liftIO $ runClientM' clientEnv $ collectScores lastMonth today userId token
       liftIO $ runSqlPool (insertScores scores) pool
   where
-    info =
-      mkSqliteConnectionInfo (T.pack "./pact.sqlite3")
-        & walEnabled .~ False
-        & fkEnabled .~ False
     logLevel = LevelWarn

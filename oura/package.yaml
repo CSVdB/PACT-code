@@ -17,6 +17,7 @@ library:
   - containers
   - http-client
   - http-client-tls
+  - pact-db
   - servant
   - servant-client
   - text

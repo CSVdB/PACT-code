@@ -1,5 +1,5 @@
 { mkDerivation, aeson, autoexporter, base, containers, http-client
-, http-client-tls, lib, servant, servant-client, sydtest
+, http-client-tls, lib, pact-db, servant, servant-client, sydtest
 , sydtest-discover, text, time, vector
 }:
 mkDerivation {
@@ -9,7 +9,7 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    aeson base containers http-client http-client-tls servant
+    aeson base containers http-client http-client-tls pact-db servant
     servant-client text time vector
   ];
   libraryToolDepends = [ autoexporter ];

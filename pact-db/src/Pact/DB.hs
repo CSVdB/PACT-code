@@ -189,6 +189,12 @@ WorkoutJoin
   UniqueJoin customer workout
 
   deriving Show Eq Ord Generic
+
+DailyScore
+  activity Score
+  sleep Score
+  readiness Score
+  deriving Show Generic
 |]
 
 allDifficulties :: [Difficulty]

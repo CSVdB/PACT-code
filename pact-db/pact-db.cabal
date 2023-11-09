@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1dc15136a6a75a2ed72b34553ce83d2ae49045f546c9611a8d31e353002b8552
+-- hash: ceeb5af6e1b1e217426655b44d0d73460deadf15378ac187f0df7f7d07e9594f
 
 name:           pact-db
 version:        0.0.0.0
@@ -24,11 +24,13 @@ library
   exposed-modules:
       Pact.Data
       Pact.Data.Exercise
+      Pact.Data.Oura
       Pact.Data.Proposal
       Pact.Data.User
       Pact.Data.UUID
       Pact.DB
       Pact.DB.Migrations
+      Pact.DB.Oura
       Pact.DB.Persistent
   other-modules:
       Paths_pact_db
@@ -63,6 +65,7 @@ library
     , validity-persistent
     , validity-text
     , validity-uuid
+    , vector
     , yamlparse-applicative
     , yesod
   default-language: Haskell2010

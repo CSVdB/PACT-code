@@ -39,5 +39,6 @@ library:
     - validity-persistent
     - validity-text
     - validity-uuid
+    - vector
     - yamlparse-applicative
     - yesod

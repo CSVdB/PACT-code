@@ -4,7 +4,7 @@
 , persistent-template, servant, servant-auth, servant-auth-server
 , servant-client-core, text, time, typed-uuid, uuid, validity
 , validity-bytestring, validity-persistent, validity-text
-, validity-uuid, yamlparse-applicative, yesod
+, validity-uuid, vector, yamlparse-applicative, yesod
 }:
 mkDerivation {
   pname = "pact-db";
@@ -16,7 +16,7 @@ mkDerivation {
     persistent-sqlite persistent-template servant servant-auth
     servant-auth-server servant-client-core text time typed-uuid uuid
     validity validity-bytestring validity-persistent validity-text
-    validity-uuid yamlparse-applicative yesod
+    validity-uuid vector yamlparse-applicative yesod
   ];
   homepage = "https://github.com/CSVdB/pact-code#readme";
   license = lib.licenses.unfree;

@@ -53,6 +53,7 @@ User
   uuid UserUUID
   name Username
   password (PasswordHash Bcrypt)
+  ouraToken OuraToken Maybe
 
   pic ImageUUID Maybe
   aboutMe Textarea

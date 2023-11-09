@@ -258,7 +258,8 @@ postRegisterR = liftHandler $ do
                 userName = registerFormUsername,
                 userPassword = passphraseHash,
                 userPic = Nothing,
-                userAboutMe = Textarea ""
+                userAboutMe = Textarea "",
+                userOuraToken = Nothing
               }
           setCredsRedirect
             Creds

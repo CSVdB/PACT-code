@@ -105,6 +105,7 @@
             doBenchmark = true; # Ook benchmark suites bouwen
             buildInputs = (with pkgs; [
               zlib
+              sqlite
             ]) ++ (with pre-commit-hooks.packages.${system};
               [
                 hlint

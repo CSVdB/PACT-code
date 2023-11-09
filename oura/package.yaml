@@ -17,7 +17,11 @@ library:
   - containers
   - http-client
   - http-client-tls
+  - microlens
+  - monad-logger
   - pact-db
+  - persistent
+  - persistent-sqlite
   - servant
   - servant-client
   - text

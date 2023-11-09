@@ -5,9 +5,16 @@
 
 module Oura where
 
+import Control.Monad
+import Control.Monad.IO.Class
+import Control.Monad.Logger
+import Data.Function
 import Data.Proxy
+import qualified Data.Text as T
 import Data.Time.Calendar
 import Data.Time.Clock
+import Database.Persist.Sqlite
+import Lens.Micro ((.~))
 import Network.HTTP.Client hiding (Proxy)
 import Network.HTTP.Client.TLS
 import Pact.DB.Oura
@@ -17,13 +24,12 @@ import Servant.Client
 import System.Exit (die)
 
 -- TODO:
--- - Implement OverallScores in dB
+-- - Run script for all OURA_TOKENS: Get connection pool
+-- - Set dB path properly:
 -- - Push data into dB
--- - Test dB integration
--- - Insert OURA_TOKEN into dB
--- - Run script for all OURA_TOKENS
--- - Set up service to run script every day
+-- - E2E test dB integration
 -- - Include yesterday's scores in your profile
+-- - Set up service to run script every day
 -- - Deploy & check if everything is working
 
 type ReqParam = QueryParam' '[Required, Strict]
@@ -59,10 +65,18 @@ ouraSync = do
   let clientEnv = mkClientEnv man url
   today <- utctDay <$> getCurrentTime
   let lastMonth = addGregorianMonthsRollOver (-1) today
-  activityData <- runClientM' clientEnv $ clientCollectActivityData lastMonth today token
-  sleepData <- runClientM' clientEnv $ clientCollectSleepData lastMonth today token
-  readinessData <- runClientM' clientEnv $ clientCollectReadinessData lastMonth today token
-  let scores = combineScores activityData sleepData readinessData
-  print scores
+  runStderrLoggingT $ filterLogger (\_ ll -> ll >= logLevel) $ withSqlitePoolInfo info 1 $ \pool -> do
+    tokens <- liftIO $ runSqlPool collectOuraTokens pool
+    forM_ tokens $ \(_userId, token) -> liftIO $ do
+      let ouraToken = "Bearer " <> token
+      activityData <- runClientM' clientEnv $ clientCollectActivityData lastMonth today ouraToken
+      sleepData <- runClientM' clientEnv $ clientCollectSleepData lastMonth today ouraToken
+      readinessData <- runClientM' clientEnv $ clientCollectReadinessData lastMonth today ouraToken
+      let scores = combineScores activityData sleepData readinessData
+      print scores
   where
-    token = "Bearer 2G32LBAM3Q2ZN6TRERAK4MTWMON6AOGQ"
+    info =
+      mkSqliteConnectionInfo (T.pack "./pact.sqlite3")
+        & walEnabled .~ False
+        & fkEnabled .~ False
+    logLevel = LevelWarn

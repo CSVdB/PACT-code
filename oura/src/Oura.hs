@@ -18,7 +18,7 @@ import Lens.Micro ((.~))
 import Network.HTTP.Client hiding (Proxy)
 import Network.HTTP.Client.TLS
 import Pact.DB.Oura
-import Pact.Data.Oura
+import Pact.Data
 import Servant.API
 import Servant.Client
 import System.Exit (die)
@@ -58,6 +58,14 @@ runClientM' env c =
     Left err -> die $ show err
     Right a -> pure a
 
+collectScores :: Day -> Day -> UserUUID -> OuraToken -> ClientM OverallScores
+collectScores start end userId token = do
+  let ouraToken = "Bearer " <> token
+  activityData <- clientCollectActivityData start end ouraToken
+  sleepData <- clientCollectSleepData start end ouraToken
+  readinessData <- clientCollectReadinessData start end ouraToken
+  pure $ combineScores userId activityData sleepData readinessData
+
 ouraSync :: IO ()
 ouraSync = do
   man <- newManager tlsManagerSettings
@@ -67,13 +75,9 @@ ouraSync = do
   let lastMonth = addGregorianMonthsRollOver (-1) today
   runStderrLoggingT $ filterLogger (\_ ll -> ll >= logLevel) $ withSqlitePoolInfo info 1 $ \pool -> do
     tokens <- liftIO $ runSqlPool collectOuraTokens pool
-    forM_ tokens $ \(_userId, token) -> liftIO $ do
-      let ouraToken = "Bearer " <> token
-      activityData <- runClientM' clientEnv $ clientCollectActivityData lastMonth today ouraToken
-      sleepData <- runClientM' clientEnv $ clientCollectSleepData lastMonth today ouraToken
-      readinessData <- runClientM' clientEnv $ clientCollectReadinessData lastMonth today ouraToken
-      let scores = combineScores activityData sleepData readinessData
-      print scores
+    forM_ tokens $ \(userId, token) -> do
+      scores <- liftIO $ runClientM' clientEnv $ collectScores lastMonth today userId token
+      liftIO $ runSqlPool (insertScores scores) pool
   where
     info =
       mkSqliteConnectionInfo (T.pack "./pact.sqlite3")

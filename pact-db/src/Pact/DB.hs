@@ -195,6 +195,8 @@ DailyScore
   activity Score
   sleep Score
   readiness Score
+  day Day
+  user UserUUID
   deriving Show Generic
 |]
 

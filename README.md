@@ -93,21 +93,5 @@ Notes:
   * Set up challenges, e.g. jog 2x/w for 4 weeks in a row. We can define one
     challenge each month to be central, app-wide.
 
-# Later
-
-- Coach confirms whether you went to the event, not you
-  * Fix bug first (including bug report & regression test)
-- Staging environment
-- Switch to Cassius to use variables (e.g. for the primary colors) and type-safe
-  URLs
-- Clean up CSS
-- Put all newsfeed events anti-chronologically? (Talk to Paul first)
-- Leaderboard + ranking per sport
-- "Community" concept
-  * New type of user = community leaders. People can follow communities, put
-    together a news feed..
-- Build an app: https://cordova.apache.org/
-- sydtest-webdriver: Selenium tests
-
 
 
